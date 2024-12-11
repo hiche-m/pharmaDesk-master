@@ -92,14 +92,21 @@ export const AuthProvider = ({ children }) => {
 
 
     const sendEmailForChangingPassword = () => {
+console.log("send email clicked");
 
         axios.post("https://pharma-back.onrender.com/api/pharma/changingPassword/", { email: resetPasswordEmail }).then(res => {
+            console.log(res.data);
 
             if (res.data.message != null) {
                 toast('Un lien de récupération a été envoyé à votre adresse email.');
+                  // Listen for the 'store_connected' event
+                socket.emit('onChanging_password', { email: resetPasswordEmail });//// make the id dynamic 
+
             }
 
         }).catch(e => {
+            console.log(e);
+            
             if (e.request.status == 400) {
                 const parsedmessage = JSON.parse(e.request.response)
                 if (parsedmessage.error == "Non-existent email") alert('Cet email n\'existe pas.');
@@ -109,9 +116,7 @@ export const AuthProvider = ({ children }) => {
             }
 
         })
-        // Listen for the 'store_connected' event
-        socket.emit('onChanging_password', { email: resetPasswordEmail });//// make the id dynamic 
-
+      
        
     }
 
