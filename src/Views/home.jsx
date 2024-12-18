@@ -14,6 +14,7 @@ import useRefuseRequest from "../Services/useRefuseRequest.jsx";
 import { useSelector } from "react-redux";
 import useConfirmTransaction from "../Services/useConfirmTransaction.jsx";
 import useFetchConfirmed from "../Services/useFetchConfirmed.jsx";
+import { useStateContext } from "../Context/ContextProvider.jsx";
 
 const Home = () => {
 
@@ -23,26 +24,28 @@ const Home = () => {
 
     const [confirmType, setConfirmType] = useState(0);
 
-    useFetch(refresh);
+    const {confirmePerscription,isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription} = useStateContext()
 
-    useFetchConfirmed(refresh);
+    //useFetch(refresh);
+
+    //useFetchConfirmed(refresh);
 
     const /* { confirmRequest, success, isRequestLoading, hasError } */ confirmRequestObject = useConfirmRequest();
-    const /* { confirmRequest, success, isRequestLoading, hasError } */ confirmTransactionObject = useConfirmTransaction();
+
     const /* { refuseRequest, rsuccess, isRRequestLoading, rHasError } */ refuseRequestObject = useRefuseRequest();
 
     const { isLoading, data, error } = useSelector(state => state.user);
 
     useEffect(() => {
-        const interval = setInterval(() => {
+      /*   const interval = setInterval(() => {
             setRefresh(prev => prev + 1);
         }, refresh_rate * 1000);
 
-        return () => clearInterval(interval);
+        return () => clearInterval(interval); */
     }, []);
 
     const handleRefresh = () => {
-        setRefresh(previous => previous + 1);
+       // setRefresh(previous => previous + 1);
     }
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -78,13 +81,8 @@ const Home = () => {
     };
 
     const handleConfirm = async (pid, clientId, formData) => {
-        await confirmTransactionObject.confirmTransaction(data.idpharma, pid, clientId, formData);
-        if (confirmTransactionObject.success) {
-            alert("Request accepted.");
-            setRefresh(previous => previous + 1);
-        } else if (confirmTransactionObject.hasError) {
-            alert("An error has occured: " + confirmTransactionObject.hasError);
-        }
+       
+        //confirmePerscription(clientId)
         setModalOpen(false);
     };
 
@@ -96,7 +94,7 @@ const Home = () => {
 
     return (<>
         <div className="col-span-3 row-span-2 bg-lightShapes">
-            <SideContent userData={data} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || confirmTransactionObject.isRequestLoading} />
+            <SideContent userData={data} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription} />
         </div>
         <div className="col-span-9 col-start-1 row-start-2 flex bg-background h-auto">
             <div className="w-max">

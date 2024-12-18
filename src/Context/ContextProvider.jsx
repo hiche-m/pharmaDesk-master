@@ -4,8 +4,9 @@ import { useDispatch } from 'react-redux';
 import { getUserData, userSuccess, userFail } from '../Redux/userActions.jsx';
 import { userData } from '../Utils/Data/UserData.jsx';
 import { toast } from 'react-toastify';
-import { HOST } from "../Utils/Parameters.jsx";
+import { HOST,notification_load_limit } from "../Utils/Parameters.jsx";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const StateContext = createContext();
 
@@ -22,8 +23,14 @@ export const ContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null)
   const [resetPasswordEmail, setResetPasswordEmail] = useState("") ///  email field for reset password
 
+  const [notificationListeRequests, setNotificationListeRequest] = useState(null)
+  const [isLoadingNotification,setIsLoadingNotifaction] =useState(true)
 
+  const [notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation] = useState(null)
+  const [isLoadingNotificationConfirmation,setIsLoadingNotifactionConfirmation] =useState(true)
 
+  const [isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription] = useState(false) // /to rechange 
+  const [posioData,setPosiodata]=useState(null)
 
 
 
@@ -89,9 +96,107 @@ export const ContextProvider = ({ children }) => {
 
 
 
+  useEffect(() => {
+    
+
+  },[])
+
+
   // Listen for the 'prescription_cancelled' event
 
 
+  const fetchNotif = async () => {
+    const jsonId = localStorage.getItem('idpharma')
+    const idpharma = JSON.parse(jsonId)
+    if (idpharma == null) {
+      return "id empty"
+    }
+    else {
+      axios.get(`${HOST}/api/demande/${idpharma}`).then(res => {
+      
+        if (res.data != null) {
+  
+          //console.log(res.data);
+          
+          setNotificationListeRequest(prev => {
+          
+            setIsLoadingNotifaction(false)
+            let array = res.data.data
+            
+            return array.reverse().slice(0, notification_load_limit)
+         }   )
+       
+  
+  
+        }
+  
+       
+        
+      }).catch(e => {
+        
+  
+      })
+    }
+   
+
+  }
+
+
+  const fetchCommingClients = async () => {
+    const jsonId = localStorage.getItem('idpharma')
+    const idpharma = JSON.parse(jsonId)
+    if (idpharma == null) {
+      return "id empty"
+    }
+    else {
+      axios.get(`${HOST}/api/comming/${idpharma}`).then(res => {
+      
+        if (res.data != null) {
+  
+          
+          
+          setNotificationListeRequestConfirmation(prev => {
+          
+            setIsLoadingNotifactionConfirmation(false)
+            let array = res.data.data
+            
+            return array.reverse().slice(0, notification_load_limit)
+         } )
+       
+  
+  
+        }
+  
+       
+        
+      }).catch(e => {
+        
+  
+      })
+    }
+   
+
+  }
+
+
+  const confirmePerscription =  (idclient) => {
+    const jsonId = localStorage.getItem('idpharma')
+    const idpharma = JSON.parse(jsonId)
+    if (idpharma != null) {
+
+      console.log("this is the form posio ",idclient,posioData);
+      
+    /*   axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`)
+        .then(res => { console.log(res.data);
+        })
+        
+        .catch(e => console.log(e)
+      )
+ */
+    }
+    else alert('id incorrect please reconnect ')
+
+  }
 
 
 
@@ -100,8 +205,13 @@ export const ContextProvider = ({ children }) => {
 
     <StateContext.Provider value={{
       triggerNavigate, setTriggerNavigate,
-      resetPasswordEmail, setResetPasswordEmail, socket
-
+      resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif,
+      notificationListeRequests,setNotificationListeRequest,
+      isLoadingNotification, setIsLoadingNotifaction,fetchCommingClients,
+      notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
+      , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation,
+      confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
+      posioData,setPosiodata,
     }}>
 
       {children}

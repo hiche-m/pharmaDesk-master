@@ -6,8 +6,12 @@ import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
 import DropdownMenu from './DropDownMenu.jsx';
+import { useStateContext } from '../Context/ContextProvider.jsx';
 
 const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotification, confirmType }) => {
+
+    const { posioData, setPosiodata } = useStateContext()
+    
 
     if (!isOpen) return null;
 
@@ -71,28 +75,28 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
 
         const addFrequency = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
                 frequence: item.quantite + 1
             } : item));
         }
 
         const minusFrequency = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
                 ...item,
                 frequence: item.quantite - 1
             } : item));
         }
 
         const addQuantity = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
                 quantite: item.quantite + portionTypes[selectedPortion]
             } : item));
         };
 
         const minusQuantity = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
                 ...item,
                 quantite: item.quantite - portionTypes[selectedPortion]
             } : item));
@@ -122,7 +126,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             ));
         }; */
         const handleTiming = (index) => {
-            setForm(prev => prev.map((item, i) => i === formIndex ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
                 ajeun: index === 0 ? 1 : 0,
                 avantRepas: index === 1 ? 1 : 0,
@@ -152,7 +156,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             });
         } */
         const handleOften = (key) => {
-            setForm(prev => prev.map((item, i) => i === formIndex ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
                 [key]: item[key] === 1 ? 0 : 1
             } : item));
@@ -173,22 +177,23 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             }
         } */
         const addDays = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
                 duree: item.duree + daysPortion
             } : item));
         };
 
         const minusDays = () => {
-            setForm(prev => prev.map((item, i) => i === formIndex && item.duree > daysPortion ? {
+            setPosiodata(prev => prev.map((item, i) => i === formIndex && item.duree > daysPortion ? {
                 ...item,
                 duree: item.duree - daysPortion
             } : item));
         };
 
 
-        /* Number of products */
-        const [form, setForm] = useState([{
+        /*   Number of products */
+        
+        setPosiodata([{
             "nomPils": '',
             "quantite": quantityPortion,
             "quantiteDetails": selectedPortion,
@@ -202,7 +207,11 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             "duree": daysPortion,
             "frequence": frequency,
             "frequenceDetails": selectedFrequency,
-        }]);
+        }])
+             
+
+        
+        
         const [formIndex, setFormIndex] = useState(0);
 
         /* const addProduct = () => {
@@ -224,7 +233,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
         } */
 
         const addProduct = () => {
-            setForm(prev => [
+            setPosiodata(prev => [
                 ...prev,
                 {
                     "nomPils": '',
@@ -246,21 +255,21 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
         };
 
         const deleteProduct = () => {
-            if (form.length > 1) {
+            if (posioData.length > 1) {
                 const currentIndex = formIndex;
                 if (currentIndex > 0) {
                     navigatePrevious();
                 }
-                setForm(prev => prev.filter((_, i) => i !== currentIndex));
+                setPosiodata(prev => prev.filter((_, i) => i !== currentIndex));
             }
         }
 
         const navigateNext = () => {
-            if (form.length === 1) {
+            if (posioData.length === 1) {
                 return;
             }
 
-            if (formIndex === form.length - 1) {
+            if (formIndex === posioData.length - 1) {
                 setFormIndex(0);
             } else {
                 setFormIndex(prev => prev + 1);
@@ -268,12 +277,12 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
         }
 
         const navigatePrevious = () => {
-            if (form.length === 1) {
+            if (posioData.length === 1) {
                 return;
             }
 
             if (formIndex === 0) {
-                setFormIndex(form.length - 1);
+                setFormIndex(posioData.length - 1);
             } else {
                 setFormIndex(prev => prev - 1);
             }
@@ -299,8 +308,9 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             updateForm();
         }, [quantity, timing, often, days]); */
 
-        const currentForm = form[formIndex];
-
+        const currentForm = posioData[formIndex];
+        console.log("this is the current form",currentForm);
+        
         return (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none" >
                 <div className="bg-white w-max rounded-lg p-6 shadow-lg">
@@ -430,7 +440,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                         Cancel
                                     </button>
                                     <button
-                                        onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn ? form : [])}
+                                        onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn ? posioData : [])}
                                         className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
                                     >
                                         Confirm
