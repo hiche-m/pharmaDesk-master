@@ -10,6 +10,7 @@ const useRefuseRequest = () => {
     const [rHasError, setRHasError] = useState(null);
 
     const refuseRequest = async (notificationId) => {
+    console.log('this is notification id ',notificationId);
 
         setIsRRequestLoading(true);
 

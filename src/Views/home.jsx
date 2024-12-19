@@ -37,15 +37,15 @@ const Home = () => {
     const { isLoading, data, error } = useSelector(state => state.user);
 
     useEffect(() => {
-      /*   const interval = setInterval(() => {
+      /*    const interval = setInterval(() => {
             setRefresh(prev => prev + 1);
         }, refresh_rate * 1000);
 
-        return () => clearInterval(interval); */
+        return () => clearInterval(interval);  */
     }, []);
 
     const handleRefresh = () => {
-       // setRefresh(previous => previous + 1);
+        setRefresh(previous => previous + 1);
     }
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -70,7 +70,7 @@ const Home = () => {
     };
 
     const handleAccept = async (pid, clientId) => {
-        await confirmRequestObject.confirmRequest(data.idpharma, pid, clientId);
+        await confirmRequestObject.confirmRequest( pid, clientId);
         if (confirmRequestObject.success) {
             alert("Request accepted.");
             setRefresh(previous => previous + 1);
@@ -80,9 +80,9 @@ const Home = () => {
         setModalOpen(false);
     };
 
-    const handleConfirm = async (pid, clientId, formData) => {
+    const handleConfirm = async (pid, clientId, isOn) => {
        
-        //confirmePerscription(clientId)
+        confirmePerscription(clientId,pid,isOn)
         setModalOpen(false);
     };
 

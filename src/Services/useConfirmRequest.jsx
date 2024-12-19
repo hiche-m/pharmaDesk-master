@@ -8,13 +8,17 @@ const useConfirmRequest = () => {
     const [isRequestLoading, setIsRequestLoading] = useState(false);
 
     const [hasError, setHasError] = useState(null);
-
-    const confirmRequest = async (userId, perscriptionId, clientId) => {
-
+   //get ID from localstorage when loading 
+        const jsonId = localStorage.getItem('idpharma')
+        const idpharma = JSON.parse(jsonId)
+    const confirmRequest = async (perscriptionId, clientId) => {
+     
         setIsRequestLoading(true);
-
+        if (idpharma == null || undefined) return setHasError('id empty')
+        
         try {
-            const res = await fetch(`${HOST}/api/Accept_prescription/${clientId}/${userId}/${perscriptionId}`, {
+
+            const res = await fetch(`${HOST}/api/Accept_prescription/${clientId}/${idpharma}/${perscriptionId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

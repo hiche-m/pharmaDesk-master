@@ -7,6 +7,8 @@ const NotificationTile = ({ handleClick = () => { }, tile, index }) => {
     const timestamp = new Date(tile.created_at);
 
     const formattedTime = formatDate((new Date()) - timestamp);
+    console.log('this is the info of notif ',tile);
+    
 
     return (
         <div onClick={handleClick} className={`flex flex-row p-4 justify-start items-center bg-superClear "bg-opacity-75" rounded-xl "shadow-lg" cursor-pointer hover:bg-opacity-95 active:bg-disabled active:shadow-none`}>

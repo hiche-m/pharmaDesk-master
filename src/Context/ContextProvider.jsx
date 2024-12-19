@@ -30,7 +30,31 @@ export const ContextProvider = ({ children }) => {
   const [isLoadingNotificationConfirmation,setIsLoadingNotifactionConfirmation] =useState(true)
 
   const [isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription] = useState(false) // /to rechange 
-  const [posioData,setPosiodata]=useState(null)
+  
+  const [selectedPortion, setSelectedPortion] = useState('take');
+  const [selectedFrequency, setSelectedFrequency] = useState('heur');
+  const [frequency, setFrequency] = useState(1);
+  const [timing, setTiming] = useState(0);
+  const daysPortion = 15;
+  const [days, setDays] = useState(daysPortion);
+  const quantityPortion = 1 / 2;
+  const [quantity, setQuantity] = useState(0);
+  const [posioData, setPosiodata] = useState([{
+    
+    "nomPils": '',
+    "quantite": quantityPortion,
+    "quantiteDetails": selectedPortion,
+    "ajeun": timing === 0 ? 1 : 0,
+    "avantRepas": timing === 1 ? 1 : 0,
+    "pendantRepas": timing === 2 ? 1 : 0,
+    "apresRepas": timing === 3 ? 1 : 0,
+    "matin": 0,
+    "apresMidi": 0,
+    "soire": 0,
+    "duree": daysPortion,
+    "frequence": frequency,
+    "frequenceDetails": selectedFrequency,
+}])
 
 
 
@@ -179,20 +203,20 @@ export const ContextProvider = ({ children }) => {
   }
 
 
-  const confirmePerscription =  (idclient) => {
+  const confirmePerscription =  (idclient,perscriptionId,isOn) => {
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
     if (idpharma != null) {
 
       console.log("this is the form posio ",idclient,posioData);
       
-    /*   axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`)
+      axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`,{idClient:idclient,posiologies: isOn? posioData:[]})
         .then(res => { console.log(res.data);
         })
         
         .catch(e => console.log(e)
       )
- */
+
     }
     else alert('id incorrect please reconnect ')
 
@@ -211,7 +235,13 @@ export const ContextProvider = ({ children }) => {
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
       , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation,
       confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
-      posioData,setPosiodata,
+      posioData, setPosiodata,
+      selectedFrequency, setSelectedFrequency,
+      selectedPortion, setSelectedPortion,
+      frequency, setFrequency,
+      timing, setTiming,
+      quantity, setQuantity,
+      days, setDays,
     }}>
 
       {children}

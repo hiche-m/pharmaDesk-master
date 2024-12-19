@@ -10,9 +10,19 @@ import { useStateContext } from '../Context/ContextProvider.jsx';
 
 const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotification, confirmType }) => {
 
-    const { posioData, setPosiodata } = useStateContext()
-    
+   
+        
+    const { posioData, setPosiodata,
+        selectedFrequency, setSelectedFrequency,
+        selectedPortion, setSelectedPortion,
+        frequency, setFrequency,
+        timing, setTiming,
+        quantity, setQuantity,
+        days, setDays,
+    } = useStateContext()
 
+    const quantityPortion = 1 / 2;
+    const daysPortion = 15;
     if (!isOpen) return null;
 
     const [isImageLoading, setImageLoading] = useState(true);
@@ -42,10 +52,10 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             'autre': null,
         };
 
-        const [selectedPortion, setSelectedPortion] = useState('take');
+
         /* Quantity Per Take */
-        const quantityPortion = 1 / 2;
-        const [quantity, setQuantity] = useState(0);
+
+
 
 
         const frequencyObjects = {
@@ -62,9 +72,8 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             'autre': null,
         };
 
-        const [selectedFrequency, setSelectedFrequency] = useState('heur');
 
-        const [frequency, setFrequency] = useState(1);
+
 
         /* Enable Posiologie */
         const [isOn, setIsOn] = useState(false);
@@ -110,7 +119,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             pendantRepas: "Pendant Repas",
             apresRepas: "Après Repas",
         };
-        const [timing, setTiming] = useState(0);
+
 
         /* const handleTiming = (index) => {
             setTiming(index);
@@ -164,8 +173,6 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
 
         /* Number of days */
-        const daysPortion = 15;
-        const [days, setDays] = useState(daysPortion);
 
         /* const addDays = () => {
             setDays(prev => prev + daysPortion);
@@ -192,45 +199,14 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
 
         /*   Number of products */
-        
-        setPosiodata([{
-            "nomPils": '',
-            "quantite": quantityPortion,
-            "quantiteDetails": selectedPortion,
-            "ajeun": timing === 0 ? 1 : 0,
-            "avantRepas": timing === 1 ? 1 : 0,
-            "pendantRepas": timing === 2 ? 1 : 0,
-            "apresRepas": timing === 3 ? 1 : 0,
-            "matin": 0,
-            "apresMidi": 0,
-            "soire": 0,
-            "duree": daysPortion,
-            "frequence": frequency,
-            "frequenceDetails": selectedFrequency,
-        }])
-             
 
-        
-        
+
+
+
+
         const [formIndex, setFormIndex] = useState(0);
 
-        /* const addProduct = () => {
-            setForm(prev => {
-                const form = [...prev, {
-                    "nomPils": '',
-                    "quantite": quantityPortion,
-                    "avantRepas": timing === 0 ? 1 : 0,
-                    "apresRepas": timing === 1 ? 1 : 0,
-                    "ajeun": timing === 2 ? 1 : 0,
-                    "matin": often.matin ? 1 : 0,
-                    "apresMidi": often.apresMidi ? 1 : 0,
-                    "soire": often.soire ? 1 : 0,
-                    "duree": daysPortion
-                }];
-                return form;
-            });
-            navigateNext();
-        } */
+
 
         const addProduct = () => {
             setPosiodata(prev => [
@@ -288,29 +264,11 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             }
         }
 
-        /* const updateForm = () => {
-            setForm(prev => prev.map((item, index) => (index === formIndex ? {
-                "nomPils": '',
-                "quantite": quantity,
-                "avantRepas": timing === 0 ? 1 : 0,
-                "apresRepas": timing === 1 ? 1 : 0,
-                "ajeun": timing === 2 ? 1 : 0,
-                "matin": often.matin ? 1 : 0,
-                "apresMidi": often.apresMidi ? 1 : 0,
-                "soire": often.soire ? 1 : 0,
-                "duree": days
-            }
-                : item)));
-            console.log(form);
-        } */
 
-        /* useEffect(() => {
-            updateForm();
-        }, [quantity, timing, often, days]); */
 
         const currentForm = posioData[formIndex];
-        console.log("this is the current form",currentForm);
-        
+       
+
         return (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none" >
                 <div className="bg-white w-max rounded-lg p-6 shadow-lg">
@@ -440,7 +398,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                         Cancel
                                     </button>
                                     <button
-                                        onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn ? posioData : [])}
+                                        onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn)}
                                         className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
                                     >
                                         Confirm

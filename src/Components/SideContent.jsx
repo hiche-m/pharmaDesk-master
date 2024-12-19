@@ -14,14 +14,22 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     
     
     useEffect(() => {
-        fetchNotif()
-        fetchCommingClients()
-console.log(isLoadingNotificationConfirmation);
-
-      /*   setInterval(() => {
-        setrefrechingInterval(prev=>!prev)
-    },10000) refrechingWithInterval*/
-    },[])
+        // Function to fetch notifications and clients
+        const fetchData = () => {
+            fetchNotif();
+            fetchCommingClients();
+        };
+    
+        fetchData(); // Fetch data immediately when the effect runs
+    
+        const interval = setInterval(() => {
+            fetchData(); // Fetch data periodically every 10 seconds
+        }, 10000);
+    
+        // Cleanup interval on component unmount
+        return () => clearInterval(interval);
+    }, []); // Empty dependency array ensures the effect runs only once on mount
+    
    // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
