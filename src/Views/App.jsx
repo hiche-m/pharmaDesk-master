@@ -25,9 +25,11 @@ export default function App() {
 
 
         const dataJson = localStorage.getItem("token")
+        const idPharmaJson = localStorage.getItem("idpharma")
+        const storeNameJson = localStorage.getItem("storeName")
 
 
-        if (dataJson) {
+        if (dataJson && idPharmaJson && storeNameJson) {
             setIsAuth(true);
 
         } else {

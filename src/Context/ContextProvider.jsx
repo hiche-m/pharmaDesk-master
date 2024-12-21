@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { getUserData, userSuccess, userFail } from '../Redux/userActions.jsx';
 import { userData } from '../Utils/Data/UserData.jsx';
 import { toast } from 'react-toastify';
-import { HOST,notification_load_limit } from "../Utils/Parameters.jsx";
+import { HOST, notification_load_limit } from "../Utils/Parameters.jsx";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -24,13 +24,14 @@ export const ContextProvider = ({ children }) => {
   const [resetPasswordEmail, setResetPasswordEmail] = useState("") ///  email field for reset password
 
   const [notificationListeRequests, setNotificationListeRequest] = useState(null)
-  const [isLoadingNotification,setIsLoadingNotifaction] =useState(true)
+  const [isLoadingNotification, setIsLoadingNotifaction] = useState(true)
+  const [storeName, setStoreName] = useState(null);
 
   const [notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation] = useState(null)
-  const [isLoadingNotificationConfirmation,setIsLoadingNotifactionConfirmation] =useState(true)
+  const [isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation] = useState(true)
 
   const [isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription] = useState(false) // /to rechange 
-  
+
   const [selectedPortion, setSelectedPortion] = useState('take');
   const [selectedFrequency, setSelectedFrequency] = useState('heur');
   const [frequency, setFrequency] = useState(1);
@@ -40,7 +41,7 @@ export const ContextProvider = ({ children }) => {
   const quantityPortion = 1 / 2;
   const [quantity, setQuantity] = useState(0);
   const [posioData, setPosiodata] = useState([{
-    
+
     "nomPils": '',
     "quantite": quantityPortion,
     "quantiteDetails": selectedPortion,
@@ -54,7 +55,7 @@ export const ContextProvider = ({ children }) => {
     "duree": daysPortion,
     "frequence": frequency,
     "frequenceDetails": selectedFrequency,
-}])
+  }])
 
 
 
@@ -70,6 +71,11 @@ export const ContextProvider = ({ children }) => {
 
     if (idpharma != null) {
       console.log("hellllooooo from the socket ");
+
+      if (storeName == null) {
+        const storeName = localStorage.getItem('storeName');
+        setStoreName(storeName);
+      }
 
       // Listen for the 'store_connected' event
       socket.emit('store_connected', { idpharma });//// make the id dynamic 
@@ -121,9 +127,9 @@ export const ContextProvider = ({ children }) => {
 
 
   useEffect(() => {
-    
 
-  },[])
+
+  }, [])
 
 
   // Listen for the 'prescription_cancelled' event
@@ -137,31 +143,31 @@ export const ContextProvider = ({ children }) => {
     }
     else {
       axios.get(`${HOST}/api/demande/${idpharma}`).then(res => {
-      
+
         if (res.data != null) {
-  
+
           //console.log(res.data);
-          
+
           setNotificationListeRequest(prev => {
-          
+
             setIsLoadingNotifaction(false)
             let array = res.data.data
-            
+
             return array.reverse().slice(0, notification_load_limit)
-         }   )
-       
-  
-  
+          })
+
+
+
         }
-  
-       
-        
+
+
+
       }).catch(e => {
-        
-  
+
+
       })
     }
-   
+
 
   }
 
@@ -174,48 +180,49 @@ export const ContextProvider = ({ children }) => {
     }
     else {
       axios.get(`${HOST}/api/comming/${idpharma}`).then(res => {
-      
+
         if (res.data != null) {
-  
-          
-          
+
+
+
           setNotificationListeRequestConfirmation(prev => {
-          
+
             setIsLoadingNotifactionConfirmation(false)
             let array = res.data.data
-            
+
             return array.reverse().slice(0, notification_load_limit)
-         } )
-       
-  
-  
+          })
+
+
+
         }
-  
-       
-        
+
+
+
       }).catch(e => {
-        
-  
+
+
       })
     }
-   
+
 
   }
 
 
-  const confirmePerscription =  (idclient,perscriptionId,isOn) => {
+  const confirmePerscription = (idclient, perscriptionId, isOn) => {
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
     if (idpharma != null) {
 
-      console.log("this is the form posio ",idclient,posioData);
-      
-      axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`,{idClient:idclient,posiologies: isOn? posioData:[]})
-        .then(res => { console.log(res.data);
+      console.log("this is the form posio ", idclient, posioData);
+
+      axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`, { idClient: idclient, posiologies: isOn ? posioData : [] })
+        .then(res => {
+          console.log(res.data);
         })
-        
+
         .catch(e => console.log(e)
-      )
+        )
 
     }
     else alert('id incorrect please reconnect ')
@@ -230,10 +237,10 @@ export const ContextProvider = ({ children }) => {
     <StateContext.Provider value={{
       triggerNavigate, setTriggerNavigate,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif,
-      notificationListeRequests,setNotificationListeRequest,
-      isLoadingNotification, setIsLoadingNotifaction,fetchCommingClients,
+      notificationListeRequests, setNotificationListeRequest,
+      isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
-      , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation,
+      , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation, storeName,
       confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
       posioData, setPosiodata,
       selectedFrequency, setSelectedFrequency,

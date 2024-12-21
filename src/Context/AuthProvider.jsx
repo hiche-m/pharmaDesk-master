@@ -51,10 +51,10 @@ export const AuthProvider = ({ children }) => {
     const [triggerNavigate, setTriggerNavigate] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
 
-    const { resetPasswordEmail, setResetPasswordEmail,socket } = useStateContext()
+    const { resetPasswordEmail, setResetPasswordEmail, socket } = useStateContext()
 
 
-   
+
 
 
 
@@ -67,6 +67,9 @@ export const AuthProvider = ({ children }) => {
             if (res.data != null && res.data.token != null) {
                 localStorage.setItem('token', res.data.token)
                 localStorage.setItem('idpharma', res.data.data[0].idpharma)
+
+                localStorage.setItem('storeName', res.data.data[0].storeName)
+
                 setIncorrectAuth(false)
                 setIsAuth(true)
             }
@@ -92,21 +95,21 @@ export const AuthProvider = ({ children }) => {
 
 
     const sendEmailForChangingPassword = () => {
-console.log("send email clicked");
+        console.log("send email clicked");
 
         axios.post("https://pharma-back.onrender.com/api/pharma/changingPassword/", { email: resetPasswordEmail }).then(res => {
             console.log(res.data);
 
             if (res.data.message != null) {
                 toast('Un lien de récupération a été envoyé à votre adresse email.');
-                  // Listen for the 'store_connected' event
+                // Listen for the 'store_connected' event
                 socket.emit('onChanging_password', { email: resetPasswordEmail });//// make the id dynamic 
 
             }
 
         }).catch(e => {
             console.log(e);
-            
+
             if (e.request.status == 400) {
                 const parsedmessage = JSON.parse(e.request.response)
                 if (parsedmessage.error == "Non-existent email") alert('Cet email n\'existe pas.');
@@ -116,8 +119,8 @@ console.log("send email clicked");
             }
 
         })
-      
-       
+
+
     }
 
     const resetPassword = () => {
