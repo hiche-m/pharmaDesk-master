@@ -14,7 +14,7 @@ const useConfirmRequest = () => {
     const confirmRequest = async (perscriptionId, clientId) => {
      
         setIsRequestLoading(true);
-        if (idpharma == null || undefined) return setHasError('id empty')
+        //if (idpharma == null || undefined) return setHasError('id empty')
         
         try {
 
