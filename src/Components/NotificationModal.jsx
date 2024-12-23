@@ -10,8 +10,6 @@ import { useStateContext } from '../Context/ContextProvider.jsx';
 
 const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotification, confirmType }) => {
 
-   
-        
     const { posioData, setPosiodata,
         selectedFrequency, setSelectedFrequency,
         selectedPortion, setSelectedPortion,
@@ -267,7 +265,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
 
         const currentForm = posioData[formIndex];
-       
+
 
         return (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none" >
@@ -294,23 +292,24 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
                             {/* Info */}
                             <h2 className="text-lg font-bold mb-2">Confirmer l'achat?</h2>
-                            <div className={`grid grid-cols-6 grid-rows-5 space-y-2 my-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
+                            <div className={`flex flex-col space-y-2 my-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
                                 {/* Line 1 */}
-                                <div className="row-span-1 col-span-6">
+                                <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center justify-between">
                                         <span>Posiologie?</span>
                                         <ToggleSwitch value={isOn} toggleSwitch={toggleSwitch} className='pointer-events-auto' />
                                         <div className='inline-flex justify-center items-center space-x-1'>
-                                            <MdDeleteForever className={`text-[1.5rem] cursor-pointer ${isOn ? 'text-red-500' : 'text-gray-500'}`} onClick={() => deleteProduct()} />
-                                            <GrFormPrevious className="bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl" onClick={() => navigatePrevious()} />
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{formIndex + 1}</span>
-                                            <MdNavigateNext className='bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl' onClick={() => navigateNext()} />
+                                            <MdDeleteForever className={`text-[1.5rem] ${isOn && posioData.length > 1 ? 'cursor-pointer text-red-500' : 'text-gray-500'}`} onClick={() => deleteProduct()} />
+                                            {posioData.length > 1 && (<GrFormPrevious className="bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl" onClick={() => navigatePrevious()} />)}
+                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>Med {formIndex + 1}</span>
+                                            {posioData.length > 1 && (<MdNavigateNext className='bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl' onClick={() => navigateNext()} />)}
                                             <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addProduct()} />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="row-span-1 col-span-6">
+                                {/* Line 2 */}
+                                <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Fréquence de prise</span>
                                         {frequencyTypes[selectedFrequency] != null && (<div className='inline-flex justify-center items-center space-x-1'>
@@ -329,8 +328,8 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                     </div>
                                 </div>
 
-                                {/* Line 2 */}
-                                <div className="row-span-1 col-span-6">
+                                {/* Line 3 */}
+                                <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Quelle quantité par prise?</span>
                                         {portionTypes[selectedPortion] != null && (<div className='inline-flex justify-center items-center space-x-1'>
@@ -349,10 +348,10 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                     </div>
                                 </div>
 
-                                {/* Line 3 */}
-                                <div className="row-span-1 col-span-6 space-x-2">
+                                {/* Line 4 */}
+                                <div className="flex flex-col space-x-2">
                                     <span className='mb-2'>Quand prendre?</span>
-                                    {Object.entries(timingList).map(([key, value], index) => (<div className='flex justify-start items-start space-x-1 mx-1' key={`timing-key-${index}`}>
+                                    {Object.entries(timingList).map(([key, value], index) => (<div className='flex flex-row justify-start items-center space-x-1 mx-1' key={`timing-key-${index}`}>
                                         <input
                                             type="radio"
                                             className={`${isOn ? 'accent-primary' : 'accent-gray-500'} cursor-pointer`}
@@ -363,8 +362,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                     </div>))}
                                 </div>
 
-                                {/* Line 4 */}
-                                {/* <div className="row-span-1 col-span-6 space-x-2">
+                                {/* <div className=" space-x-2">
                                     <span className='mr-2'>À quelle fréquence?</span>
                                     {Object.entries(oftenList).map(([key, value], index) => (
                                         <span key={`often-key-${index}`} onClick={() => handleOften(key)} className={`${currentForm[key] ? 'text-white' : 'text-textPrimary'} px-2 py-1 ${currentForm[key] ? isOn ? 'bg-primary' : 'bg-gray-500' : 'bg-lightShapes'} rounded-lg cursor-pointer select-none`}>{value}</span>
@@ -372,7 +370,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                 </div> */}
 
                                 {/* Line 5 */}
-                                <div className="row-span-1 col-span-6 mt-4">
+                                <div className=" mt-4">
                                     <span className='mr-2'>Durée de traitement: </span>
                                     <div className='inline-flex justify-center items-center space-x-1'>
                                         <FaMinus className='text-[1.2rem] text-textSecoundary cursor-pointer' onClick={() => minusDays()} />

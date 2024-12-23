@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { AiFillCaretDown } from "react-icons/ai";
 import { calcPercentage, drawCircle, drawLine, formatNumberWithComma } from "../Utils/Functions.jsx";
 
-const DailyIncome = ({ className = "", values = [8000, 10100, 7000], dotWidth = 5 }) => {
+const DailyIncome = ({ className = "", values = [17, 15, 7], dotWidth = 5 }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const DailyIncome = ({ className = "", values = [8000, 10100, 7000], dotWidth = 
             <div className="grid grid-cols-3 grid-rows-1 h-full mt-5 text-center pb-6">
                 <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">20 Nov</span>
                 <div className="col-span-1 row-span-1 flex flex-col justify-between items-center bg-darkPrimary p-2 rounded-xl text-white text-sm">
-                    <span className="font-medium">{formatNumberWithComma(values[1])} DA</span>
+                    <span className="font-medium">{formatNumberWithComma(values[1])} Ventes</span>
                     <span>21 Nov</span>
                 </div>
                 <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">22 Nov</span>

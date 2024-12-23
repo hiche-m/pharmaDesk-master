@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SideMenu from "../Components/SideMenu.jsx";
+import pfp4 from "../Assets/Images/pfp4.svg"
 import HalfSlabs from "../Components/HalfSlabs.jsx";
 import IncomePerPost from "../Components/IncomePerPost.jsx";
 import DailyIncome from "../Components/DailyIncome.jsx";
@@ -15,6 +16,8 @@ import { useSelector } from "react-redux";
 import useConfirmTransaction from "../Services/useConfirmTransaction.jsx";
 import useFetchConfirmed from "../Services/useFetchConfirmed.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import DashHeader from "../Components/DashboardHeader.jsx";
+import DashCard from "../Components/DashboardCard.jsx";
 
 const Home = () => {
 
@@ -24,7 +27,7 @@ const Home = () => {
 
     const [confirmType, setConfirmType] = useState(0);
 
-    const {confirmePerscription,isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription} = useStateContext()
+    const { confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription } = useStateContext()
 
     //useFetch(refresh);
 
@@ -37,11 +40,11 @@ const Home = () => {
     const { isLoading, data, error } = useSelector(state => state.user);
 
     useEffect(() => {
-      /*    const interval = setInterval(() => {
-            setRefresh(prev => prev + 1);
-        }, refresh_rate * 1000);
-
-        return () => clearInterval(interval);  */
+        /*    const interval = setInterval(() => {
+              setRefresh(prev => prev + 1);
+          }, refresh_rate * 1000);
+  
+          return () => clearInterval(interval);  */
     }, []);
 
     const handleRefresh = () => {
@@ -70,7 +73,7 @@ const Home = () => {
     };
 
     const handleAccept = async (pid, clientId) => {
-        await confirmRequestObject.confirmRequest( pid, clientId);
+        await confirmRequestObject.confirmRequest(pid, clientId);
         if (confirmRequestObject.success) {
             alert("Request accepted.");
             setRefresh(previous => previous + 1);
@@ -81,8 +84,8 @@ const Home = () => {
     };
 
     const handleConfirm = async (pid, clientId, isOn) => {
-       
-        confirmePerscription(clientId,pid,isOn)
+
+        confirmePerscription(clientId, pid, isOn)
         setModalOpen(false);
     };
 
@@ -94,19 +97,26 @@ const Home = () => {
 
     return (<>
         <div className="col-span-3 row-span-2 bg-lightShapes">
-            <SideContent userData={data} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription} />
+            <SideContent userData={data} refreshVar={refresh} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription} />
         </div>
-        <div className="col-span-9 col-start-1 row-start-2 flex bg-background h-auto">
+        <div className="col-span-9 col-start-1 row-start-2 flex h-auto mb-10">
             <div className="w-max">
                 <SideMenu option_list={[{ label: "Tableau de bord" }, { label: "Boutique", disabled: true }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
             </div>
             <div className="flex-1">
-                <div className="max-w-[190px] sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-2 space-y-2 pb-3 pr-3 pt-1 bg-background mb-40">
-                    <HalfSlabs className="col-span-12 sm:col-span-5 small:col-span-2 sm:row-span-2 small:row-span-4" />
+                <div className="max-w-[190px] sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
+                    {/* <HalfSlabs className="col-span-12 sm:col-span-5 small:col-span-2 sm:row-span-2 small:row-span-4" />
                     <IncomePerPost className="col-span-12 sm:col-span-7 small:col-span-6 sm:row-span-7 small:row-span-7" />
                     <DailyIncome className="col-span-12 min-h-48 sm:col-span-5 small:col-span-4 sm:row-span-5 small:row-span-7" />
                     <ActivePosts className="max-h-36 col-span-12 sm:col-span-4 small:col-span-2 sm:row-span-7 small:row-span-3" />
-                    <WideGraph className="max-small:hidden sm:col-span-8 small:col-span-12 sm:row-span-7 small:row-span-7" />
+                    <WideGraph className="max-small:hidden sm:col-span-8 small:col-span-12 sm:row-span-7 small:row-span-7" /> */}
+                    <DashHeader className="hidden sm:flex row-span-3 col-span-12 ml-4" />
+                    <div className="row-span-5 col-span-12 flex-col space-y-4 small:space-y-0 small:flex small:flex-row small:justify-stretch small:space-x-4">
+                        <DashCard className='w-full' post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} />
+                        <DashCard className='w-full' name="Dexter Elliot" adress="Boulevard des lions" />
+                        <DailyIncome className='min-w-44 min-h-44' />
+                    </div>
+                    <WideGraph className="row-span-6 col-span-12" />
                 </div>
             </div>
         </div>
