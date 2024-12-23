@@ -32,18 +32,17 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
-    const { storeName, fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext()
-    return (
-        <>
-            <div className="w-full h-full min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto overflow-x-auto">
-                <div className="self-end flex flex-row items-center">
-                    <div className="flex flex-col items-end p-4">
-                        <div className="text-sm font-medium text-textPrimary">{storeName}</div>
-                        <div className="text-xs text-textSecoundary">Administrateur</div>
-                    </div>
-                    <img src={pfp4} className="h-8 w-8 rounded-full" />
-                </div>
-                {/* <div className="flex flex-col">
+    const { storeName, fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
+
+    return (<div className="w-full h-full min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4">
+        <div className="self-end flex flex-row items-center">
+            <div className="flex flex-col items-end p-4">
+                <div className="text-sm font-medium text-textPrimary">{storeName}</div>
+                <div className="text-xs text-textSecoundary">Administrateur</div>
+            </div>
+            <img src={pfp4} className="h-8 w-8 rounded-full" />
+        </div>
+        {/* <div className="flex flex-col">
                     <div className="font-medium mb-2">Activité Récente</div>
                     {acivity.map(
                         (tile, index) => {
@@ -52,35 +51,28 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                         }
                     )}
                 </div> */}
-                <div className="flex flex-col">
-                    <div className="h-max w-full space-y-2">
-                        <div className="inline-flex mb-2 justify-between items-center ">
-                            <span className="font-medium">Confirmation et Posiologie</span>
-                            {!(isLoadingNotification || isLoadingNotificationConfirmation) && (<span className="text-sm ml-2 text-textSecoundary cursor-pointer" onClick={() => handleRefresh()}>Refresh</span>)}
-                            {(isLoadingNotification || isLoadingNotificationConfirmation) && (<span className="text-sm ml-2 text-disabled">Refresh</span>)}
-                        </div>
-                        {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
+        <div className="flex flex-col">
+            <div className="h-max w-full space-y-2">
+                <div className="inline-flex mb-2 justify-between items-center ">
+                    <span className="font-medium">Confirmation et Posiologie</span>
+                    {/* {!(isLoadingNotification || isLoadingNotificationConfirmation) && (<span className="text-sm ml-2 text-textSecoundary cursor-pointer" onClick={() => handleRefresh()}>Refresh</span>)} */}
+                    {/* {(isLoadingNotification || isLoadingNotificationConfirmation) && (<span className="text-sm ml-2 text-disabled">Refresh</span>)} */}
+                </div>
+                {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
 
-                        {notificationListeRequestsConfirmation != null && notificationListeRequestsConfirmation.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
-                    </div>
-                    <div className="my-5" />
-                    <div className="h-max w-full space-y-2">
-                        <div className="inline-flex mb-2">
-                            <span className="font-medium">Notifications d'ordonnances</span>
-                        </div>
-                        {(notificationListeRequests != null && notificationListeRequests.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications</span>)}
-                        {isLoadingNotification && <NotifictionsSkeleton />}
-                        {notificationListeRequests != null && notificationListeRequests.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
-                    </div>
-                </div>
+                {notificationListeRequestsConfirmation != null && notificationListeRequestsConfirmation.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
             </div>
-            {loading && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 pointer-events-none">
-                    <div className="text-white text-xl">Loading...</div>
+            <div className="my-5" />
+            <div className="h-max w-full space-y-2">
+                <div className="inline-flex mb-2">
+                    <span className="font-medium">Notifications d'ordonnances</span>
                 </div>
-            )}
-        </>
-    );
+                {(notificationListeRequests != null && notificationListeRequests.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications</span>)}
+                {isLoadingNotification && <NotifictionsSkeleton />}
+                {notificationListeRequests != null && notificationListeRequests.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
+            </div>
+        </div>
+    </div>);
 }
 
 export default SideContent;

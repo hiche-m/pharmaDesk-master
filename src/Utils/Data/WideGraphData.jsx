@@ -23,7 +23,7 @@ export const options = {
         y: {
             title: {
                 display: false,
-                text: 'Revenue (DZD)',
+                text: 'Operations',
             },
             ticks: {
                 display: false,
@@ -36,8 +36,8 @@ export const data = {
     labels: ["Jan 2023", "Fév 2023", "Mar 2023", "Avr 2023", "Mai 2023", "Juin 2023", "Juil 2023", "Août 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Déc 2023"],
     datasets: [
         {
-            label: "Revenue (DZD)",
-            data: [null, 12000, 43000, 37000, 25000, 15000, 48000, 22000, 31000, 45000, 28000, null],
+            label: "Confirmed",
+            data: [null, 301, 278, 304, 315, 345, 398, 420, 425, 452, 470, null],
             borderColor: tailwindColors.primary,
             cubicInterpolationMode: 'monotone',
             pointBackgroundColor: '#FFFFFF',
@@ -47,8 +47,8 @@ export const data = {
             pointRadius: 0,
         },
         {
-            label: "Dépenses (DZD)",
-            data: [null, 8000, 25000, 18000, 12000, 9000, 22000, 11000, 15000, 20000, 14000, null],
+            label: "Received",
+            data: [null, 328, 302, 341, 321, 370, 402, 455, 433, 460, 488, null],
             borderColor: tailwindColors.lightShapes,
             cubicInterpolationMode: 'monotone',
             pointBackgroundColor: '#FFFFFF',
