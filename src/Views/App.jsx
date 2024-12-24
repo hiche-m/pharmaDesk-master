@@ -64,13 +64,8 @@ export default function App() {
                 <Route path='/' element={isAuth ? <Layout /> : <Login />}>
                     <Route index element={<Home />} />
                     <Route path='store' element={<NotFound />} />
-                    <Route path='discover' element={<NotFound />} />
-                </Route>
-
-                <Route path='/stock' element={<Layout />}>
-                    <Route index element={<NotFound />} />
-                    <Route path='transactions' element={<NotFound />} />
-                    <Route path='database' element={<NotFound />} />
+                    <Route path='feed' element={<NotFound />} />
+                    <Route path='settings' element={<NotFound />} />
                 </Route>
 
                 <Route path="/login" element={<Login />} />

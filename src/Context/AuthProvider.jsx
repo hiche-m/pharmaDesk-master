@@ -57,7 +57,13 @@ export const AuthProvider = ({ children }) => {
 
 
 
+    const handleLogout = () => {
+        console.log('Disconnecting...');
 
+        localStorage.removeItem('token');
+        localStorage.removeItem('idpharma');
+        localStorage.removeItem('storeName');
+    }
 
 
     const handleLoginPost = () => {
@@ -65,10 +71,9 @@ export const AuthProvider = ({ children }) => {
         axios.post("https://pharma-back.onrender.com/api/pharma/login/v1", loginForm).then((res) => {
 
             if (res.data != null && res.data.token != null) {
-                localStorage.setItem('token', res.data.token)
-                localStorage.setItem('idpharma', res.data.data[0].idpharma)
-
-                localStorage.setItem('storeName', res.data.data[0].storeName)
+                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('idpharma', res.data.data[0].idpharma);
+                localStorage.setItem('storeName', res.data.data[0].storeName);
 
                 setIncorrectAuth(false)
                 setIsAuth(true)
@@ -188,7 +193,7 @@ export const AuthProvider = ({ children }) => {
 
         <AuthContext.Provider value={{
             loginForm, setLoginForm,
-            handleLoginPost, incorrectAuth,
+            handleLoginPost, handleLogout, incorrectAuth,
             setIncorrectAuth, resetPasswordEmail,
             setResetPasswordEmail, sendEmailForChangingPassword,
             resetPasswordForm, setResetPasswordForm,

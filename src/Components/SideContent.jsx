@@ -32,16 +32,16 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
-    const { storeName, fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
+    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
 
-    return (<div className="w-full h-full min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4">
-        <div className="self-end flex flex-row items-center">
+    return (<div className="w-full h-full min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
+        {/* <div className="self-end flex flex-row items-center">
             <div className="flex flex-col items-end p-4">
                 <div className="text-sm font-medium text-textPrimary">{storeName}</div>
                 <div className="text-xs text-textSecoundary">Administrateur</div>
             </div>
             <img src={pfp4} className="h-8 w-8 rounded-full" />
-        </div>
+        </div> */}
         {/* <div className="flex flex-col">
                     <div className="font-medium mb-2">Activité Récente</div>
                     {acivity.map(
