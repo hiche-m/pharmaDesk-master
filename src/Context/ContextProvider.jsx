@@ -230,12 +230,21 @@ export const ContextProvider = ({ children }) => {
   }
 
 
+  const getUserData = () => {
+    const idpharma = localStorage.getItem('idpharma');
+    const storeName = localStorage.getItem('storeName');
+
+    return {
+      idpharma,
+      storeName
+    };
+  }
 
 
   return (
 
     <StateContext.Provider value={{
-      triggerNavigate, setTriggerNavigate,
+      triggerNavigate, setTriggerNavigate, getUserData,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif,
       notificationListeRequests, setNotificationListeRequest,
       isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,

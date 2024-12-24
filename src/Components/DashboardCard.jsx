@@ -1,11 +1,12 @@
 import React from "react";
+import { AiFillCaretDown } from "react-icons/ai";
 
 const DashCard = ({ className, post = 'Seller', name = 'Alice Smith', adress = '', imgSrc = null }) => {
     return (<div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col space-y-2`}>
         {/* Header */}
         <span className="inline-flex justify-between">
             <span className=" text-sm font-medium">{post}</span>
-            <span className="">V</span>
+            <AiFillCaretDown size="0.5rem" />
         </span>
 
         {/* Profile */}

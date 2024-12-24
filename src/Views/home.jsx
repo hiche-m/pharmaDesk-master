@@ -16,8 +16,11 @@ import { useSelector } from "react-redux";
 import useConfirmTransaction from "../Services/useConfirmTransaction.jsx";
 import useFetchConfirmed from "../Services/useFetchConfirmed.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import { useAuthContext } from '../Context/AuthProvider.jsx';
 import DashHeader from "../Components/DashboardHeader.jsx";
 import DashCard from "../Components/DashboardCard.jsx";
+import { useNavigate } from 'react-router-dom';
+
 
 const Home = () => {
 
@@ -28,6 +31,8 @@ const Home = () => {
     const [confirmType, setConfirmType] = useState(0);
 
     const { confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription } = useStateContext()
+    const { handleLogout } = useAuthContext()
+    const navigate = useNavigate(0);
 
     //useFetch(refresh);
 
@@ -95,13 +100,18 @@ const Home = () => {
         handleOpenModal();
     };
 
+    const handleDisconnect = () => {
+        handleLogout();
+        navigate(0);
+    }
+
     return (<>
         <div className="col-span-3 row-span-2 bg-lightShapes">
             <SideContent userData={data} refreshVar={refresh} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription} />
         </div>
         <div className="col-span-9 col-start-1 row-start-2 flex h-auto mb-10">
             <div className="w-max">
-                <SideMenu option_list={[{ label: "Tableau de bord" }, { label: "Boutique", disabled: true }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
+                <SideMenu option_list={[{ label: "Tableau de bord", route: '/' }, { label: "Boutique", disabled: true, route: '/store' }, { label: "Annonces", disabled: true, route: '/feed' }, { label: "Paramètres", route: '/settings' }, { label: "Se déconnecter", action: () => handleDisconnect() }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
             </div>
             <div className="flex-1">
                 <div className="max-w-[190px] sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
