@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import SideMenu from "../Components/SideMenu.jsx";
-import pfp4 from "../Assets/Images/pfp4.svg"
 import HalfSlabs from "../Components/HalfSlabs.jsx";
 import IncomePerPost from "../Components/IncomePerPost.jsx";
 import DailyIncome from "../Components/DailyIncome.jsx";
@@ -19,7 +18,7 @@ import { useStateContext } from "../Context/ContextProvider.jsx";
 import { useAuthContext } from '../Context/AuthProvider.jsx';
 import DashHeader from "../Components/DashboardHeader.jsx";
 import DashCard from "../Components/DashboardCard.jsx";
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 
 const Home = () => {
@@ -111,22 +110,11 @@ const Home = () => {
         </div>
         <div className="col-span-9 col-start-1 row-start-2 flex h-auto mb-10">
             <div className="w-max">
-                <SideMenu option_list={[{ label: "Tableau de bord", route: '/' }, { label: "Boutique", disabled: true, route: '/store' }, { label: "Annonces", disabled: true, route: '/feed' }, { label: "Paramètres", route: '/settings' }, { label: "Se déconnecter", action: () => handleDisconnect() }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
+                <SideMenu option_list={[{ label: "Tableau de bord", route: '/dashboard' }, { label: "Boutique", disabled: true, route: '/dashboard/store' }, { label: "Annonces", disabled: true, route: '/dashboard/feed' }, { label: "Paramètres", route: '/dashboard/settings' }, { label: "Se déconnecter", action: () => handleDisconnect() }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
             </div>
             <div className="flex-1">
                 <div className="max-w-[190px] sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
-                    {/* <HalfSlabs className="col-span-12 sm:col-span-5 small:col-span-2 sm:row-span-2 small:row-span-4" />
-                    <IncomePerPost className="col-span-12 sm:col-span-7 small:col-span-6 sm:row-span-7 small:row-span-7" />
-                    <DailyIncome className="col-span-12 min-h-48 sm:col-span-5 small:col-span-4 sm:row-span-5 small:row-span-7" />
-                    <ActivePosts className="max-h-36 col-span-12 sm:col-span-4 small:col-span-2 sm:row-span-7 small:row-span-3" />
-                    <WideGraph className="max-small:hidden sm:col-span-8 small:col-span-12 sm:row-span-7 small:row-span-7" /> */}
-                    <DashHeader className="hidden sm:flex row-span-3 col-span-12 ml-4" />
-                    <div className="row-span-5 col-span-12 flex-col space-y-4 small:space-y-0 small:flex small:flex-row small:justify-stretch small:space-x-4">
-                        <DashCard className='w-full' post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} />
-                        <DashCard className='w-full' name="Dexter Elliot" adress="Boulevard des lions" />
-                        <DailyIncome className='min-w-44 min-h-44' />
-                    </div>
-                    <WideGraph className="row-span-6 col-span-12" />
+                    <Outlet />
                 </div>
             </div>
         </div>

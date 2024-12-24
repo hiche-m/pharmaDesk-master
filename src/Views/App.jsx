@@ -13,6 +13,7 @@ import PasswordForgoten from "./AuthViews/PasswordForgoten.jsx";
 import ResetPassword from "./AuthViews/ResetPassword.jsx";
 import { useAuthContext } from "../Context/AuthProvider.jsx";
 import SignUp from "./AuthViews/SignUp.jsx";
+import Dashboard from "./dashboard.jsx";
 
 export default function App() {
 
@@ -62,10 +63,13 @@ export default function App() {
             <Routes>
 
                 <Route path='/' element={isAuth ? <Layout /> : <Login />}>
-                    <Route index element={<Home />} />
-                    <Route path='store' element={<NotFound />} />
-                    <Route path='feed' element={<NotFound />} />
-                    <Route path='settings' element={<NotFound />} />
+                    <Route index element={<Navigate to='/dashboard' />} />
+                    <Route path='dashboard' element={<Home />} >
+                        <Route index element={<Dashboard />} />
+                        <Route path='store' element={<NotFound />} />
+                        <Route path='feed' element={<NotFound />} />
+                        <Route path='settings' element={<NotFound />} />
+                    </Route>
                 </Route>
 
                 <Route path="/login" element={<Login />} />

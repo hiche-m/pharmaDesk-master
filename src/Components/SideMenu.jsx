@@ -17,12 +17,18 @@ const SideMenu = ({ option_list, initialIndex = 0 }) => {
         const disabled = option_list[i].disabled ?? false;
         const route = option_list[i].route;
 
-        if (route) {
+        if (disabled) {
+            renderedItems.push(
+                <div className="flex flex-row justify-between items-center text-disabled">
+                    <span className={`flex grow bg-lightShapes rounded-md px-6 py-2 font-medium text-disabled`}>{label}</span>
+                    <IoLockClosedOutline />
+                </div>
+            );
+        } else if (route) {
             renderedItems.push(
                 <Link to={location.pathname === route ? undefined : route} key={`menu-option-${label}-i`} >
                     <div className="flex flex-row justify-between items-center text-disabled">
-                        <span onClick={!disabled ? () => handleMenuSwitch(i) : null} className={`flex grow ${!disabled ? location.pathname === route ? "bg-disabled " : "" : "bg-lightShapes"}rounded-md ${!disabled ? "cursor-pointer" : ""} px-6 py-2 font-medium ${!disabled ? location.pathname === route ? "text-black" : "text-textSecoundary" : "text-disabled"}`}>{label}</span>
-                        {disabled && (<IoLockClosedOutline />)}
+                        <span onClick={() => handleMenuSwitch(i)} className={`flex grow ${location.pathname === route ? "bg-disabled " : ""}rounded-md cursor-pointer px-6 py-2 font-medium ${location.pathname === route ? "text-black" : "text-textSecoundary"}`}>{label}</span>
                     </div>
                 </Link>
             );
@@ -31,7 +37,6 @@ const SideMenu = ({ option_list, initialIndex = 0 }) => {
 
             renderedItems.push(<div key={`menu-option-${label}-i`} className="flex flex-row justify-between items-center text-disabled">
                 <span onClick={() => action()} className={`flex grow rounded-md cursor-pointer px-6 py-2 font-medium text-textSecoundary`}>{label}</span>
-                {disabled && (<IoLockClosedOutline />)}
             </div>);
         }
     }
