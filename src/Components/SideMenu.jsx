@@ -19,7 +19,7 @@ const SideMenu = ({ option_list, initialIndex = 0 }) => {
 
         if (disabled) {
             renderedItems.push(
-                <div className="flex flex-row justify-between items-center text-disabled">
+                <div className="flex flex-row justify-between items-center text-disabled" key={`menu-option-${label}-i`} >
                     <span className={`flex grow bg-lightShapes rounded-md px-6 py-2 font-medium text-disabled`}>{label}</span>
                     <IoLockClosedOutline />
                 </div>
