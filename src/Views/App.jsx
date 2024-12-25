@@ -14,6 +14,7 @@ import ResetPassword from "./AuthViews/ResetPassword.jsx";
 import { useAuthContext } from "../Context/AuthProvider.jsx";
 import SignUp from "./AuthViews/SignUp.jsx";
 import Dashboard from "./dashboard.jsx";
+import Settings from "./settings.jsx";
 
 export default function App() {
 
@@ -68,7 +69,7 @@ export default function App() {
                         <Route index element={<Dashboard />} />
                         <Route path='store' element={<NotFound />} />
                         <Route path='feed' element={<NotFound />} />
-                        <Route path='settings' element={<NotFound />} />
+                        <Route path='settings' element={<Settings />} />
                     </Route>
                 </Route>
 
