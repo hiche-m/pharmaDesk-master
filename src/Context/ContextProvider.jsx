@@ -83,15 +83,32 @@ export const ContextProvider = ({ children }) => {
       socket.emit('store_connected', { idpharma });//// make the id dynamic 
 
 
-      socket.on('prescription_cancelled', (data) => {
+      /* socket.on('prescription_cancelled', (data) => {
         const { idprescription, message } = data;
         toast("un client a annulé sa commande");
         // Display the notification in the front
         console.log(`Notification: ${message, idprescription}`);
 
 
-      });
+      }); */
+      socket.on('notification_removed', (data) => {
+        const { idnotifications,
+          idpharma,
+          idprescription,
+          created_at,
+          url,
+          idClient,
+          firstname,
+          userPic,
+          message } = data;
+        toast("Commande annulé!");
+        removeNotif(data);
+        removeNotifComing(data);
+        // Display the notification in the front
+        console.log(`Notification: ${data}`);
 
+
+      });
 
       socket.on('client_confirmed_notification', (data) => {
         const { idnotifications,
@@ -103,8 +120,9 @@ export const ContextProvider = ({ children }) => {
           firstname,
           userPic,
         } = data;
-        toast("Posiologie confirmé!");
+        toast("Un client arrive!");
         // Display the notification in the front
+        removeNotif(data);
         addNotifComing(data);
         console.log(`Notification ${idnotifications}: Client ${firstname}:${idClient} is coming!`);
       });
@@ -122,19 +140,30 @@ export const ContextProvider = ({ children }) => {
         } = data;
         const sound = new Audio(sound1);
         sound.play();
-        toast("Nouvelle posiologie!");
+        toast("Nouvelle notification!");
         addNotif(data);
         // Display the notification in the front
         console.log(`Notification ${idnotifications}: Perscription ${idprescription} arrived from ${firstname}:${idClient} at ${created_at}`);
       });
 
 
+
       socket.on('prescription_confirmed_notification', (data) => {
-        const { message, idprescription, idClient } = data;
-        toast("Ordonnance confirmé!");
-        /* addNotifComing(data); */
+        const { idnotifications,
+          idpharma,
+          idprescription,
+          created_at,
+          url,
+          idClient,
+          firstname,
+          userPic,
+          prix,
+          posioFlag,
+          message
+        } = data;
+        toast("Posiologie envoyé!");
         // Display the notification in the front
-        console.log(data);
+        removeNotifComing(data);
       });
 
 
@@ -222,7 +251,15 @@ export const ContextProvider = ({ children }) => {
     });
   }
 
-  const removeNotif = (notifIndex) => { }
+  const removeNotif = (notifObject) => {
+    setNotificationListeRequest(prev => {
+      let arr = prev.slice();
+      let idnotifications = notifObject.idnotifications;
+
+      let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
+      return newArr;
+    });
+  };
 
   const fetchCommingClients = async () => {
     const jsonId = localStorage.getItem('idpharma')
@@ -269,7 +306,15 @@ export const ContextProvider = ({ children }) => {
     });
   }
 
-  const removeNotifComing = (notifIndex) => { }
+  const removeNotifComing = (notifObject) => {
+    setNotificationListeRequestConfirmation(prev => {
+      let arr = prev.slice();
+      let idnotifications = notifObject.idnotifications;
+
+      let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
+      return newArr;
+    });
+  }
 
   const confirmePerscription = (idclient, perscriptionId, isOn) => {
     const jsonId = localStorage.getItem('idpharma')

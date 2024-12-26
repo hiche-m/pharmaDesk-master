@@ -68,10 +68,10 @@ const Home = () => {
     const handleRefuse = async (nid) => {
         await refuseRequestObject.refuseRequest(nid);
         if (refuseRequestObject.rsuccess) {
-            alert("Request refused.");
+            console.log("Request refused.");
             setRefresh(previous => previous + 1);
         } else if (refuseRequestObject.rHasError) {
-            alert("An error has occured: " + refuseRequestObject.rHasError);
+            console.log("An error has occured: " + refuseRequestObject.rHasError);
         }
         setModalOpen(false);
     };
@@ -79,10 +79,10 @@ const Home = () => {
     const handleAccept = async (pid, clientId) => {
         await confirmRequestObject.confirmRequest(pid, clientId);
         if (confirmRequestObject.success) {
-            alert("Request accepted.");
+            console.log("Request accepted.");
             setRefresh(previous => previous + 1);
         } else if (confirmRequestObject.hasError) {
-            alert("An error has occured: " + hasError);
+            console.log("An error has occured: " + hasError);
         }
         setModalOpen(false);
     };
