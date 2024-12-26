@@ -52,6 +52,13 @@ module.exports = [
       filename: 'images/[name][ext]'
     }
   },
+  {
+    test: /\.(wav|mp3)$/i,
+    type: 'asset/resource', // This ensures the audio file is copied to the output folder
+    generator: {
+      filename: 'sounds/[name][ext]', // You can adjust the folder path here
+    }
+  },
   // Put your webpack loader rules in this array.  This is where you would put
   // your ts-loader configuration for instance:
   /**
