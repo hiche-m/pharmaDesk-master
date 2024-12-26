@@ -113,7 +113,7 @@ const Home = () => {
                 <SideMenu option_list={[{ label: "Tableau de bord", route: '/dashboard' }, { label: "Boutique", disabled: true, route: '/dashboard/store' }, { label: "Annonces", disabled: true, route: '/dashboard/feed' }, { label: "Paramètres", route: '/dashboard/settings' }, { label: "Se déconnecter", action: () => handleDisconnect() }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
             </div>
             <div className="flex-1">
-                <div className="max-w-[190px] sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
+                <div className="sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
                     <Outlet />
                 </div>
             </div>
