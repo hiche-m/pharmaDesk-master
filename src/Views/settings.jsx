@@ -57,14 +57,17 @@ const Settings = () => {
 
             {/* Content */}
             <div className="w-full">
+                {/* Account Settings */}
                 <div className={`${selectedIndex === 0 ? 'flex' : 'hidden'}`}>
                     {settingsTiles[0]}
                 </div>
 
+                {/* Notification Settings */}
                 <div className={`${selectedIndex === 1 ? 'flex' : 'hidden'}`}>
                     {settingsTiles[1]}
                 </div>
 
+                {/* Profiles Settings */}
                 <div className={`${selectedIndex === 2 ? 'flex' : 'hidden'}`}>
                     {settingsTiles[2]}
                 </div>

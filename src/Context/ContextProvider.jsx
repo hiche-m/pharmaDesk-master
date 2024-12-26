@@ -4,9 +4,11 @@ import { useDispatch } from 'react-redux';
 import { getUserData, userSuccess, userFail } from '../Redux/userActions.jsx';
 import { userData } from '../Utils/Data/UserData.jsx';
 import { toast } from 'react-toastify';
-import { HOST, notification_load_limit } from "../Utils/Parameters.jsx";
+import { HOST, notification_load_limit, notification_sound_url } from "../Utils/Parameters.jsx";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+import sound1 from '../Assets/Sounds/Notification/sound1.wav';
 
 const StateContext = createContext();
 
@@ -91,6 +93,51 @@ export const ContextProvider = ({ children }) => {
       });
 
 
+      socket.on('client_confirmed_notification', (data) => {
+        const { idnotifications,
+          idpharma,
+          idprescription,
+          created_at,
+          url,
+          idClient,
+          firstname,
+          userPic,
+        } = data;
+        toast("Posiologie confirmé!");
+        // Display the notification in the front
+        addNotifComing(data);
+        console.log(`Notification ${idnotifications}: Client ${firstname}:${idClient} is coming!`);
+      });
+
+
+      socket.on('new_prescription_notification', (data) => {
+        const { idnotifications,
+          idpharma,
+          idprescription,
+          created_at,
+          url,
+          idClient,
+          firstname,
+          userPic,
+        } = data;
+        const sound = new Audio(sound1);
+        sound.play();
+        toast("Nouvelle posiologie!");
+        addNotif(data);
+        // Display the notification in the front
+        console.log(`Notification ${idnotifications}: Perscription ${idprescription} arrived from ${firstname}:${idClient} at ${created_at}`);
+      });
+
+
+      socket.on('prescription_confirmed_notification', (data) => {
+        const { message, idprescription, idClient } = data;
+        toast("Ordonnance confirmé!");
+        /* addNotifComing(data); */
+        // Display the notification in the front
+        console.log(data);
+      });
+
+
 
 
     }
@@ -125,17 +172,12 @@ export const ContextProvider = ({ children }) => {
   }, [])
 
 
-
-  useEffect(() => {
-
-
-  }, [])
-
-
   // Listen for the 'prescription_cancelled' event
 
 
   const fetchNotif = async () => {
+    console.log('Fetching Notif!');
+
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
     if (idpharma == null) {
@@ -151,9 +193,9 @@ export const ContextProvider = ({ children }) => {
           setNotificationListeRequest(prev => {
 
             setIsLoadingNotifaction(false)
-            let array = res.data.data
+            const array = res.data.data;
 
-            return array.reverse().slice(0, notification_load_limit)
+            return array.reverse().slice(0, notification_load_limit);
           })
 
 
@@ -171,6 +213,16 @@ export const ContextProvider = ({ children }) => {
 
   }
 
+  const addNotif = (notifObject) => {
+    setNotificationListeRequest(prev => {
+      let arr = prev.slice(0, -1);
+      arr.unshift(notifObject);
+
+      return arr
+    });
+  }
+
+  const removeNotif = (notifIndex) => { }
 
   const fetchCommingClients = async () => {
     const jsonId = localStorage.getItem('idpharma')
@@ -190,6 +242,7 @@ export const ContextProvider = ({ children }) => {
             setIsLoadingNotifactionConfirmation(false)
             let array = res.data.data
 
+
             return array.reverse().slice(0, notification_load_limit)
           })
 
@@ -208,6 +261,15 @@ export const ContextProvider = ({ children }) => {
 
   }
 
+  const addNotifComing = (notifObject) => {
+    setNotificationListeRequestConfirmation(prev => {
+      let arr = prev;
+      arr.unshift(notifObject);
+      return arr
+    });
+  }
+
+  const removeNotifComing = (notifIndex) => { }
 
   const confirmePerscription = (idclient, perscriptionId, isOn) => {
     const jsonId = localStorage.getItem('idpharma')

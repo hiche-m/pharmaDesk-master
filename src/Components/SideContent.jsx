@@ -6,6 +6,7 @@ import NotificationTile from "./NotificationTile.jsx";
 import { useSelector } from "react-redux";
 import NotifictionsSkeleton from "../Skeletons/notifications_skeleton.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import { refresh_rate } from "../Utils/Parameters.jsx";
 
 const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActivity, openNotification = (notification_data, type) => { }, loading = false }) => {
 
@@ -23,7 +24,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
 
         const interval = setInterval(() => {
             fetchData(); // Fetch data periodically every 10 seconds
-        }, 10000);
+        }, 1000 * refresh_rate);
 
         // Cleanup interval on component unmount
         return () => clearInterval(interval);
@@ -34,7 +35,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
 
     const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
 
-    return (<div className="w-full h-full min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
+    return (<div className="w-full h-[100vh] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
         {/* <div className="self-end flex flex-row items-center">
             <div className="flex flex-col items-end p-4">
                 <div className="text-sm font-medium text-textPrimary">{storeName}</div>
