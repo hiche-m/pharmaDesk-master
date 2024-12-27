@@ -56,10 +56,14 @@ const Settings = () => {
         <span className="col-span-12 row-span-1 text-lg font-bold">Settings</span>
 
         {/* Content */}
-        <div className="col-span-12 row-span-10 inline-flex flex-row bg-superClear rounded-xl shadow-md">
+        <div className="col-span-12 row-span-10 flex flex-col small:inline-flex small:flex-row bg-superClear rounded-xl shadow-md">
             {/* Side Menu */}
-            <div className={`bg-lightShapes hidden small:flex flex-col space-y-4 p-4 rounded-tl-xl`}>
-                {settingsTiles.map((item, index) => (<span className={`font-medium cursor-pointer ${index === selectedIndex ? 'text-textPrimary' : 'text-textSecoundary'}`} key={`setting-item-tile-${index}-${item}`} onClick={() => handleMenuSwitch(index)}>{item}</span>))}
+            <div className={`bg-lightShapes flex flex-row flex-wrap space-y-0 space-x-4 small:flex small:flex-col small:space-y-4 small:space-x-0 p-4 rounded-tl-xl`}>
+                {settingsTiles.map((item, index) => (<span className={`font-medium cursor-pointer ${index === selectedIndex ? 'text-textPrimary' : 'text-textSecoundary'}`} key={`setting-item-tile-${index}-${item}`} onClick={() => handleMenuSwitch(index)}>
+                    <span className="sm:hidden small:block hidden" >{item}</span>
+                    <span className="sm:block small:hidden hidden" >{item.split(' ').at(-1)}</span>
+                    <span className="sm:hidden small:hidden block" >{index + 1}</span>
+                </span>))}
             </div>
 
             {/* Content */}
@@ -196,7 +200,7 @@ const Settings = () => {
                     </div>
                 </div>
 
-                {/* Profils Settings */}
+                {/* Profiles Settings */}
                 <div className={`${selectedIndex === 4 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     <div className="flex flex-col space-y-2">
                         <div className="inline-flex flex-row w-full justify-between items-center py-2">
