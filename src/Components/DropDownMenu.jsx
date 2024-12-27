@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { AiFillCaretDown } from "react-icons/ai";
 
 const DropdownMenu = ({ options, label, selectedValue, onSelect, disabled = false }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -26,9 +27,12 @@ const DropdownMenu = ({ options, label, selectedValue, onSelect, disabled = fals
             <button
                 ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className={`${disabled ? 'bg-gray-500' : 'bg-primary'} text-white px-4 py-2 rounded-md focus:outline-none z-0`}
+                className={`${disabled ? 'border-gray-500' : 'border-primary'} border-2 bg-superClear ${disabled ? 'text-textSecoundary' : 'text-textPrimary'} px-2 py-2 rounded-md inline-flex justify-around items-center focus:outline-none z-0`}
             >
-                {label}
+                <span className="px-2">
+                    {label}
+                </span>
+                <AiFillCaretDown className="text-primary" />
             </button>
 
             {/* Dropdown menu */}
