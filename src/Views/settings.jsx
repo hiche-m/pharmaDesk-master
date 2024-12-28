@@ -10,6 +10,8 @@ import SettingsInput from "../Components/SettingsInput.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
 import DropdownMenu from "../Components/DropDownMenu.jsx";
 import { toast } from "react-toastify";
+import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
+import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 
 const Settings = () => {
 
@@ -35,7 +37,206 @@ const Settings = () => {
         setSelectedIndex(index);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Forms Section
+    ////////////////////////////////////////////////// Pharmacy Settings
+    const defaultPharmacyForm = {
+        storeName: '',
+        adress: '',
+        phone: '',
+        description: '',
+        latitude: null,
+        longitude: null,
+    };
+
+    const [pharmacyForm, setPharmacyForm] = useState(defaultPharmacyForm);
+
+    const changePharmacyFormValue = (key, value) => {
+        if (value && value != '') {
+            setPharmacyForm({
+                ...pharmacyForm,
+                [key]: value,
+            });
+        }
+    };
+
+    const resetPharmacyForm = () => {
+        setPharmacyForm(defaultPharmacyForm);
+    }
+
+    ////////////////////////////////////////////////// Personal Settings
+    const defaultPersonalForm = {
+        lastName: '',
+        firstName: '',
+        phone: '',
+        adress: '',
+    };
+
+    const [personalForm, setPersonalForm] = useState(defaultPersonalForm);
+
+    const changePersonalFormValue = (key, value) => {
+        setPersonalForm({
+            ...personalForm,
+            [key]: value,
+        });
+    };
+
+    const resetPersonalForm = () => {
+        setPersonalForm(defaultPersonalForm);
+    }
+
+    ////////////////////////////////////////////////// Security Settings
+    const defaultSecurityForm = {
+        email: '',
+        newPassword: '',
+        repeatPassword: '',
+        oldPassword: '',
+    };
+
+    const [securityForm, setSecurityForm] = useState(defaultSecurityForm);
+
+    const changeSecurityFormValue = (key, value) => {
+        setSecurityForm({
+            ...securityForm,
+            [key]: value,
+        });
+    };
+
+    const resetSecurityForm = () => {
+        setSecurityForm(defaultSecurityForm);
+    }
+
+    ////////////////////////////////////////////////// Notification Settings
+    const defaultNotificationForm = {
+        notificationSound: true,
+        confirmationSound: false,
+        showToast: true,
+    };
+
+    const [notificationForm, setNotificationForm] = useState(defaultNotificationForm);
+
+    const toggleNotificationFormValue = (key) => {
+        setNotificationForm({
+            ...notificationForm,
+            [key]: !notificationForm[key],
+        });
+    };
+
+    const resetNotificationForm = () => {
+        setNotificationForm(defaultNotificationForm);
+    }
+
+    ////////////////////////////////////////////////// Profile Settings
+    const roleObject = {
+        'admin': 'Administrateur',
+        'seller': 'Vendeur'
+    };
+
+    const initialProfiles = [
+        {
+            name: 'Harrison Pfannerstill',
+            role: Object.keys(roleObject)[0],
+            url: null,
+        },
+    ];
+
+    const [profileList, setProfileList] = useState(initialProfiles);
+
+    const addNewProfile = () => {
+        setProfileList([...profileList, {
+            name: '',
+            role: Object.keys(roleObject)[1],
+            url: null,
+        }]);
+    };
+
+    const removeProfileByIndex = (index) => {
+        const numOfAdmins = profileList.filter(profile => profile.role === Object.keys(roleObject)[0]);
+        if (numOfAdmins.length > 1 || profileList[index].role !== Object.keys(roleObject)[0]) {
+            setProfileList([
+                ...profileList.slice(0, index),
+                ...profileList.slice(index + 1)
+            ]);
+        } else {
+            showAlertDialog('Action impossible!', "Impossible de supprimer tous les profils d'administrateur.", 'Fermer');
+        }
+    };
+
+    const changeProfileName = (index, value) => {
+        setProfileList([
+            ...profileList.slice(0, index),
+            {
+                name: value,
+                role: profileList[index].role,
+                url: profileList[index].url,
+            },
+            ...profileList.slice(index + 1)
+        ]);
+    };
+
+    const changeProfileRole = (index, value) => {
+        const numOfAdmins = profileList.filter(profile => profile.role === Object.keys(roleObject)[0]);
+        if (numOfAdmins.length > 1 || profileList[index].role !== Object.keys(roleObject)[0]) {
+            setProfileList([
+                ...profileList.slice(0, index),
+                {
+                    name: profileList[index].name,
+                    role: value,
+                    url: profileList[index].url,
+                },
+                ...profileList.slice(index + 1)
+            ]);
+        } else {
+            showAlertDialog('Action impossible!', "Impossible de supprimer tous les profils d'administrateur.", 'Fermer');
+        }
+    };
+
+    const resetProfiles = () => {
+        setProfileList(initialProfiles);
+    };
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////// Delete Modal Dialog
+    const [deleteDialogShowing, setDeleteDialogShowing] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(null);
+
+    const cancelAction = () => {
+        setDeleteDialogShowing(false);
+    };
+
+    const deleteProfileAction = () => {
+        removeProfileByIndex(deleteIndex);
+        setDeleteDialogShowing(false);
+    };
+
+    const handleDeleteOnClick = (index) => {
+        setDeleteIndex(index);
+        setDeleteDialogShowing(true);
+    };
+    /////////////////////////////////////////////////////////////////// Alert Modal Dialog
+    const [alertDialogShowing, setAlertDialogShowing] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertContent, setAlertContent] = useState('');
+    const [alertActionLabel, setAlertActionLabel] = useState("D'accord");
+
+    const alertActionFunction = () => {
+        setAlertDialogShowing(false);
+    };
+
+    const showAlertDialog = (title, content, actionLabel) => {
+        if (title) {
+            setAlertTitle(title);
+        }
+        if (content) {
+            setAlertContent(content);
+        }
+        if (actionLabel) {
+            setAlertActionLabel(actionLabel);
+        }
+        setAlertDialogShowing(true);
+    };
+
     return (<>
+        {alertDialogShowing && (<TailwindAlertModal title={alertTitle} content={alertContent} actionLabel={alertActionLabel} actionFunction={alertActionFunction} />)}
+        {deleteDialogShowing && (<TailwindConfirmModal title='Vous êtes sûrs ?' content='Cela supprimera le profil sélectionné, cette action peut ne pas être réversible.' actionLabel='Supprimer' cancelLabel='Annuler' actionFunction={() => deleteProfileAction()} cancelAction={() => cancelAction()} />)}
         {/* Profile */}
         <div className="col-span-12 row-span-3 ml-4 inline-flex flex-row justify-between items-center">
             <div className="inline-flex flex-row space-x-2 items-center">
@@ -73,25 +274,25 @@ const Settings = () => {
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations sur la pharmacie</span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 overflow-y-auto gap-x-2 small:gap-x-10">
-                            <SettingsInput placeholder='Nom du pharmacie...' flexible={true} />
-                            <SettingsInput placeholder='Adresse du pharmacie...' flexible={true} />
-                            <SettingsInput placeholder='Numéro téléphone pharmacie...' flexible={true} />
-                            <SettingsInput placeholder='Description...' large={true} flexible={true} />
-                            <SettingsInput placeholder='Latitude' flexible={true} />
-                            <SettingsInput placeholder='Longitude' flexible={true} />
+                            <SettingsInput placeholder='Nom du pharmacie...' flexible={true} onChange={(value) => changePharmacyFormValue('storeName', value)} value={pharmacyForm.storeName} />
+                            <SettingsInput placeholder='Adresse du pharmacie...' flexible={true} onChange={(value) => changePharmacyFormValue('adress', value)} value={pharmacyForm.adress} />
+                            <SettingsInput placeholder='Numéro téléphone pharmacie...' flexible={true} onChange={(value) => changePharmacyFormValue('phone', value)} value={pharmacyForm.phone} />
+                            <SettingsInput placeholder='Description...' large={true} flexible={true} onChange={(value) => changePharmacyFormValue('description', value)} value={pharmacyForm.description} />
+                            <SettingsInput placeholder='Latitude' flexible={true} onChange={(value) => changePharmacyFormValue('latitude', value)} value={pharmacyForm.latitude} />
+                            <SettingsInput placeholder='Longitude' flexible={true} onChange={(value) => changePharmacyFormValue('longitude', value)} value={pharmacyForm.longitude} />
                         </div>
                     </div>
                     <div className="inline-flex w-full justify-between">
-                        <button className="text-textSecoundary">
+                        <button className="text-textSecoundary" onClick={() => resetPharmacyForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Clear</span>
+                                <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary">
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(pharmacyForm)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
-                                <span>Save</span>
+                                <span>Sauvegarder</span>
                             </span>
                         </button>
                     </div>
@@ -102,23 +303,23 @@ const Settings = () => {
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations personnelles </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 overflow-y-auto gap-x-2 small:gap-x-10">
-                            <SettingsInput placeholder='Votre nom...' flexible={true} />
-                            <SettingsInput placeholder='Votre prénom...' flexible={true} />
-                            <SettingsInput placeholder='Votre numéro téléphone...' flexible={true} />
-                            <SettingsInput placeholder='Votre adresse complète...' large={true} flexible={true} />
+                            <SettingsInput placeholder='Votre nom...' flexible={true} onChange={(value) => changePersonalFormValue('lastName', value)} value={personalForm.lastName} />
+                            <SettingsInput placeholder='Votre prénom...' flexible={true} onChange={(value) => changePersonalFormValue('firstName', value)} value={personalForm.firstName} />
+                            <SettingsInput placeholder='Votre numéro téléphone...' flexible={true} onChange={(value) => changePersonalFormValue('phone', value)} value={personalForm.phone} />
+                            <SettingsInput placeholder='Votre adresse complète...' large={true} flexible={true} onChange={(value) => changePersonalFormValue('adress', value)} value={personalForm.adress} />
                         </div>
                     </div>
                     <div className="inline-flex w-full justify-between">
-                        <button className="text-textSecoundary">
+                        <button className="text-textSecoundary" onClick={() => resetPersonalForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Clear</span>
+                                <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary">
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(personalForm)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
-                                <span>Save</span>
+                                <span>Sauvegarder</span>
                             </span>
                         </button>
                     </div>
@@ -129,25 +330,25 @@ const Settings = () => {
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations de sécurité</span>
                         <div className="grid grid-cols-1 overflow-y-auto mr-2 small:mr-20">
-                            <SettingsInput placeholder='Adresse mail...' flexible={true} />
+                            <SettingsInput placeholder='Adresse mail...' flexible={true} onChange={(value) => changeSecurityFormValue('email', value)} value={securityForm.email} />
                             <span className="col-span-1 h-5" />
-                            <SettingsInput placeholder='Nouveau mot de passe...' flexible={true} />
-                            <SettingsInput placeholder='Confirmer le nouveau mot de passe...' flexible={true} />
+                            <SettingsInput placeholder='Nouveau mot de passe...' flexible={true} onChange={(value) => changeSecurityFormValue('newPassword', value)} value={securityForm.newPassword} obscure={true} />
+                            <SettingsInput placeholder='Confirmer le nouveau mot de passe...' flexible={true} onChange={(value) => changeSecurityFormValue('repeatPassword', value)} value={securityForm.repeatPassword} obscure={true} />
                             <span className="col-span-1 h-5" />
-                            <SettingsInput placeholder='Votre mot de passe actuel...' flexible={true} />
+                            <SettingsInput placeholder='Votre mot de passe actuel...' flexible={true} onChange={(value) => changeSecurityFormValue('oldPassword', value)} value={securityForm.oldPassword} obscure={true} />
                         </div>
                     </div>
                     <div className="inline-flex w-full justify-between">
-                        <button className="text-textSecoundary">
+                        <button className="text-textSecoundary" onClick={() => resetSecurityForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Clear</span>
+                                <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary">
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(securityForm)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
-                                <span>Save</span>
+                                <span>Sauvegarder</span>
                             </span>
                         </button>
                     </div>
@@ -164,7 +365,7 @@ const Settings = () => {
                                     <span>Émettre un son lorsqu'une notification d'ordonnance arrive.</span>
                                     <span className="text-textSecoundary italic text-sm">Nouvelle notification!</span>
                                 </span>
-                                <ToggleSwitch value={true} toggleSwitch={() => { }} />
+                                <ToggleSwitch value={notificationForm.notificationSound} toggleSwitch={() => toggleNotificationFormValue('notificationSound')} />
                             </div>
                             {/* Secound Row */}
                             <div className="inline-flex flex-row w-full justify-between">
@@ -172,7 +373,7 @@ const Settings = () => {
                                     <span>Émettre un son lorsqu'un client confirme qu'il va venir.</span>
                                     <span className="text-textSecoundary italic text-sm">Un client arrive!</span>
                                 </span>
-                                <ToggleSwitch value={false} toggleSwitch={() => { }} />
+                                <ToggleSwitch value={notificationForm.confirmationSound} toggleSwitch={() => toggleNotificationFormValue('confirmationSound')} />
                             </div>
                             {/* Third Row */}
                             <div className="inline-flex flex-row w-full justify-between">
@@ -180,21 +381,21 @@ const Settings = () => {
                                     <span>Afficher une boîte de dialogue toast lorsque des événements se produisent.</span>
                                     <span className="text-textSecoundary underline text-sm cursor-pointer" onClick={() => toast('Un dialogue toast!')}>Cliquez ici pour prévisualiser</span>
                                 </span>
-                                <ToggleSwitch value={true} toggleSwitch={() => { }} />
+                                <ToggleSwitch value={notificationForm.showToast} toggleSwitch={() => toggleNotificationFormValue('showToast')} />
                             </div>
                         </div>
                     </div>
                     <div className="inline-flex w-full justify-between">
-                        <button className="text-textSecoundary">
+                        <button className="text-textSecoundary" onClick={() => resetNotificationForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Clear</span>
+                                <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary">
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(notificationForm)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
-                                <span>Save</span>
+                                <span>Sauvegarder</span>
                             </span>
                         </button>
                     </div>
@@ -205,37 +406,38 @@ const Settings = () => {
                     <div className="flex flex-col space-y-2">
                         <div className="inline-flex flex-row w-full justify-between items-center py-2">
                             <span className="font-medium">Gestion de profils</span>
-                            <IoMdAdd className="text-textSecoundary cursor-pointer" onClick={() => {
-                                console.log('Add Profile');
-                            }} />
+                            <IoMdAdd className="text-textSecoundary cursor-pointer" onClick={() => addNewProfile()} />
                         </div>
-                        <div className="flex flex-col space-y-2 py-2">
-                            <div className="flex flex-col small:inline-flex small:flex-row w-full justify-between items-start small:items-center">
+                        {/* Content */}
+                        <div className="flex flex-col space-y-2 py-2 max-h-80 overflow-y-auto">
+                            {profileList.map((profile, index) => (<div key={`settings-profile-${index}`} className="flex flex-col small:inline-flex small:flex-row w-full justify-between items-start small:items-center">
                                 <div className="inline-flex flex-row space-x-2 items-center">
                                     <img className="hidden sm:block h-12 w-12 rounded-full bg-gray-500" src={pfp4} />
                                     <span className="flex flex-col">
-                                        <span className="font-medium">Harrison Pfannerstill</span>
-                                        <span className="text-sm text-textSecoundary">Administrateur</span>
+                                        <input className="font-medium placeholder:font-normal placeholder:italic" placeholder="Nom du profil" value={profile.name} onChange={(event) => changeProfileName(index, event.target.value)} />
+                                        <span className="text-sm text-textSecoundary">{roleObject[profile.role]}</span>
                                     </span>
                                 </div>
                                 <div className="flex flex-col space-y-0 py-0 sm:space-y-2 sm:py-2 sm:inline-flex sm:flex-row space-x-4 items-center">
-                                    <button className="text-red-500 underline text-sm">Supprimer</button>
-                                    <DropdownMenu options={[{ label: 'Administrateur', value: 'admin' }, { label: 'Vendeur', value: 'vendeur' }]} label={'Role'} selectedValue={'admin'} onSelect={(value) => { }} />
+                                    <button className="text-red-500 underline text-sm mt-1" onClick={() => handleDeleteOnClick(index)}>Supprimer</button>
+                                    <DropdownMenu options={Object.entries(roleObject).map((row, index) => {
+                                        return { label: row[1], value: row[0] };
+                                    })} label={'Role'} selectedValue={profile.role} onSelect={(value) => changeProfileRole(index, value)} />
                                 </div>
-                            </div>
+                            </div>))}
                         </div>
                     </div>
                     <div className="inline-flex w-full justify-between">
-                        <button className="text-textSecoundary">
+                        <button className="text-textSecoundary" onClick={() => resetProfiles()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Clear</span>
+                                <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary">
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(profileList)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
-                                <span>Save</span>
+                                <span>Sauvegarder</span>
                             </span>
                         </button>
                     </div>
