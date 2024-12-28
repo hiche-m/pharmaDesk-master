@@ -8,16 +8,17 @@ import { ContextProvider } from './Context/ContextProvider.jsx';
 import { AuthProvider } from './Context/AuthProvider.jsx';
 
 
-const root = createRoot(document.getElementById("root")).render(
+const root = createRoot(document.getElementById("root"));
+root.render(
     <Provider store={store}>
         <ContextProvider>
             <AuthProvider>
-                 <App /> 
+                <App />
             </AuthProvider>
-           
-              
-          
-            
+
+
+
+
         </ContextProvider>
 
     </Provider>

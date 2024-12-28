@@ -15,13 +15,13 @@ import { useAuthContext } from "../Context/AuthProvider.jsx";
 import SignUp from "./AuthViews/SignUp.jsx";
 import Dashboard from "./dashboard.jsx";
 import Settings from "./settings.jsx";
+import { default_notification_settings } from "../Utils/Parameters.jsx";
 
 export default function App() {
 
     const { canceling, setCanceling } = useStateContext()
     const { isAuth, setIsAuth } = useAuthContext()
     /*    const navigate = useNavigate(); // Initialize the useNavigate hook */
-
 
     useEffect(() => {
 
@@ -30,10 +30,13 @@ export default function App() {
         const idPharmaJson = localStorage.getItem("idpharma")
         const storeNameJson = localStorage.getItem("storeName")
 
+        const notificationSettingsJson = localStorage.getItem("notification");
 
         if (dataJson && idPharmaJson && storeNameJson) {
+            if (!notificationSettingsJson) {
+                localStorage.setItem("notification", JSON.stringify(default_notification_settings));
+            }
             setIsAuth(true);
-
         } else {
             setIsAuth(false); // If token is not found, set isAuth to false
         }

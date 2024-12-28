@@ -4,6 +4,7 @@ import { getConfirmedNotifications, confirmedNotificationSuccess, confirmedNotif
 import { HOST, PORT, notification_load_limit } from '../Utils/Parameters.jsx';
 import { getUserData, userSuccess, userFail } from '../Redux/userActions.jsx';
 import { userData } from '../Utils/Data/UserData.jsx';
+import axios from 'axios';
 
 const useFetchConfirmed = (refresh) => {
     const dispatch = useDispatch();
@@ -14,13 +15,7 @@ const useFetchConfirmed = (refresh) => {
         dispatch(getConfirmedNotifications());
         dispatch(userSuccess(userData));
 
-        fetch(`${HOST}/api/comming/${userData.idpharma}`, {
-            signal: onDispose.signal,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then(res => {
+        axios.get(`${HOST}/api/comming/${userData.idpharma}`).then(res => {
             if (!res.ok) {
                 throw Error('Invalid response from ' + uri);
             }
