@@ -12,8 +12,11 @@ import DropdownMenu from "../Components/DropDownMenu.jsx";
 import { toast } from "react-toastify";
 import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
+import { useStateContext } from "../Context/ContextProvider.jsx";
 
 const Settings = () => {
+
+    const { notificationSettings, updateNotificationSettings } = useStateContext()
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -106,13 +109,8 @@ const Settings = () => {
     }
 
     ////////////////////////////////////////////////// Notification Settings
-    const defaultNotificationForm = {
-        notificationSound: true,
-        confirmationSound: false,
-        showToast: true,
-    };
 
-    const [notificationForm, setNotificationForm] = useState(defaultNotificationForm);
+    const [notificationForm, setNotificationForm] = useState(notificationSettings);
 
     const toggleNotificationFormValue = (key) => {
         setNotificationForm({
@@ -122,7 +120,7 @@ const Settings = () => {
     };
 
     const resetNotificationForm = () => {
-        setNotificationForm(defaultNotificationForm);
+        setNotificationForm(notificationSettings);
     }
 
     ////////////////////////////////////////////////// Profile Settings
@@ -392,7 +390,7 @@ const Settings = () => {
                                 <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(notificationForm)}>
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => updateNotificationSettings(notificationForm)}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
                                 <span>Sauvegarder</span>

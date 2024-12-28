@@ -1,5 +1,6 @@
 import { HOST, PORT } from "../Utils/Parameters.jsx";
 import { useState } from 'react';
+import axios from "axios";
 
 const useRefuseRequest = () => {
 
@@ -10,24 +11,18 @@ const useRefuseRequest = () => {
     const [rHasError, setRHasError] = useState(null);
 
     const refuseRequest = async (notificationId) => {
-    console.log('this is notification id ',notificationId);
+        console.log('this is notification id ', notificationId);
 
         setIsRRequestLoading(true);
 
         try {
-            const res = await fetch(`${HOST}/api/refuseOrder/${notificationId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            axios.delete(`${HOST}/api/refuseOrder/${notificationId}`).then((res) => {
+                if (!res) {
+                    throw new Error('An error has occured, please try again in a moment...');
+                } else {
+                    setRSuccess(true);
+                }
             });
-
-            if (!res.ok) {
-                throw new Error('An error has occured, please try again in a moment...');
-            }
-
-            console.log(await res.json());
-            setRSuccess(true);
         } catch (error) {
             setRHasError(error);
             console.log(error);

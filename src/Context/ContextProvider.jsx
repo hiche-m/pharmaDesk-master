@@ -57,7 +57,9 @@ export const ContextProvider = ({ children }) => {
     "duree": daysPortion,
     "frequence": frequency,
     "frequenceDetails": selectedFrequency,
-  }])
+  }]);
+
+  const [notificationSettings, setNotificationSettings] = useState(null);
 
 
 
@@ -66,6 +68,7 @@ export const ContextProvider = ({ children }) => {
     //get ID from localstorage when loading 
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
+    const cachedNotificationSetting = JSON.parse(localStorage.getItem('notification'));
     /* const idpharma = 1 */
     // Initialize Socket.IO client and set it to state
     const socket = io(HOST);
@@ -77,6 +80,10 @@ export const ContextProvider = ({ children }) => {
       if (storeName == null) {
         const storeName = localStorage.getItem('storeName');
         setStoreName(storeName);
+      }
+
+      if (!notificationSettings) {
+        setNotificationSettings(cachedNotificationSetting);
       }
 
       // Listen for the 'store_connected' event
@@ -101,7 +108,9 @@ export const ContextProvider = ({ children }) => {
           firstname,
           userPic,
           message } = data;
-        toast("Commande annulé!");
+        if (cachedNotificationSetting.showToast) {
+          toast("Commande annulé!");
+        }
         removeNotif(data);
         removeNotifComing(data);
         // Display the notification in the front
@@ -120,7 +129,13 @@ export const ContextProvider = ({ children }) => {
           firstname,
           userPic,
         } = data;
-        toast("Un client arrive!");
+        if (cachedNotificationSetting.showToast) {
+          toast("Un client arrive!");
+        }
+        if (cachedNotificationSetting.confirmationSound) {
+          const sound = new Audio(sound1);
+          sound.play();
+        }
         // Display the notification in the front
         removeNotif(data);
         addNotifComing(data);
@@ -138,9 +153,13 @@ export const ContextProvider = ({ children }) => {
           firstname,
           userPic,
         } = data;
-        const sound = new Audio(sound1);
-        sound.play();
-        toast("Nouvelle notification!");
+        if (cachedNotificationSetting.notificationSound) {
+          const sound = new Audio(sound1);
+          sound.play();
+        }
+        if (cachedNotificationSetting.showToast) {
+          toast("Nouvelle notification!");
+        }
         addNotif(data);
         // Display the notification in the front
         console.log(`Notification ${idnotifications}: Perscription ${idprescription} arrived from ${firstname}:${idClient} at ${created_at}`);
@@ -161,7 +180,9 @@ export const ContextProvider = ({ children }) => {
           posioFlag,
           message
         } = data;
-        toast("Posiologie envoyé!");
+        if (cachedNotificationSetting.showToast) {
+          toast("Posiologie envoyé!");
+        }
         // Display the notification in the front
         removeNotifComing(data);
       });
@@ -198,7 +219,7 @@ export const ContextProvider = ({ children }) => {
     return () => socket.close();
 
 
-  }, [])
+  }, [notificationSettings])
 
 
   // Listen for the 'prescription_cancelled' event
@@ -347,11 +368,16 @@ export const ContextProvider = ({ children }) => {
     };
   }
 
+  const updateNotificationSettings = (newSettings) => {
+    localStorage.setItem("notification", JSON.stringify(newSettings));
+    setNotificationSettings(newSettings);
+  }
+
 
   return (
 
     <StateContext.Provider value={{
-      triggerNavigate, setTriggerNavigate, getUserData,
+      triggerNavigate, setTriggerNavigate, getUserData, notificationSettings, updateNotificationSettings,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif,
       notificationListeRequests, setNotificationListeRequest,
       isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,
