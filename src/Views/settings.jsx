@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import axios from "axios";
+import { HOST } from "../Utils/Parameters.jsx";
 
 const Settings = () => {
 
@@ -20,7 +22,13 @@ const Settings = () => {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const settingsTiles = ["Compte Pharmacie", "Compte Personnel", "Sécurité", "Notifications", "Profils"];
+    const settingsTiles = ["Compte Pharmacie", "Compte Personnel", "Sécurité", "Notifications"/* , "Profils" */];
+
+    const [settingsInfo, setSettingsInfo] = useState(null);
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [hasError, setHasError] = useState(null);
 
     const handleEditClick = () => {
         console.log('Edit');
@@ -29,7 +37,7 @@ const Settings = () => {
 
     const handleAccountClick = () => {
         console.log('Account');
-        setSelectedIndex(settingsTiles.indexOf('Profils'));
+        /* setSelectedIndex(settingsTiles.indexOf('Profils')); */
     };
 
     const handleDropdownClick = () => {
@@ -39,17 +47,85 @@ const Settings = () => {
     const handleMenuSwitch = (index) => {
         setSelectedIndex(index);
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Effects
 
+    useEffect(() => {
+        if (settingsInfo) {
+            setPharmacyForm({
+                storeName: settingsInfo ? settingsInfo.storeName : '',
+                adress: settingsInfo ? settingsInfo.adresse : '',
+                phone: settingsInfo ? settingsInfo.phoneNumber : '',
+                description: settingsInfo ? settingsInfo.description : '',
+                latitude: settingsInfo ? settingsInfo.latitude : null,
+                longitude: settingsInfo ? settingsInfo.longitude : null,
+            });
+
+            setPersonalForm({
+                lastName: settingsInfo ? settingsInfo.nameOwner.split(' ')[0] : '',
+                firstName: settingsInfo ? settingsInfo.nameOwner.split(' ')[1] : '',
+                phone: settingsInfo ? settingsInfo.phoneNumber : '',
+                adress: settingsInfo ? settingsInfo.adresse : '',
+            });
+
+            setSecurityForm({
+                ...securityForm,
+                ['email']: settingsInfo.email,
+            });
+        }
+    }, [settingsInfo])
+
+    useEffect(() => {
+        if (!settingsInfo) {
+            const pharmaId = localStorage.getItem('idpharma');
+            if (pharmaId) {
+                axios.get(`${HOST}/api/pharma/accountInfo/${pharmaId}`).then((res) => {
+                    if (!res || !res.data) {
+                        console.log('There was a problem fetching settings information...' + res);
+                        setHasError('There was a problem fetching settings information');
+                    } else {
+                        const temp = res.data.data;
+                        setSettingsInfo(res.data.data);
+
+                        setdefaultPharmacyForm({
+                            storeName: temp ? temp.storeName : '',
+                            adress: temp ? temp.adresse : '',
+                            phone: temp ? temp.phoneNumber : '',
+                            description: temp ? temp.description : '',
+                            latitude: temp ? temp.latitude : null,
+                            longitude: temp ? temp.longitude : null,
+                        });
+
+                        setDefaultPersonalForm({
+                            lastName: temp ? temp.nameOwner.split(' ')[0] : '',
+                            firstName: temp ? temp.nameOwner.split(' ')[1] : '',
+                            phone: temp ? temp.phoneNumber : '',
+                            adress: temp ? temp.adresse : '',
+                        });
+
+                        setDefaultSecurityForm({
+                            ...defaultSecurityForm,
+                            ['email']: temp.email,
+                        });
+
+                        if (hasError) {
+                            setHasError(null);
+                        }
+                    }
+                });
+            }
+            setIsLoading(false);
+        }
+    }, []);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Forms Section
     ////////////////////////////////////////////////// Pharmacy Settings
-    const defaultPharmacyForm = {
+    const [defaultPharmacyForm, setdefaultPharmacyForm] = useState({
         storeName: '',
         adress: '',
         phone: '',
         description: '',
         latitude: null,
         longitude: null,
-    };
+    });
 
     const [pharmacyForm, setPharmacyForm] = useState(defaultPharmacyForm);
 
@@ -67,12 +143,12 @@ const Settings = () => {
     }
 
     ////////////////////////////////////////////////// Personal Settings
-    const defaultPersonalForm = {
+    const [defaultPersonalForm, setDefaultPersonalForm] = useState({
         lastName: '',
         firstName: '',
         phone: '',
         adress: '',
-    };
+    });
 
     const [personalForm, setPersonalForm] = useState(defaultPersonalForm);
 
@@ -88,12 +164,12 @@ const Settings = () => {
     }
 
     ////////////////////////////////////////////////// Security Settings
-    const defaultSecurityForm = {
+    const [defaultSecurityForm, setDefaultSecurityForm] = useState({
         email: '',
         newPassword: '',
         repeatPassword: '',
         oldPassword: '',
-    };
+    });
 
     const [securityForm, setSecurityForm] = useState(defaultSecurityForm);
 
@@ -124,7 +200,7 @@ const Settings = () => {
     }
 
     ////////////////////////////////////////////////// Profile Settings
-    const roleObject = {
+    /* const roleObject = {
         'admin': 'Administrateur',
         'seller': 'Vendeur'
     };
@@ -190,10 +266,10 @@ const Settings = () => {
 
     const resetProfiles = () => {
         setProfileList(initialProfiles);
-    };
+    }; */
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////// Delete Modal Dialog
-    const [deleteDialogShowing, setDeleteDialogShowing] = useState(false);
+    /* const [deleteDialogShowing, setDeleteDialogShowing] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState(null);
 
     const cancelAction = () => {
@@ -208,7 +284,7 @@ const Settings = () => {
     const handleDeleteOnClick = (index) => {
         setDeleteIndex(index);
         setDeleteDialogShowing(true);
-    };
+    }; */
     /////////////////////////////////////////////////////////////////// Alert Modal Dialog
     const [alertDialogShowing, setAlertDialogShowing] = useState(false);
     const [alertTitle, setAlertTitle] = useState('');
@@ -234,7 +310,7 @@ const Settings = () => {
 
     return (<>
         {alertDialogShowing && (<TailwindAlertModal title={alertTitle} content={alertContent} actionLabel={alertActionLabel} actionFunction={alertActionFunction} />)}
-        {deleteDialogShowing && (<TailwindConfirmModal title='Vous êtes sûrs ?' content='Cela supprimera le profil sélectionné, cette action peut ne pas être réversible.' actionLabel='Supprimer' cancelLabel='Annuler' actionFunction={() => deleteProfileAction()} cancelAction={() => cancelAction()} />)}
+        {/* {deleteDialogShowing && (<TailwindConfirmModal title='Vous êtes sûrs ?' content='Cela supprimera le profil sélectionné, cette action peut ne pas être réversible.' actionLabel='Supprimer' cancelLabel='Annuler' actionFunction={() => deleteProfileAction()} cancelAction={() => cancelAction()} />)} */}
         {/* Profile */}
         <div className="col-span-12 row-span-3 ml-4 inline-flex flex-row justify-between items-center">
             <div className="inline-flex flex-row space-x-2 items-center">
@@ -328,7 +404,10 @@ const Settings = () => {
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations de sécurité</span>
                         <div className="grid grid-cols-1 overflow-y-auto mr-2 small:mr-20">
-                            <SettingsInput placeholder='Adresse mail...' flexible={true} onChange={(value) => changeSecurityFormValue('email', value)} value={securityForm.email} />
+                            <div className="flex flex-col space-y-2 py-2">
+                                <span className={`bg-lightShapes p-2 outline-none rounded-md text-textSecoundary`}>{securityForm.email}</span>
+                            </div>
+                            {/* <SettingsInput placeholder='Adresse mail...' flexible={true} onChange={(value) => changeSecurityFormValue('email', value)} value={securityForm.email} /> */}
                             <span className="col-span-1 h-5" />
                             <SettingsInput placeholder='Nouveau mot de passe...' flexible={true} onChange={(value) => changeSecurityFormValue('newPassword', value)} value={securityForm.newPassword} obscure={true} />
                             <SettingsInput placeholder='Confirmer le nouveau mot de passe...' flexible={true} onChange={(value) => changeSecurityFormValue('repeatPassword', value)} value={securityForm.repeatPassword} obscure={true} />
@@ -400,13 +479,12 @@ const Settings = () => {
                 </div>
 
                 {/* Profiles Settings */}
-                <div className={`${selectedIndex === 4 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
+                {/* <div className={`${selectedIndex === 4 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     <div className="flex flex-col space-y-2">
                         <div className="inline-flex flex-row w-full justify-between items-center py-2">
                             <span className="font-medium">Gestion de profils</span>
                             <IoMdAdd className="text-textSecoundary cursor-pointer" onClick={() => addNewProfile()} />
                         </div>
-                        {/* Content */}
                         <div className="flex flex-col space-y-2 py-2 max-h-80 overflow-y-auto">
                             {profileList.map((profile, index) => (<div key={`settings-profile-${index}`} className="flex flex-col small:inline-flex small:flex-row w-full justify-between items-start small:items-center">
                                 <div className="inline-flex flex-row space-x-2 items-center">
@@ -439,7 +517,7 @@ const Settings = () => {
                             </span>
                         </button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     </>);
