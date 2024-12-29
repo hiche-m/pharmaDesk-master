@@ -15,6 +15,7 @@ import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import axios from "axios";
 import { HOST } from "../Utils/Parameters.jsx";
+import useUpdateInfo from "../Services/useUpdateInfo.jsx";
 
 const Settings = () => {
 
@@ -116,6 +117,8 @@ const Settings = () => {
             setIsLoading(false);
         }
     }, []);
+
+    const { profileUpdateLoading, profileUpdateError, setProfileUpdateError, updateProfile, updatePassword } = useUpdateInfo();
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Forms Section
     ////////////////////////////////////////////////// Pharmacy Settings
     const [defaultPharmacyForm, setdefaultPharmacyForm] = useState({
@@ -142,6 +145,30 @@ const Settings = () => {
         setPharmacyForm(defaultPharmacyForm);
     }
 
+    const handlePharmacyFormSave = () => {
+        const form = {};
+
+        let count = 0;
+        for (let key in pharmacyForm) {
+            // Check if the property exists in both pharmacyForm and defaultPharmacyForm
+            if (pharmacyForm.hasOwnProperty(key)) {
+                // If the value in pharmacyForm is different from defaultPharmacyForm, keep the value
+                // Otherwise, set it to null
+                if (pharmacyForm[key] !== defaultPharmacyForm[key]) {
+                    form[key] = pharmacyForm[key];
+                    count += 1;
+                } else {
+                    form[key] = null;
+                }
+            }
+        }
+
+        if (count > 0) {
+            console.log('Sending request...');
+            updateProfile(form, {});
+        }
+    };
+
     ////////////////////////////////////////////////// Personal Settings
     const [defaultPersonalForm, setDefaultPersonalForm] = useState({
         lastName: '',
@@ -163,6 +190,35 @@ const Settings = () => {
         setPersonalForm(defaultPersonalForm);
     }
 
+    const handlePersonalFormSave = () => {
+        const form = {};
+
+        let count = 0;
+        for (let key in personalForm) {
+            // Check if the property exists in both personalForm and defaultPersonalForm
+            if (personalForm.hasOwnProperty(key)) {
+                // If the value in personalForm is different from defaultPersonalForm, keep the value
+                // Otherwise, set it to null
+                if (personalForm[key] !== defaultPersonalForm[key]) {
+                    form[key] = personalForm[key];
+                    count += 1;
+                } else {
+                    form[key] = null;
+                }
+            }
+        }
+
+        if (personalForm.firstName !== defaultPersonalForm.firstName || personalForm.lastName !== defaultPersonalForm.lastName) {
+            form.firstName = personalForm.firstName;
+            form.lastName = personalForm.lastName;
+        }
+
+        if (count > 0) {
+            console.log('Sending request...');
+            updateProfile({}, form);
+        }
+    };
+
     ////////////////////////////////////////////////// Security Settings
     const [defaultSecurityForm, setDefaultSecurityForm] = useState({
         email: '',
@@ -183,6 +239,23 @@ const Settings = () => {
     const resetSecurityForm = () => {
         setSecurityForm(defaultSecurityForm);
     }
+
+    const handleSecurityFormSave = () => {
+
+        if (securityForm.newPassword === '' || securityForm.repeatPassword === '' || securityForm.oldPassword === '') {
+            setProfileUpdateError('Tous les champs sont obligatoires!');
+            console.log('Tous les champs sont obligatoires!');
+        } else if (securityForm.newPassword !== securityForm.repeatPassword) {
+            setProfileUpdateError('Le nouveau mot de passe et la confirmation ne correspondent pas!');
+            console.log('Le nouveau mot de passe et la confirmation ne correspondent pas!');
+        } else {
+            if (profileUpdateError) {
+                setProfileUpdateError(null);
+            }
+            console.log('Sending request...');
+            updatePassword(securityForm);
+        }
+    };
 
     ////////////////////////////////////////////////// Notification Settings
 
@@ -331,7 +404,7 @@ const Settings = () => {
         <span className="col-span-12 row-span-1 text-lg font-bold">Settings</span>
 
         {/* Content */}
-        <div className="col-span-12 row-span-10 flex flex-col small:inline-flex small:flex-row bg-superClear rounded-xl shadow-md">
+        <div className={`col-span-12 row-span-10 flex flex-col small:inline-flex small:flex-row bg-superClear rounded-xl shadow-md ${profileUpdateLoading ? 'pointer-events-none' : ''} ${profileUpdateLoading ? 'blur-sm' : ''}`}>
             {/* Side Menu */}
             <div className={`bg-lightShapes flex flex-row flex-wrap space-y-0 space-x-4 small:flex small:flex-col small:space-y-4 small:space-x-0 p-4 rounded-tl-xl`}>
                 {settingsTiles.map((item, index) => (<span className={`font-medium cursor-pointer ${index === selectedIndex ? 'text-textPrimary' : 'text-textSecoundary'}`} key={`setting-item-tile-${index}-${item}`} onClick={() => handleMenuSwitch(index)}>
@@ -343,6 +416,8 @@ const Settings = () => {
 
             {/* Content */}
             <div className="w-full">
+                {profileUpdateError && (<span className="p-4 text-red-500 font-medium">{profileUpdateError}</span>)}
+
                 {/* Account Settings */}
                 <div className={`${selectedIndex === 0 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     <div className="flex flex-col space-y-2">
@@ -363,7 +438,7 @@ const Settings = () => {
                                 <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(pharmacyForm)}>
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => handlePharmacyFormSave()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
                                 <span>Sauvegarder</span>
@@ -390,7 +465,7 @@ const Settings = () => {
                                 <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(personalForm)}>
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => handlePersonalFormSave()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
                                 <span>Sauvegarder</span>
@@ -422,7 +497,7 @@ const Settings = () => {
                                 <span>Réinitialiser</span>
                             </span>
                         </button>
-                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => console.log(securityForm)}>
+                        <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => handleSecurityFormSave()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center px-2 text-white">
                                 <FaSave />
                                 <span>Sauvegarder</span>
