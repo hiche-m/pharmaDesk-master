@@ -82,10 +82,6 @@ export const ContextProvider = ({ children }) => {
         setStoreName(storeName);
       }
 
-      if (!notificationSettings) {
-        setNotificationSettings(cachedNotificationSetting);
-      }
-
       // Listen for the 'store_connected' event
       socket.emit('store_connected', { idpharma });//// make the id dynamic 
 
@@ -219,7 +215,15 @@ export const ContextProvider = ({ children }) => {
     return () => socket.close();
 
 
-  }, [notificationSettings])
+  }, []);
+
+  useEffect(() => {
+    if (!notificationSettings) {
+      const cachedNotificationSetting = JSON.parse(localStorage.getItem('notification'));
+      setNotificationSettings(cachedNotificationSetting);
+      console.log('Update notification settings.');
+    }
+  }, [notificationSettings]);
 
 
   // Listen for the 'prescription_cancelled' event
@@ -378,7 +382,7 @@ export const ContextProvider = ({ children }) => {
 
     <StateContext.Provider value={{
       triggerNavigate, setTriggerNavigate, getUserData, notificationSettings, updateNotificationSettings,
-      resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif,
+      resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif, setNotificationSettings,
       notificationListeRequests, setNotificationListeRequest,
       isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation

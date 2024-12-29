@@ -12,7 +12,9 @@ const useUpdateInfo = () => {
 
     const jsonId = localStorage.getItem('idpharma');
     const idpharma = JSON.parse(jsonId);
-    const { confirmationSound, notificationSound, showToast } = JSON.parse(localStorage.getItem('notification'));
+    const notificationObject = JSON.parse(localStorage.getItem('notification'));
+
+    /* { confirmationSound, notificationSound, showToast } */
 
     const updateProfile = async (pharmacyForm, personalForm) => {
         setProfileUpdateLoading(true);
@@ -54,7 +56,7 @@ const useUpdateInfo = () => {
                     console.log(err);
                 } else {
                     setProfileUpdateLoading(false);
-                    if (showToast) {
+                    if (notificationObject.showToast) {
                         toast('Sauvegardé!');
                     }
                 }
@@ -114,7 +116,7 @@ const useUpdateInfo = () => {
                     console.log(err);
                 } else {
                     setProfileUpdateLoading(false);
-                    if (showToast) {
+                    if (notificationObject.showToast) {
                         toast('Sauvegardé!');
                     }
                 }

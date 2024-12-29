@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     const [triggerNavigate, setTriggerNavigate] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
 
-    const { resetPasswordEmail, setResetPasswordEmail, socket } = useStateContext()
+    const { resetPasswordEmail, setResetPasswordEmail, socket, setNotificationSettings } = useStateContext()
 
 
 
@@ -63,6 +63,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('idpharma');
         localStorage.removeItem('storeName');
+
+        setNotificationSettings(null);
     }
 
 

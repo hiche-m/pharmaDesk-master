@@ -19,7 +19,7 @@ import useUpdateInfo from "../Services/useUpdateInfo.jsx";
 
 const Settings = () => {
 
-    const { notificationSettings, updateNotificationSettings } = useStateContext()
+    const { notificationSettings, updateNotificationSettings, setNotificationSettings } = useStateContext()
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -114,9 +114,16 @@ const Settings = () => {
                     }
                 });
             }
+            setNotificationSettings(null);
             setIsLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (notificationSettings) {
+            setNotificationForm(notificationSettings)
+        }
+    }, [notificationSettings]);
 
     const { profileUpdateLoading, profileUpdateError, setProfileUpdateError, updateProfile, updatePassword } = useUpdateInfo();
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Forms Section
@@ -508,7 +515,10 @@ const Settings = () => {
 
                 {/* Notification Settings */}
                 <div className={`${selectedIndex === 3 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
-                    <div className="flex flex-col space-y-2">
+                    {!notificationForm && (
+                        <div className="h-full w-full flex grow justify-center items-center">Chargement...</div>
+                    )}
+                    {notificationForm && (<div className="flex flex-col space-y-2">
                         <span className="font-medium">Paramètres de notifications</span>
                         <div className="grid grid-cols-1 overflow-y-auto space-y-2 py-2">
                             {/* First Row */}
@@ -536,7 +546,7 @@ const Settings = () => {
                                 <ToggleSwitch value={notificationForm.showToast} toggleSwitch={() => toggleNotificationFormValue('showToast')} />
                             </div>
                         </div>
-                    </div>
+                    </div>)}
                     <div className="inline-flex w-full justify-between">
                         <button className="text-textSecoundary" onClick={() => resetNotificationForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
