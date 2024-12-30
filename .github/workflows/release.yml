@@ -4,48 +4,53 @@ on:
   push:
     branches:
       - afterRebase  # Trigger on push to the `main` branch
-
+      
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js (Optional, in case you need Node.js for some other task)
+      # Step 2: Set Git configuration (user name and email)
+      - name: Set Git user info
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      # Step 3: Set up Node.js (Optional, in case you need Node.js for some other task)
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'  # Specify your Node.js version (optional)
+          node-version: '16'  # Specify your Node.js version (optional)
 
-      # Step 3: Install dependencies
+      # Step 4: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run Standard Version for the first release (bumping version, creating changelog)
+      # Step 5: Run Standard Version for first release (bumping version, creating changelog)
       - name: Run Standard Version for first release
         run: npm run release -- --first-release
 
-      # Step 5: Push version bump and tag
+      # Step 6: Push version bump and tag
       - name: Push version bump and tag
         run: git push --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 6: Package the Electron app (using electron-forge)
+      # Step 7: Package the Electron app (using electron-forge)
       - name: Build Electron app
         run: npm run package  # This runs electron-forge package
 
-      # Step 7: Zip the build output (assuming it's in `out` directory)
+      # Step 8: Zip the build output (assuming it's in `out` directory)
       - name: Zip the build output
         run: |
           cd out
-          zip -r build.zip *
-      # Zip the contents of the 'out' folder (adjust if needed)
+          zip -r build.zip *  # Zip the contents of the 'out' folder (adjust if needed)
 
-      # Step 8: Get version and changelog content for the release
+      # Step 9: Get version and changelog content for the release
       - name: Get new version and changelog content
         id: changelog
         run: |
@@ -54,7 +59,7 @@ jobs:
           echo "::set-output name=version::$NEW_VERSION"
           echo "::set-output name=changelog::$CHANGES"
 
-      # Step 9: Create GitHub release (with changelog)
+      # Step 10: Create GitHub release (with changelog)
       - name: Create GitHub release
         run: |
           curl -X POST \
@@ -68,7 +73,7 @@ jobs:
               }' \
             https://api.github.com/repos/${{ github.repository }}/releases
 
-      # Step 10: Upload the zip file as a release asset
+      # Step 11: Upload build to GitHub release
       - name: Upload build to GitHub release
         run: |
           # Assuming the zip file is created in the previous step and it's in the `out` folder
