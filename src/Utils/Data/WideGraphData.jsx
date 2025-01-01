@@ -1,4 +1,4 @@
-import { tailwindColors } from "../../utils/Colors.jsx";
+import { tailwindColors } from "../../Utils/Colors.jsx";
 
 
 export const options = {
