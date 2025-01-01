@@ -76,8 +76,15 @@ const Home = () => {
         setModalOpen(false);
     };
 
-    const handleAccept = async (pid, clientId) => {
-        await confirmRequestObject.confirmRequest(pid, clientId);
+    const handleAccept = async (pid, clientId, comment, genList) => {
+
+        let gen = {};
+
+        genList.map((value, index) => {
+            gen[index] = value;
+        });
+
+        await confirmRequestObject.confirmRequest(pid, clientId, comment, gen);
         if (confirmRequestObject.success) {
             console.log("Request accepted.");
             setRefresh(previous => previous + 1);

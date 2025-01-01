@@ -7,6 +7,7 @@ import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
 import DropdownMenu from './DropDownMenu.jsx';
 import { useStateContext } from '../Context/ContextProvider.jsx';
+import { FaTrashAlt } from "react-icons/fa";
 
 const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotification, confirmType }) => {
 
@@ -410,55 +411,107 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
         );
     }
 
+    /* Commentaire */
+
+    const [comment, setComment] = useState('');
+
+    const onCommentChange = (value) => {
+        setComment(value);
+    };
+
+    /* Liste Générique */
+
+    const [genList, setGenList] = useState([]);
+
+    const addMed = () => {
+        setGenList([
+            ...genList,
+            false
+        ]);
+    };
+
+    const removeMed = (index) => {
+        setGenList([
+            ...genList.slice(0, index),
+            ...genList.slice(index + 1)
+        ]);
+    };
+
+    const toggleMed = (index) => {
+        setGenList([
+            ...genList.slice(0, index),
+            !genList[index],
+            ...genList.slice(index + 1)
+        ]);
+    };
+
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
-            <div className="bg-white rounded-lg p-6 w-1/3 shadow-lg">
-                <div className="flex flex-col items-center">
+            <div className="bg-white rounded-lg p-6 w-max h-max shadow-lg">
+                <div className="inline-flex w-max h-max space-x-4">
                     {isImageLoading && (
-                        <div className="w-32 h-32 flex justify-center items-center">
+                        <div className="w-[33vw] aspect-square flex justify-center items-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                         </div>
                     )}
                     {error !== "" && (
-                        <div className="flex justify-center items-center">
-                            <span className="text-lg text-red-500">{error}</span>
-                        </div>
+                        <span className="text-lg text-red-500">{error}</span>
                     )}
                     {error === "" && (<img
                         src={selectedNotification.url}
                         alt="Perscription"
-                        className="mb-4 w-96 h-96 object-cover rounded-md"
+                        className="w-[33vw] aspect-square mb-4 object-cover rounded-md"
                         onLoad={() => setImageLoading(false)}
                         onError={() => setError("Image unavailable!")}
                     />)}
+                    <div className="flex flex-col items-start">
+                        {/* Info */}
+                        <h2 className="text-lg font-bold mb-2">Accepter l'ordonnance?</h2>
+                        <p className="text-gray-600 mb-4 text-center">
+                            <b>{selectedNotification.firstname}</b> a envoyé une ordonnance.
+                        </p>
 
-                    {/* Info */}
-                    <h2 className="text-lg font-bold mb-2">Accepter l'ordonnance?</h2>
-                    <p className="text-gray-600 mb-4 text-center">
-                        <b>{selectedNotification.firstname}</b> a envoyé une ordonnance.
-                    </p>
+                        {/* Form */}
+                        <div className="h-full flex flex-col space-y-4">
+                            <textarea className="bg-lightShapes rounded-lg outline-none p-2 resize-none" placeholder="Commentaire..." value={comment} onChange={(event) => onCommentChange(event.target.value)} />
+                            <div className="w-full inline-flex justify-between">
+                                <span className='text-textSecoundary font-medium'>Disponibilité</span>
+                                <span className='text-textPrimary'>Générique?</span>
+                            </div>
+                            <div className="flex flex-col space-y-2">
+                                {genList.map((value, index) => (<div key={`medicine-modal-gen-${index}`} className="w-full inline-flex justify-between">
+                                    <div className="inline-flex items-center space-x-2">
+                                        <FaTrashAlt className='text-textSecoundary text-sm cursor-pointer' onClick={() => removeMed(index)} />
+                                        <span className='text-textPrimary'>Médicament {index + 1}</span>
+                                    </div>
+                                    <ToggleSwitch value={value} toggleSwitch={() => toggleMed(index)} />
+                                </div>))}
+                                <span className='text-textSecoundary italic text-sm cursor-pointer' onClick={() => addMed()}>Cliquer ici pour ajouter un médicament...</span>
+                            </div>
+                        </div>
 
-                    {/* Actions */}
-                    <div className="flex justify-between w-full">
-                        <button
-                            onClick={handleOnClose}
-                            className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
-                        >
-                            Ignore
-                        </button>
-                        <div className="inline-flex">
+                        {/* Actions */}
+                        <div className="flex justify-between w-full">
                             <button
-                                onClick={() => onRefuse(selectedNotification.idnotifications)}
-                                className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
+                                onClick={handleOnClose}
+                                className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
                             >
-                                Refuse
+                                Ignore
                             </button>
-                            <button
-                                onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient)}
-                                className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
-                            >
-                                Accept
-                            </button>
+                            <div className="inline-flex">
+                                <button
+                                    onClick={() => onRefuse(selectedNotification.idnotifications)}
+                                    className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
+                                >
+                                    Refuse
+                                </button>
+                                <button
+                                    onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient, comment, genList)}
+                                    className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
+                                >
+                                    Accept
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
