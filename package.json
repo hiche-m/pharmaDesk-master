@@ -1,7 +1,7 @@
 {
   "name": "pharma-exp-desk",
   "productName": "Pharma Express Desktop",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The Pharma Express pharmacy desktop app.",
   "main": ".webpack/main",
   "proxy": "https://pharma-back.onrender.com",
