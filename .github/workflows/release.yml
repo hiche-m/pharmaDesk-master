@@ -3,7 +3,7 @@ name: Release Workflow
 on:
   push:
     branches:
-      - afterRebase  # Trigger on push to the `main` branch
+      - release  # Trigger on push to the `release` branch
       
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Specify your Node.js version (optional)
+          node-version: '20'  # Specify your Node.js version (optional)
 
       # Step 4: Install dependencies
       - name: Install dependencies
@@ -32,7 +32,7 @@ jobs:
 
       # Step 5: Run Standard Version for first release (bumping version, creating changelog)
       - name: Run Standard Version for first release
-        run: npm run release -- --first-release
+        run: npm run release
 
       # Step 6: Push version bump and tag
       - name: Push version bump and tag
@@ -48,7 +48,8 @@ jobs:
       - name: Zip the build output
         run: |
           cd out
-          zip -r build.zip *  # Zip the contents of the 'out' folder (adjust if needed)
+          zip -r build.zip *
+        # Zip the contents of the 'out' folder (adjust if needed)
 
       # Step 9: Get version and changelog content for the release
       - name: Get new version and changelog content
