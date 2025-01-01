@@ -1,6 +1,6 @@
 import React from "react";
 import { BiSearch } from "react-icons/bi";
-import { tailwindColors } from "../utils/Colors.jsx";
+import { tailwindColors } from "../Utils/Colors.jsx";
 
 const SearchBar = () => {
     return (<div className="bg-lightShapes rounded-full inline-flex flex-row items-center px-2">

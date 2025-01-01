@@ -1,5 +1,5 @@
 import React from "react";
-import { tailwindColors } from '../utils/Colors.jsx';
+import { tailwindColors } from '../Utils/Colors.jsx';
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import pfp1 from "../Assets/Images/pfp1.svg"
 import pfp2 from "../Assets/Images/pfp2.svg"

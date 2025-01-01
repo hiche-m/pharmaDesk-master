@@ -3,8 +3,8 @@ name: Release Workflow
 on:
   push:
     branches:
-      - afterRebase  # Trigger on push to the `main` branch
-      
+      - release  # Trigger on push to the `release` branch
+     
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Specify your Node.js version (optional)
+          node-version: '20'  # Specify your Node.js version (optional)
 
       # Step 4: Install dependencies
       - name: Install dependencies
@@ -32,7 +32,7 @@ jobs:
 
       # Step 5: Run Standard Version for first release (bumping version, creating changelog)
       - name: Run Standard Version for first release
-        run: npm run release -- --first-release
+        run: npm run release
 
       # Step 6: Push version bump and tag
       - name: Push version bump and tag
@@ -48,7 +48,7 @@ jobs:
       - name: Zip the build output
         run: |
           cd out
-          zip -r build.zip *  # Zip the contents of the 'out' folder (adjust if needed)
+          zip -r build.zip *
 
       # Step 9: Get version and changelog content for the release
       - name: Get new version and changelog content
@@ -59,10 +59,11 @@ jobs:
           echo "::set-output name=version::$NEW_VERSION"
           echo "::set-output name=changelog::$CHANGES"
 
-      # Step 10: Create GitHub release (with changelog)
+      # Step 10: Create GitHub release (with changelog) and capture release ID
       - name: Create GitHub release
+        id: create-release
         run: |
-          curl -X POST \
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{
                 "tag_name": "v${{ steps.changelog.outputs.version }}",
@@ -71,16 +72,18 @@ jobs:
                 "draft": false,
                 "prerelease": false
               }' \
-            https://api.github.com/repos/${{ github.repository }}/releases
-
+            https://api.github.com/repos/${{ github.repository }}/releases)
+          
+          release_id=$(echo $response | jq -r '.id')
+          echo "::set-output name=release_id::$release_id"
+          
       # Step 11: Upload build to GitHub release
       - name: Upload build to GitHub release
         run: |
-          # Assuming the zip file is created in the previous step and it's in the `out` folder
           for file in ./out/build.zip; do
             curl -X POST \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               -H "Content-Type: application/octet-stream" \
               --data-binary @"$file" \
-              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.id }}/assets?name=$(basename $file)"
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=$(basename $file)"
           done
