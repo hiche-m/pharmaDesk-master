@@ -8,7 +8,8 @@ import WideGraph from "../Components/WideGraph.jsx";
 import SideContent from "../Components/SideContent.jsx";
 import useFetch from "../Services/UseFetch.jsx";
 import { refresh_rate } from "../Utils/Parameters.jsx";
-import Modal from "../Components/NotificationModal.jsx";
+import NotificationModal from "../Components/NotificationModal.jsx";
+import ConfirmationModal from "../Components/ConfirmationModal.jsx";
 import useConfirmRequest from "../Services/useConfirmRequest.jsx";
 import useRefuseRequest from "../Services/useRefuseRequest.jsx";
 import { useSelector } from "react-redux";
@@ -125,15 +126,8 @@ const Home = () => {
                 </div>
             </div>
         </div>
-        <Modal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            onRefuse={handleRefuse}
-            onAccept={handleAccept}
-            onConfirm={handleConfirm}
-            selectedNotification={selectedNot}
-            confirmType={confirmType}
-        />
+        {confirmType === 0 ? (<NotificationModal isOpen={isModalOpen} onClose={handleCloseModal} onRefuse={handleRefuse} onAccept={handleAccept} selectedNotification={selectedNot} />)
+            : (<ConfirmationModal isOpen={isModalOpen} onClose={handleCloseModal} onRefuse={handleRefuse} onConfirm={handleConfirm} selectedNotification={selectedNot} />)}
     </>
     );
 }
