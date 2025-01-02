@@ -33,29 +33,12 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
     if (confirmType) {
 
-        const portionObjects = {
-            'take': 'Par prise',
-            'volume': 'Par volume',
-            'weight': 'Par poids',
-            'c_cafe': 'Par cuillère à caffé',
-            'c_soup': 'Par cuillère à soupe',
-            'autre': 'Autre'
-        }
 
-        const portionTypes = {
-            'take': 1,
-            'volume': 10,
-            'weight': 10,
-            'c_cafe': 1,
-            'c_soup': 1,
-            'autre': null,
-        };
+        /* Enable Posiologie */
+        const [isOn, setIsOn] = useState(false);
 
 
-        /* Quantity Per Take */
-
-
-
+        /* Frequency */
 
         const frequencyObjects = {
             'heur': 'Par heur',
@@ -71,42 +54,65 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             'autre': null,
         };
 
-
-
-
-        /* Enable Posiologie */
-        const [isOn, setIsOn] = useState(false);
-
         const toggleSwitch = () => {
             setIsOn(!isOn);
         };
 
-
         const addFrequency = () => {
-            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
-                ...item,
-                frequence: item.quantite + 1
-            } : item));
+            setPosiodata([
+                ...posioData.slice(0, formIndex),
+                {
+                    ...posioData[formIndex],
+                    frequence: posioData[formIndex].frequence + 1,
+                },
+                ...posioData.slice(formIndex + 1)
+            ]);
         }
 
         const minusFrequency = () => {
-            setPosiodata(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
-                ...item,
-                frequence: item.quantite - 1
-            } : item));
+            if (posioData[formIndex].frequence > 1) {
+                setPosiodata([
+                    ...posioData.slice(0, formIndex),
+                    {
+                        ...posioData[formIndex],
+                        frequence: posioData[formIndex].frequence - 1,
+                    },
+                    ...posioData.slice(formIndex + 1)
+                ]);
+            }
         }
+
+        /* Portion/Quantity */
+
+        const portionObjects = {
+            'take': 'Par prise',
+            'volume': 'Par volume',
+            'weight': 'Par poids',
+            'c_cafe': 'Par cuillère à caffé',
+            'c_soup': 'Par cuillère à soupe',
+            'autre': 'Autre'
+        }
+
+        const portionValues = {
+            'take': 1,
+            'volume': 10,
+            'weight': 10,
+            'c_cafe': 1,
+            'c_soup': 1,
+            'autre': null,
+        };
 
         const addQuantity = () => {
             setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
                 ...item,
-                quantite: item.quantite + portionTypes[selectedPortion]
+                quantite: item.quantite + portionValues[selectedPortion]
             } : item));
         };
 
         const minusQuantity = () => {
             setPosiodata(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
                 ...item,
-                quantite: item.quantite - portionTypes[selectedPortion]
+                quantite: item.quantite - portionValues[selectedPortion]
             } : item));
         };
 
@@ -314,7 +320,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Fréquence de prise</span>
                                         {frequencyTypes[selectedFrequency] != null && (<div className='inline-flex justify-center items-center space-x-1'>
-                                            <FaMinus className='text-[1.2rem] cursor-pointer text-textSecoundary' onClick={() => minusFrequency()} />
+                                            <FaMinus className={`text-[1.2rem] cursor-pointer ${posioData[formIndex].frequence > 1 ? 'text-textSecoundary' : 'text-disabled'}`} onClick={() => minusFrequency()} />
                                             <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{currentForm["frequence"]}{frequencyTypes[selectedFrequency]}</span>
                                             <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addFrequency()} />
                                         </div>)}
@@ -333,7 +339,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                 <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Quelle quantité par prise?</span>
-                                        {portionTypes[selectedPortion] != null && (<div className='inline-flex justify-center items-center space-x-1'>
+                                        {portionValues[selectedPortion] != null && (<div className='inline-flex justify-center items-center space-x-1'>
                                             <FaMinus className='text-[1.2rem] cursor-pointer text-textSecoundary' onClick={() => minusQuantity()} />
                                             <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{currentForm["quantite"]}</span>
                                             <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addQuantity()} />
@@ -447,7 +453,7 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
-            <div className="bg-white rounded-lg p-6 w-max h-max shadow-lg">
+            <div className="bg-white rounded-lg p-4 w-max h-max shadow-lg">
                 <div className="inline-flex w-max h-max space-x-4">
                     {isImageLoading && (
                         <div className="w-[33vw] aspect-square flex justify-center items-center">
@@ -464,21 +470,32 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                         onLoad={() => setImageLoading(false)}
                         onError={() => setError("Image unavailable!")}
                     />)}
-                    <div className="flex flex-col items-start">
+                    <div className="flex flex-col items-start space-y-2 max-h-full">
                         {/* Info */}
-                        <h2 className="text-lg font-bold mb-2">Accepter l'ordonnance?</h2>
-                        <p className="text-gray-600 mb-4 text-center">
+                        <h2 className="text-lg font-bold m-0 p-0">Accepter l'ordonnance?</h2>
+                        <p className="text-gray-600 text-center">
                             <b>{selectedNotification.firstname}</b> a envoyé une ordonnance.
                         </p>
 
                         {/* Form */}
-                        <div className="h-full flex flex-col space-y-4">
+                        <div className="h-full flex flex-col mt-2">
                             <textarea className="bg-lightShapes rounded-lg outline-none p-2 resize-none" placeholder="Commentaire..." value={comment} onChange={(event) => onCommentChange(event.target.value)} />
-                            <div className="w-full inline-flex justify-between">
-                                <span className='text-textSecoundary font-medium'>Disponibilité</span>
+                            <div className="w-full inline-flex justify-between mt-4">
+                                <span className='text-textSecoundary font-medium'>Disponibilité ({(!genList || genList.length === 0) ? '/' : genList.length})</span>
                                 <span className='text-textPrimary'>Générique?</span>
                             </div>
-                            <div className="flex flex-col space-y-2">
+                            <div className="flex flex-col overflow-y-auto max-h-72 space-y-2 mt-2">
+                                <span className="flex justify-start items-center text-textSecoundary italic text-sm cursor-pointer">
+                                    <IoMdAdd />
+                                    <span onClick={() => addMed()}>Cliquer ici pour ajouter un médicament...</span>
+                                </span>
+                                {(!genList || genList.length === 0) && (<div key={`medicine-modal-gen-(-1)`} className="w-full inline-flex justify-between pointer-events-none">
+                                    <div className="inline-flex items-center space-x-2">
+                                        <FaTrashAlt className='text-disabled text-sm' />
+                                        <span className='text-textSecoundary'>Médicament 1</span>
+                                    </div>
+                                    <ToggleSwitch className="opacity-35" value={false} toggleSwitch={() => { }} />
+                                </div>)}
                                 {genList.map((value, index) => (<div key={`medicine-modal-gen-${index}`} className="w-full inline-flex justify-between">
                                     <div className="inline-flex items-center space-x-2">
                                         <FaTrashAlt className='text-textSecoundary text-sm cursor-pointer' onClick={() => removeMed(index)} />
@@ -486,7 +503,6 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                     </div>
                                     <ToggleSwitch value={value} toggleSwitch={() => toggleMed(index)} />
                                 </div>))}
-                                <span className='text-textSecoundary italic text-sm cursor-pointer' onClick={() => addMed()}>Cliquer ici pour ajouter un médicament...</span>
                             </div>
                         </div>
 
