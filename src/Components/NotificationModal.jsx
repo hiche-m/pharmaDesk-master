@@ -12,15 +12,11 @@ import { FaTrashAlt } from "react-icons/fa";
 const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotification, confirmType }) => {
 
     const { posioData, setPosiodata,
-        selectedFrequency, setSelectedFrequency,
-        selectedPortion, setSelectedPortion,
-        frequency, setFrequency,
-        timing, setTiming,
-        quantity, setQuantity,
-        days, setDays,
-    } = useStateContext()
+        selectedFrequency,
+        selectedPortion,
+        quantityPortion, frequency,
+    } = useStateContext();
 
-    const quantityPortion = 1 / 2;
     const daysPortion = 15;
     if (!isOpen) return null;
 
@@ -82,6 +78,31 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             }
         }
 
+        const handleFrequencyChange = (value) => {
+            const number = parseInt(value);
+            if (!isNaN(number) && number > 0) {
+                setPosiodata([
+                    ...posioData.slice(0, formIndex),
+                    {
+                        ...posioData[formIndex],
+                        frequence: number,
+                    },
+                    ...posioData.slice(formIndex + 1)
+                ]);
+            }
+        };
+
+        const handleFrequencyTypeChange = (value) => {
+            setPosiodata([
+                ...posioData.slice(0, formIndex),
+                {
+                    ...posioData[formIndex],
+                    frequenceDetails: value,
+                },
+                ...posioData.slice(formIndex + 1)
+            ]);
+        };
+
         /* Portion/Quantity */
 
         const portionObjects = {
@@ -102,18 +123,63 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
             'autre': null,
         };
 
+        const portionTypes = {
+            'take': '',
+            'volume': 'ml',
+            'weight': 'g',
+            'c_cafe': '',
+            'c_soup': '',
+            'autre': null,
+        };
+
         const addQuantity = () => {
-            setPosiodata(prev => prev.map((item, i) => i === formIndex ? {
-                ...item,
-                quantite: item.quantite + portionValues[selectedPortion]
-            } : item));
+            setPosiodata([
+                ...posioData.slice(0, formIndex),
+                {
+                    ...posioData[formIndex],
+                    quantite: posioData[formIndex].quantite + 1,
+                },
+                ...posioData.slice(formIndex + 1)
+            ]);
         };
 
         const minusQuantity = () => {
-            setPosiodata(prev => prev.map((item, i) => i === formIndex && item.quantite > quantityPortion ? {
-                ...item,
-                quantite: item.quantite - portionValues[selectedPortion]
-            } : item));
+            if (posioData[formIndex].quantite > 1) {
+                setPosiodata([
+                    ...posioData.slice(0, formIndex),
+                    {
+                        ...posioData[formIndex],
+                        quantite: posioData[formIndex].quantite - 1,
+                    },
+                    ...posioData.slice(formIndex + 1)
+                ]);
+            }
+        };
+
+        const handleQuantityChange = (value) => {
+            let number = parseInt(value);
+            if (!isNaN(number) && number > 0) {
+                number = number / portionValues[posioData[formIndex].quantiteDetails];
+                setPosiodata([
+                    ...posioData.slice(0, formIndex),
+                    {
+                        ...posioData[formIndex],
+                        quantite: number,
+                    },
+                    ...posioData.slice(formIndex + 1)
+                ]);
+            }
+        };
+
+        const handleQuantityTypeChange = (value) => {
+            setPosiodata([
+                ...posioData.slice(0, formIndex),
+                {
+                    ...posioData[formIndex],
+                    quantiteDetails: value,
+                },
+                ...posioData.slice(formIndex + 1)
+            ]);
         };
 
 
@@ -220,8 +286,8 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                     "nomPils": '',
                     "quantite": quantityPortion,
                     "quantiteDetails": selectedPortion,
-                    "ajeun": 0,
-                    "avantRepas": 1,
+                    "ajeun": 1,
+                    "avantRepas": 0,
                     "pendantRepas": 0,
                     "apresRepas": 0,
                     "matin": 0,
@@ -318,18 +384,17 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                 {/* Line 2 */}
                                 <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center">
-                                        <span>Fréquence de prise</span>
-                                        {frequencyTypes[selectedFrequency] != null && (<div className='inline-flex justify-center items-center space-x-1'>
-                                            <FaMinus className={`text-[1.2rem] cursor-pointer ${posioData[formIndex].frequence > 1 ? 'text-textSecoundary' : 'text-disabled'}`} onClick={() => minusFrequency()} />
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{currentForm["frequence"]}{frequencyTypes[selectedFrequency]}</span>
+                                        <span>{'Fréquence de prise: '}</span>
+                                        {frequencyTypes[posioData[formIndex].frequenceDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
+                                            <FaMinus className={`text-[1.2rem] ${posioData[formIndex].frequence > 1 ? 'text-textSecoundary cursor-pointer' : 'text-disabled'}`} onClick={() => minusFrequency()} />
+                                            <span>{'Chaque '}</span>
+                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg inline-flex'><input className='outline-none bg-transparent w-10 text-center' value={currentForm["frequence"]} onChange={(event) => handleFrequencyChange(event.target.value)} />{frequencyTypes[posioData[formIndex].frequenceDetails]}</span>
                                             <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addFrequency()} />
                                         </div>)}
                                         <DropdownMenu options={Object.entries(frequencyObjects).map(([key, value]) => ({
                                             value: key,
                                             label: value
-                                        }))} label={frequencyObjects[selectedFrequency]} selectedValue={selectedFrequency} onSelect={(value) => {
-                                            setSelectedFrequency(value);
-                                        }}
+                                        }))} label={frequencyObjects[posioData[formIndex].frequenceDetails]} selectedValue={posioData[formIndex].frequenceDetails} onSelect={(value) => handleFrequencyTypeChange(value)}
                                             disabled={!isOn}
                                         />
                                     </div>
@@ -339,17 +404,15 @@ const Modal = ({ isOpen, onClose, onRefuse, onAccept, onConfirm, selectedNotific
                                 <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Quelle quantité par prise?</span>
-                                        {portionValues[selectedPortion] != null && (<div className='inline-flex justify-center items-center space-x-1'>
-                                            <FaMinus className='text-[1.2rem] cursor-pointer text-textSecoundary' onClick={() => minusQuantity()} />
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{currentForm["quantite"]}</span>
+                                        {portionValues[posioData[formIndex].quantiteDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
+                                            <FaMinus className={`text-[1.2rem] ${posioData[formIndex].quantite > 1 ? 'text-textSecoundary cursor-pointer' : 'text-disabled'}`} onClick={() => minusQuantity()} />
+                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg inline-flex'><input className='outline-none bg-transparent w-10 text-center' value={currentForm["quantite"] * portionValues[posioData[formIndex].quantiteDetails]} onChange={(event) => handleQuantityChange(event.target.value)} />{portionTypes[posioData[formIndex].quantiteDetails]}</span>
                                             <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addQuantity()} />
                                         </div>)}
                                         <DropdownMenu options={Object.entries(portionObjects).map(([key, value]) => ({
                                             value: key,
                                             label: value
-                                        }))} label={portionObjects[selectedPortion]} selectedValue={selectedPortion} onSelect={(value) => {
-                                            setSelectedPortion(value);
-                                        }}
+                                        }))} label={portionObjects[posioData[formIndex].quantiteDetails]} selectedValue={posioData[formIndex].quantiteDetails} onSelect={(value) => handleQuantityTypeChange(value)}
                                             disabled={!isOn}
                                         />
                                     </div>

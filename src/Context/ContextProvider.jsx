@@ -40,7 +40,7 @@ export const ContextProvider = ({ children }) => {
   const [timing, setTiming] = useState(0);
   const daysPortion = 15;
   const [days, setDays] = useState(daysPortion);
-  const quantityPortion = 1 / 2;
+  const quantityPortion = 1;
   const [quantity, setQuantity] = useState(0);
   const [posioData, setPosiodata] = useState([{
 
@@ -391,6 +391,7 @@ export const ContextProvider = ({ children }) => {
       posioData, setPosiodata,
       selectedFrequency, setSelectedFrequency,
       selectedPortion, setSelectedPortion,
+      quantityPortion,
       frequency, setFrequency,
       timing, setTiming,
       quantity, setQuantity,
