@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.6...v0.0.7) (2025-01-03)
+
+
+### Features
+
+* Added comment and replica list in the pharmacy response ([63f9104](https://github.com/hiche-m/pharmaDesk-master/commit/63f9104ea5d1ca6b6210c5472eb7b3e3fafe7d89))
+
+
+### Bug Fixes
+
+* Dev branch now up to date ([0944180](https://github.com/hiche-m/pharmaDesk-master/commit/0944180c11fc6d62f45cfd2e3d2ed91808b38cff))
+* Dev tools aren't opened anymore ([ba17b56](https://github.com/hiche-m/pharmaDesk-master/commit/ba17b56e2419e9e3050821345dfa818b7ef59923))
+* Fixed posology controls ([ec0d98c](https://github.com/hiche-m/pharmaDesk-master/commit/ec0d98c7d7e846e0517b59d07be9911bed7530e3))
+* Seperated notification modal and confirmation modal ([bb85173](https://github.com/hiche-m/pharmaDesk-master/commit/bb8517382a14296c1592925715eea085aa6cf24a))
+
+### 0.0.1 (2025-01-01)
+
 ### 0.0.6 (2025-01-03)
 
 ### 0.0.5 (2025-01-03)
