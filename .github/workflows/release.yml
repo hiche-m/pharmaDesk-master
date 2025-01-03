@@ -60,15 +60,29 @@ jobs:
           echo "::set-output name=changelog::$CHANGES"
 
       # Step 10: Create GitHub release (with changelog) and capture release ID
-      - name: Create GitHub release
-        id: create-release
+      - name: Capture Changelog Content in Variable
+        id: capture-changelog
         run: |
+          CHANGES=$(cat CHANGELOG.md)
+          echo "Captured Changelog Content:"
+          echo "$CHANGES"
+          echo "CHANGES=$CHANGES" >> $GITHUB_ENV
+
+      - name: Create GitHub Release with Changelog
+        run: |
+          json=$(jq -n \
+            --arg tag_name "v${{ steps.changelog.outputs.version }}" \
+            --arg name "Release v${{ steps.changelog.outputs.version }}" \
+            --arg body "$CHANGES" \
+            '{tag_name: $tag_name, name: $name, body: $body, draft: false, prerelease: false}')
+          
+          echo "Generated JSON for release:"
+          echo "$json"
+          
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "$(jq -n --arg tag_name "v${{ steps.changelog.outputs.version }}" \
-                          --arg name "Release v${{ steps.changelog.outputs.version }}" \
-                          --arg body "$CHANGES" \
-                          '{tag_name: $tag_name, name: $name, body: $body, draft: false, prerelease: false}')" \
+            -H "Content-Type: application/json" \
+            -d "$json" \
             https://api.github.com/repos/${{ github.repository }}/releases
           
       # Step 11: Upload build to GitHub release
