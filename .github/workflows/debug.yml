@@ -25,6 +25,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '20'  # Specify your Node.js version (optional)
+
+      - name: Install dependencies
+        run: npm install
             
       - name: Print changelog before standard-version
         run: cat CHANGELOG.md
