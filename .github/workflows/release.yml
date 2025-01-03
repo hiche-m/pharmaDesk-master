@@ -20,11 +20,11 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      # Step 3: Set up Node.js (Optional, in case you need Node.js for some other task)
+      # Step 3: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'  # Specify your Node.js version (optional)
+          node-version: '20'
 
       # Step 4: Install dependencies
       - name: Install dependencies
@@ -42,56 +42,45 @@ jobs:
 
       # Step 7: Package the Electron app (using electron-forge)
       - name: Build Electron app
-        run: npm run package  # This runs electron-forge package
+        run: npm run package
 
-      # Step 8: Zip the build output (assuming it's in `out` directory)
+      # Step 8: Zip the build output
       - name: Zip the build output
         run: |
           cd out
           zip -r build.zip *
 
-      # Step 9: Get version and changelog content for the release
+      # Step 9: Get new version and changelog content
       - name: Get new version and changelog content
         id: changelog
         run: |
           NEW_VERSION=$(node -p "require('./package.json').version")
-          CHANGES=$(cat CHANGELOG.md)
-          echo "::set-output name=version::$NEW_VERSION"
-          echo "::set-output name=changelog::$CHANGES"
+          CHANGELOG=$(cat CHANGELOG.md)
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      # Step 10: Create GitHub release (with changelog) and capture release ID
-      - name: Capture Changelog Content in Variable
-        id: capture-changelog
-        run: |
-          CHANGES=$(cat CHANGELOG.md)
-          echo "Captured Changelog Content:"
-          echo "$CHANGES"
-          echo "CHANGES=$CHANGES" >> $GITHUB_ENV
-
+      # Step 10: Create GitHub release with changelog
       - name: Create GitHub Release with Changelog
-        run: |
-          json=$(jq -n \
-            --arg tag_name "v${{ steps.changelog.outputs.version }}" \
-            --arg name "Release v${{ steps.changelog.outputs.version }}" \
-            --arg body "$CHANGES" \
-            '{tag_name: $tag_name, name: $name, body: $body, draft: false, prerelease: false}')
-          
-          echo "Generated JSON for release:"
-          echo "$json"
-          
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "$json" \
-            https://api.github.com/repos/${{ github.repository }}/releases
-          
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.changelog.outputs.version }}
+          release_name: Release v${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
       # Step 11: Upload build to GitHub release
       - name: Upload build to GitHub release
-        run: |
-          for file in ./out/build.zip; do
-            curl -X POST \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @"$file" \
-              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=$(basename $file)"
-          done
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./out/build.zip
+          asset_name: build.zip
+          asset_content_type: application/zip
