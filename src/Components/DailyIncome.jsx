@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { AiFillCaretDown } from "react-icons/ai";
-import { calcPercentage, drawCircle, drawLine, formatNumberWithComma } from "../Utils/Functions.jsx";
+import { calcPercentage, drawCircle, drawLine, formatDateForSql, formatNumberWithComma, formattedPreviousDates, getFullMonthNameInFrench, sqlToFrenchDateDaily } from "../Utils/Functions.jsx";
 
-const DailyIncome = ({ className = "", values = [17, 15, 7], dotWidth = 5 }) => {
+const DailyIncome = ({ className = "", inputValues = [0, 0, 0], dailyWidgetDate = formatDateForSql(new Date()), dotWidth = 5 }) => {
     const canvasRef = useRef(null);
+
+    const values = inputValues ? inputValues : [0, 0, 0]
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -45,7 +47,7 @@ const DailyIncome = ({ className = "", values = [17, 15, 7], dotWidth = 5 }) => 
         <div className="flex flex-row h-max">
             <span className="flex flex-row grow text-sm items-center justify-start font-medium">Profits quotidiens</span>
             <span className="flex flex-row grow row-span-1 text-xs justify-end items-center">
-                <span className="px-1">Novembre</span>
+                <span className="px-1">{getFullMonthNameInFrench(formattedPreviousDates(dailyWidgetDate, 1))}</span>
                 <AiFillCaretDown size="0.5rem" />
             </span>
         </div>
@@ -56,12 +58,12 @@ const DailyIncome = ({ className = "", values = [17, 15, 7], dotWidth = 5 }) => 
                 className="absolute top-0 left-0 w-full h-full z-20 pointer-events-none"
             ></canvas>
             <div className="grid grid-cols-3 grid-rows-1 h-full mt-5 text-center pb-6">
-                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">20 Nov</span>
+                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">{sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 2))}</span>
                 <div className="col-span-1 row-span-1 flex flex-col justify-between items-center bg-darkPrimary p-2 rounded-xl text-white text-sm">
                     <span className="font-medium">{formatNumberWithComma(values[1])} Ventes</span>
-                    <span>21 Nov</span>
+                    <span>{sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 1))}</span>
                 </div>
-                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">22 Nov</span>
+                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">{sqlToFrenchDateDaily(dailyWidgetDate)}</span>
             </div>
         </div>
     </div>);

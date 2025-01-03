@@ -30,7 +30,10 @@ const Home = () => {
 
     const [confirmType, setConfirmType] = useState(0);
 
-    const { confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription } = useStateContext()
+    const {
+        confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
+    } = useStateContext();
+
     const { handleLogout } = useAuthContext()
     const navigate = useNavigate(0);
 
