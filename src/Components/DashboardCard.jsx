@@ -1,7 +1,7 @@
 import React from "react";
 import { AiFillCaretDown } from "react-icons/ai";
 
-const DashCard = ({ className, post = 'Seller', name = 'Alice Smith', adress = '', imgSrc = null }) => {
+const DashCard = ({ className, post = 'Seller', name = 'Alice Smith', adress = '', imgSrc = null, todaySales = 0, salesToNextLevel = 0 }) => {
     return (<div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col space-y-2`}>
         {/* Header */}
         <span className="inline-flex justify-between">
@@ -24,13 +24,13 @@ const DashCard = ({ className, post = 'Seller', name = 'Alice Smith', adress = '
         {/* Daily Sales */}
         <span className="inline-flex justify-between">
             <span className="text-xs">Today</span>
-            <span className="text-xs font-medium">5 sales</span>
+            <span className="text-xs font-medium">{todaySales} sales</span>
         </span>
 
         {/* Til next leve */}
         <span className="inline-flex justify-between">
             <span className="text-xs mr-2">Sales until next level</span>
-            <span className="text-xs font-medium">12 sales</span>
+            <span className="text-xs font-medium">{salesToNextLevel} sales</span>
         </span>
 
         {/* Progress */}

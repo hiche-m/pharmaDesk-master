@@ -100,3 +100,43 @@ export function capFix(text) {
     // Join the words back together
     return capitalizedWords.join(' ');
 }
+
+export const formatDateForSql = (date) => new Date(date).toISOString().split('T')[0];
+
+export const getTotalSalesForDates = (salesData, dailyWidgetDate) => {
+
+    const widgetDate = new Date(dailyWidgetDate);
+    const datesToCheck = [
+        formatDateForSql(new Date(widgetDate.setDate(widgetDate.getDate() - 2))),
+        formatDateForSql(new Date(widgetDate.setDate(widgetDate.getDate() + 1))),
+        dailyWidgetDate
+    ];
+
+    const salesMap = Object.fromEntries(
+        salesData.map(({ sale_date, total_sales }) => [formatDateForSql(sale_date), total_sales])
+    );
+
+    return datesToCheck.map(date => salesMap[date] || 0);
+}
+
+export const sqlToFrenchDateDaily = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short'
+    }).replace('.', '');
+}
+
+export const formattedPreviousDates = (dateString, number) => {
+    const date = new Date(dateString);
+
+    const NDayBefore = new Date(date);
+    NDayBefore.setDate(NDayBefore.getDate() - number);
+
+    return formatDateForSql(NDayBefore);
+}
+
+export const getFullMonthNameInFrench = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { month: 'long' });
+}

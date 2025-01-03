@@ -32,12 +32,58 @@ export const options = {
     },
 };
 
+export function formatPrescriptionData(prescriptions, graphWidgetBeginDate, graphWidgetEndDate) {
+    // Helper function to format date as 'dd MMM yyyy' in French
+    function formatDate(date) {
+        return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' }).format(new Date(date));
+    }
+
+    // Convert input dates to Date objects for comparison
+    const startDate = new Date(graphWidgetBeginDate);
+    const endDate = new Date(graphWidgetEndDate);
+
+    // Generate the list of dates between graphWidgetBeginDate and graphWidgetEndDate
+    const datesInRange = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        datesInRange.push(formatDate(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Initialize the result object
+    const result = {
+        labels: datesInRange,
+        confirmed: Array(datesInRange.length).fill(0),
+        received: Array(datesInRange.length).fill(0),
+    };
+
+    // Map the prescriptions data to a date-based lookup
+    const prescriptionsMap = prescriptions.reduce((acc, { prescription_date, confirmed_prescriptions, total_prescriptions }) => {
+        const dateFormatted = formatDate(prescription_date);
+        acc[dateFormatted] = {
+            confirmed: parseInt(confirmed_prescriptions, 10),
+            received: total_prescriptions,
+        };
+        return acc;
+    }, {});
+
+    // Fill the confirmed and received arrays based on the prescriptions map
+    result.labels.forEach((label, index) => {
+        if (prescriptionsMap[label]) {
+            result.confirmed[index] = prescriptionsMap[label].confirmed;
+            result.received[index] = prescriptionsMap[label].received;
+        }
+    });
+
+    return result;
+}
+
 export const data = {
-    labels: ["Jan 2023", "Fév 2023", "Mar 2023", "Avr 2023", "Mai 2023", "Juin 2023", "Juil 2023", "Août 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Déc 2023"],
+    labels: [`Jan ${new Date().getFullYear()}`, `Fév ${new Date().getFullYear()}`, `Mar ${new Date().getFullYear()}`, `Avr ${new Date().getFullYear()}`, `Mai ${new Date().getFullYear()}`, `Juin ${new Date().getFullYear()}`, `Juil ${new Date().getFullYear()}`, `Août ${new Date().getFullYear()}`, `Sep ${new Date().getFullYear()}`, `Oct ${new Date().getFullYear()}`, `Nov ${new Date().getFullYear()}`, `Déc ${new Date().getFullYear()}`,],
     datasets: [
         {
             label: "Confirmed",
-            data: [null, 301, 278, 304, 315, 345, 398, 420, 425, 452, 470, null],
+            data: [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
             borderColor: tailwindColors.primary,
             cubicInterpolationMode: 'monotone',
             pointBackgroundColor: '#FFFFFF',
@@ -48,7 +94,7 @@ export const data = {
         },
         {
             label: "Received",
-            data: [null, 328, 302, 341, 321, 370, 402, 455, 433, 460, 488, null],
+            data: [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
             borderColor: tailwindColors.lightShapes,
             cubicInterpolationMode: 'monotone',
             pointBackgroundColor: '#FFFFFF',

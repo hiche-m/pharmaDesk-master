@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import sound1 from '../Assets/Sounds/Notification/sound1.wav';
+import { formatDateForSql } from '../Utils/Functions.jsx';
 
 const StateContext = createContext();
 
@@ -62,7 +63,59 @@ export const ContextProvider = ({ children }) => {
   const [notificationSettings, setNotificationSettings] = useState(null);
 
 
+  const [todayStats, setTodayStats] = useState(null);
 
+
+  const [dailyWidgetDate, setDailyWidgetDate] = useState(null);
+
+  const [dailyWidgetData, setDailyWidgetData] = useState(null);
+
+
+  const [graphWidgetBeginDate, setGraphWidgetBeginDate] = useState(null);
+
+  const [graphWidgetEndDate, setGraphWidgetEndDate] = useState(null);
+
+  const [graphWidgetData, setGraphWidgetData] = useState(null);
+
+
+  /* Dashboard */
+  useEffect(() => {
+    const jsonId = localStorage.getItem('idpharma')
+    const idpharma = JSON.parse(jsonId)
+
+    if (idpharma && dailyWidgetDate) {
+      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/${dailyWidgetDate}`).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching daily widget data.');
+        } else {
+          setDailyWidgetData(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching daily widget data.');
+      });
+    }
+
+  }, [dailyWidgetDate]);
+
+  useEffect(() => {
+    const jsonId = localStorage.getItem('idpharma')
+    const idpharma = JSON.parse(jsonId)
+
+    if (idpharma && graphWidgetBeginDate && graphWidgetEndDate) {
+      axios.get(`${HOST}/api/dashboard/${idpharma}/prescriptions/${graphWidgetBeginDate}/${graphWidgetEndDate}`).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching graph widget data.');
+        } else {
+          setGraphWidgetData(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching graph widget data.');
+      });
+    }
+
+  }, [graphWidgetBeginDate, graphWidgetEndDate])
+
+  /* Rest */
   useEffect(() => {
 
     //get ID from localstorage when loading 
@@ -76,6 +129,37 @@ export const ContextProvider = ({ children }) => {
 
     if (idpharma != null) {
       console.log("hellllooooo from the socket ");
+
+
+
+      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/today`).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching daily sales.');
+        } else {
+          setTodayStats(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching daily sales.');
+      });
+
+
+
+
+
+      const today = new Date();
+      setDailyWidgetDate(formatDateForSql(today));
+
+      // Set graphWidgetBeginDate to the first day of the current year
+      const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+      setGraphWidgetBeginDate(formatDateForSql(firstDayOfYear));
+
+      // Set graphWidgetEndDate to the last day of the current year
+      const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+      setGraphWidgetEndDate(formatDateForSql(lastDayOfYear));
+
+
+
+
 
       if (storeName == null) {
         const storeName = localStorage.getItem('storeName');
@@ -388,14 +472,11 @@ export const ContextProvider = ({ children }) => {
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
       , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation, storeName,
       confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
-      posioData, setPosiodata,
-      selectedFrequency, setSelectedFrequency,
-      selectedPortion, setSelectedPortion,
-      quantityPortion,
-      frequency, setFrequency,
-      timing, setTiming,
-      quantity, setQuantity,
-      days, setDays,
+      posioData, setPosiodata, selectedFrequency, setSelectedFrequency, selectedPortion,
+      setSelectedPortion, quantityPortion, frequency, setFrequency, timing, setTiming,
+      quantity, setQuantity, days, setDays, todayStats, setDailyWidgetDate, dailyWidgetData,
+      setGraphWidgetBeginDate, setGraphWidgetEndDate, graphWidgetData, dailyWidgetDate,
+      graphWidgetBeginDate, graphWidgetEndDate
     }}>
 
       {children}
