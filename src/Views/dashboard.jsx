@@ -11,7 +11,7 @@ const Dashboard = () => {
 
     const {
         todayStats, setDailyWidgetDate, dailyWidgetData, setGraphWidgetBeginDate, setGraphWidgetEndDate,
-        graphWidgetData, dailyWidgetDate, graphWidgetBeginDate, graphWidgetEndDate
+        dailyWidgetDate, graphWidgetData, graphWidgetBeginDate, graphWidgetEndDate
     } = useStateContext();
 
     return (
