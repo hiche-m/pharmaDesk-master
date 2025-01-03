@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 5: Run Standard Version for first release (bumping version, creating changelog)
-      - name: Run Standard Version for first release
+      # Step 5: Run Standard Version (bumping version, creating changelog)
+      - name: Run Standard Version
         run: npm run release
 
       # Step 6: Push version bump and tag
