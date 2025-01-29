@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.9...v0.0.10) (2025-01-29)
+
+
+### Bug Fixes
+
+* **Dashboard:** Fixed loading after login issue ([8fd71c3](https://github.com/hiche-m/pharmaDesk-master/commit/8fd71c310ef4426b87bd75cdff7e2bec4ca49701))
+
 ### [0.0.9](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.8...v0.0.9) (2025-01-04)
 
 ### [0.0.8](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.7...v0.0.8) (2025-01-03)
