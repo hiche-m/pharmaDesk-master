@@ -77,6 +77,8 @@ export const ContextProvider = ({ children }) => {
 
   const [graphWidgetData, setGraphWidgetData] = useState(null);
 
+  const [idpharma, setIdpharma] = useState(null);
+
 
   /* Dashboard */
   useEffect(() => {
@@ -115,57 +117,11 @@ export const ContextProvider = ({ children }) => {
 
   }, [graphWidgetBeginDate, graphWidgetEndDate])
 
-  /* Rest */
   useEffect(() => {
 
-    //get ID from localstorage when loading 
-    const jsonId = localStorage.getItem('idpharma')
-    const idpharma = JSON.parse(jsonId)
-    const cachedNotificationSetting = JSON.parse(localStorage.getItem('notification'));
-    /* const idpharma = 1 */
-    // Initialize Socket.IO client and set it to state
-    const socket = io(HOST);
-    setSocket(socket)
+    const cachedNotificationSetting = JSON.parse(localStorage.getItem('notification'));;
 
-    if (idpharma != null) {
-      console.log("hellllooooo from the socket ");
-
-
-
-      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/today`).then((res) => {
-        if (!res || !res.data) {
-          console.log('Error fetching daily sales.');
-        } else {
-          setTodayStats(res.data.data);
-        }
-      }).catch((e) => {
-        console.log('Error fetching daily sales.');
-      });
-
-
-
-
-
-      const today = new Date();
-      setDailyWidgetDate(formatDateForSql(today));
-
-      // Set graphWidgetBeginDate to the first day of the current year
-      const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
-      setGraphWidgetBeginDate(formatDateForSql(firstDayOfYear));
-
-      // Set graphWidgetEndDate to the last day of the current year
-      const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
-      setGraphWidgetEndDate(formatDateForSql(lastDayOfYear));
-
-
-
-
-
-      if (storeName == null) {
-        const storeName = localStorage.getItem('storeName');
-        setStoreName(storeName);
-      }
-
+    if (socket) {
       // Listen for the 'store_connected' event
       socket.emit('store_connected', { idpharma });//// make the id dynamic 
 
@@ -175,8 +131,8 @@ export const ContextProvider = ({ children }) => {
         toast("un client a annulé sa commande");
         // Display the notification in the front
         console.log(`Notification: ${message, idprescription}`);
-
-
+ 
+ 
       }); */
       socket.on('notification_removed', (data) => {
         const { idnotifications,
@@ -267,39 +223,78 @@ export const ContextProvider = ({ children }) => {
         removeNotifComing(data);
       });
 
+      socket.on('restoring_password', (data) => {
 
+        console.log("i'm in the restoring socket out if  ", data);
+        if (data.idpharma != null || undefined) {
 
+          console.log("i'm in the restoring socket ", data.idpharma);// set useNavigate() to redirect to the changing page 
+
+          localStorage.setItem('idpharma', data.idpharma)
+          setTriggerNavigate(true)
+        }
+      });
+    }
+
+  }, [socket]);
+
+  /* Rest */
+  useEffect(() => {
+
+    if (!socket) {
+
+      const varSocket = io(HOST);
+      setSocket(varSocket);
 
     }
 
-    socket.on('restoring_password', (data) => {
 
-      console.log("i'm in the restoring socket out if  ", data);
-      if (data.idpharma != null || undefined) {
+    console.log('Starting useContextProvider with ID: ' + idpharma);
 
-        console.log("i'm in the restoring socket ", data.idpharma);// set useNavigate() to redirect to the changing page 
+    if (idpharma == null) {
 
-        localStorage.setItem('idpharma', data.idpharma)
-        setTriggerNavigate(true)
+      const jsonId = localStorage.getItem('idpharma');
+      setIdpharma(JSON.parse(jsonId));
+
+    } else {
+      console.log("hellllooooo from the socket ");
+
+      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/today`).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching daily sales.');
+        } else {
+          setTodayStats(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching daily sales.');
+      });
+
+
+
+
+
+      const today = new Date();
+      setDailyWidgetDate(formatDateForSql(today));
+
+      // Set graphWidgetBeginDate to the first day of the current year
+      const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+      setGraphWidgetBeginDate(formatDateForSql(firstDayOfYear));
+
+      // Set graphWidgetEndDate to the last day of the current year
+      const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+      setGraphWidgetEndDate(formatDateForSql(lastDayOfYear));
+
+
+
+
+
+      if (storeName == null) {
+        const storeName = localStorage.getItem('storeName');
+        setStoreName(storeName);
       }
-    })
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-    // Clean up the socket connection on component unmount
-    return () => socket.close();
-
-
-  }, []);
+  }, [idpharma]);
 
   useEffect(() => {
     if (!notificationSettings) {
@@ -465,6 +460,7 @@ export const ContextProvider = ({ children }) => {
   return (
 
     <StateContext.Provider value={{
+      setIdpharma,
       triggerNavigate, setTriggerNavigate, getUserData, notificationSettings, updateNotificationSettings,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif, setNotificationSettings,
       notificationListeRequests, setNotificationListeRequest,
