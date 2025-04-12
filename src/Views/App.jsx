@@ -61,7 +61,16 @@ export default function App() {
             <Helmet>
                 <meta
                     http-equiv="Content-Security-Policy"
-                    content="default-src 'self'; connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com; img-src 'self' http://res.cloudinary.com data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+                    content=
+                    {"default-src 'self' http://res.cloudinary.com;" +
+                        " connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com http://res.cloudinary.com;" +
+                        " img-src 'self' http://res.cloudinary.com data:;" +
+                        " script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
+                        " style-src 'self' 'unsafe-inline';"}
+                /* "default-src 'self';
+                 connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com;
+                  img-src 'self' http://res.cloudinary.com data:; script-src 'self' 'unsafe-inline'
+                   'unsafe-eval'; style-src 'self' 'unsafe-inline';" */
                 />
             </Helmet>
             <Routes>

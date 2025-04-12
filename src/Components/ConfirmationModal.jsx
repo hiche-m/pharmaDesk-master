@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import { IoMdAdd } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
@@ -7,10 +7,40 @@ import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
 import DropdownMenu from './DropDownMenu.jsx';
 import { useStateContext } from '../Context/ContextProvider.jsx';
+import { Document, Page } from 'react-pdf';
+import { useResizeObserver } from '@wojtekmaj/react-hooks';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
+
+
+const resizeObserverOptions = {};
+
+const maxWidth = 600;
 
 const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotification }) => {
 
     if (!isOpen) return null;
+
+    const [numPages, setNumPages] = useState();
+    const [containerRef, setContainerRef] = useState(null);
+    const [containerWidth, setContainerWidth] = useState();
+
+
+    const onResize = useCallback((entries) => {
+        const [entry] = entries;
+
+        if (entry) {
+            setContainerWidth(entry.contentRect.width);
+        }
+    }, []);
+
+    useResizeObserver(containerRef, resizeObserverOptions, onResize);
+
+    function onDocumentLoadSuccess({ numPages: nextNumPages }) {
+        setNumPages(nextNumPages);
+        setImageLoading(false);
+    }
 
     const { posioData, setPosiodata,
         selectedFrequency,
@@ -276,24 +306,31 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     const currentForm = posioData[formIndex];
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none" >
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
             <div className="bg-white w-max rounded-lg p-6 shadow-lg">
                 <div className="inline-flex w-max h-max space-x-4">
-                    {isImageLoading && (
+                    {/* {isImageLoading && (
                         <div className="w-[33vw] h-[33vw] flex justify-center items-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                         </div>
-                    )}
+                    )} */}
                     {error !== "" && (
                         <span className="text-lg text-red-500">{error}</span>
                     )}
-                    {error === "" && (<img
-                        src={selectedNotification.url}
-                        alt="Perscription"
-                        className={`${isImageLoading ? 'w-[1ch] h-[1ch]' : 'w-[33vw] h-[33vw]'} object-cover rounded-md`}
-                        onLoad={() => setImageLoading(false)}
-                        onError={() => setError("Image unavailable!")}
-                    />)}
+                    {/* PDF */}
+                    <div className="max-h-[33vw] h-[33vw] max-w-[33vw] w-[33vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
+                        <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
+                            {Array.from(new Array(numPages), (_el, index) => (
+                                <Page
+                                    key={`page_${index + 1}`}
+                                    className={"my-2"}
+                                    pageNumber={index + 1}
+                                    width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
+                                />
+                            ))}
+                        </Document>
+                    </div>
+
                     <div className="flex flex-col justify-between items-start">
                         {/* Info */}
                         <div className="flex flex-col justify-start items-start space-y-2">

@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     const [triggerNavigate, setTriggerNavigate] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
 
-    const { resetPasswordEmail, setResetPasswordEmail, socket, setNotificationSettings } = useStateContext()
+    const { resetPasswordEmail, setResetPasswordEmail, socket, setNotificationSettings, setIdpharma } = useStateContext();
 
 
 
@@ -76,6 +76,8 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('token', res.data.token);
                 localStorage.setItem('idpharma', res.data.data[0].idpharma);
                 localStorage.setItem('storeName', res.data.data[0].storeName);
+
+                setIdpharma(JSON.parse(res.data.data[0].idpharma));
 
                 setIncorrectAuth(false)
                 setIsAuth(true)
