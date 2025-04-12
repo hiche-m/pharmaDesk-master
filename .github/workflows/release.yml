@@ -7,14 +7,14 @@ on:
      
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Use Windows runner
 
     steps:
       # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
       # Step 2: Set Git configuration (user name and email)
       - name: Set Git user info
@@ -42,26 +42,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 7: Package the Electron app (using electron-forge)
-      - name: Build Electron app
-        run: npm run package
+      # Step 7: Package the Electron app for Windows
+      - name: Package Electron app for Windows
+        run: npm run package -- --platform=win32 --arch=x64
 
       # Step 8: Zip the build output
       - name: Zip the build output
         run: |
-          cd out
-          zip -r build.zip *
+          Compress-Archive -Path .\out\* -DestinationPath .\windows-build.zip
 
       # Step 9: Get new version and changelog content
       - name: Get new version and changelog content
         id: changelog
         run: |
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          CHANGELOG=$(cat CHANGELOG.md)
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          $NEW_VERSION = (Get-Content .\package.json | ConvertFrom-Json).version
+          $CHANGELOG = Get-Content .\CHANGELOG.md -Raw
+          echo "version=$NEW_VERSION" >> $env:GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $env:GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $env:GITHUB_OUTPUT
+          echo "EOF" >> $env:GITHUB_OUTPUT
 
       # Step 10: Create GitHub release with changelog
       - name: Create GitHub Release with Changelog
@@ -83,6 +82,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out/build.zip
-          asset_name: build.zip
+          asset_path: .\windows-build.zip
+          asset_name: windows-build.zip
           asset_content_type: application/zip

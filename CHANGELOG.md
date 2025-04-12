@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.9...v0.0.10) (2025-01-29)
+
+
+### Bug Fixes
+
+* **Dashboard:** Fixed loading after login issue ([8fd71c3](https://github.com/hiche-m/pharmaDesk-master/commit/8fd71c310ef4426b87bd75cdff7e2bec4ca49701))
+
+### [0.0.9](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.8...v0.0.9) (2025-01-04)
+
+### [0.0.8](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.7...v0.0.8) (2025-01-03)
+
+
+### Features
+
+* **dashboard:** Added daily income widget (Fully connected) ([a280a67](https://github.com/hiche-m/pharmaDesk-master/commit/a280a67eba1932bab5bcb8fc13e8793bd7cde962))
+* **dashboard:** Added wide graph in the dashboard (Fully connected) ([80503f5](https://github.com/hiche-m/pharmaDesk-master/commit/80503f598d60e97c774d72f8b3abc6474cfd223a))
+
+
+### Bug Fixes
+
+* Fixed DailyIncome component bug ([caeaeeb](https://github.com/hiche-m/pharmaDesk-master/commit/caeaeebe02cb4b9c3e939a54fc5a7a75fc9cfaaf))
+
 ### [0.0.7](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.6...v0.0.7) (2025-01-03)
 
 
