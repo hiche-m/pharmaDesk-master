@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.10...v0.0.11) (2025-04-12)
+
+
+### Features
+
+* **Notifications:** Perscriptions must now be PDF ([28d4424](https://github.com/hiche-m/pharmaDesk-master/commit/28d4424bad82975b8083fba68fd82ccd144acd7c))
+
 ### [0.0.10](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.9...v0.0.10) (2025-01-29)
 
 
