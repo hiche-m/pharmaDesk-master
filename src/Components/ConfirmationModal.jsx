@@ -7,6 +7,7 @@ import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
 import DropdownMenu from './DropDownMenu.jsx';
 import { useStateContext } from '../Context/ContextProvider.jsx';
+import { Document } from 'react-pdf';
 
 const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotification }) => {
 
@@ -276,7 +277,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     const currentForm = posioData[formIndex];
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none" >
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
             <div className="bg-white w-max rounded-lg p-6 shadow-lg">
                 <div className="inline-flex w-max h-max space-x-4">
                     {isImageLoading && (
@@ -287,13 +288,27 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                     {error !== "" && (
                         <span className="text-lg text-red-500">{error}</span>
                     )}
-                    {error === "" && (<img
-                        src={selectedNotification.url}
-                        alt="Perscription"
-                        className={`${isImageLoading ? 'w-[1ch] h-[1ch]' : 'w-[33vw] h-[33vw]'} object-cover rounded-md`}
-                        onLoad={() => setImageLoading(false)}
-                        onError={() => setError("Image unavailable!")}
-                    />)}
+                    {error === "" && selectedNotification.url.endsWith('.pdf') ? (
+                        <div className="w-[33vw] h-[33vw] overflow-auto">
+                            <Document
+                                file={selectedNotification.url}
+                                onLoadSuccess={() => setImageLoading(false)}
+                                onLoadError={() => setError("PDF unavailable!")}
+                            >
+                                <div className="text-center">
+                                    <p>PDF Loaded Successfully</p>
+                                </div>
+                            </Document>
+                        </div>
+                    ) : (
+                        <img
+                            src={selectedNotification.url}
+                            alt="Perscription"
+                            className={`${isImageLoading ? 'w-[1ch] h-[1ch]' : 'w-[33vw] h-[33vw]'} object-cover rounded-md`}
+                            onLoad={() => setImageLoading(false)}
+                            onError={() => setError("Image unavailable!")}
+                        />
+                    )}
                     <div className="flex flex-col justify-between items-start">
                         {/* Info */}
                         <div className="flex flex-col justify-start items-start space-y-2">
