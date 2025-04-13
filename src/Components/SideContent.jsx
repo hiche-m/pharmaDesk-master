@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import NotifictionsSkeleton from "../Skeletons/notifications_skeleton.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import { refresh_rate } from "../Utils/Parameters.jsx";
+import SearchBar from "./SearchBar.jsx";
 
 const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActivity, openNotification = (notification_data, type) => { }, loading = false }) => {
 
@@ -53,6 +54,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                     )}
                 </div> */}
         <div className="flex flex-col">
+            <SearchBar />
             <div className="h-max w-full space-y-2">
                 <div className="inline-flex mb-2 justify-between items-center ">
                     <span className="font-medium">Confirmation et Posiologie</span>
