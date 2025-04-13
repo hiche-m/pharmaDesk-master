@@ -10,7 +10,6 @@ import SettingsInput from "../Components/SettingsInput.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
 import DropdownMenu from "../Components/DropDownMenu.jsx";
 import { toast } from "react-toastify";
-import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import axios from "axios";
