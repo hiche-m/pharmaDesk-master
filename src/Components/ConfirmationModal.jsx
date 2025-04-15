@@ -1,10 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import { IoMdAdd } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
+import { AiOutlinePushpin } from "react-icons/ai";
+import { AiFillPushpin } from "react-icons/ai";
 import DropdownMenu from './DropDownMenu.jsx';
 import { useStateContext } from '../Context/ContextProvider.jsx';
 import { Document, Page } from 'react-pdf';
@@ -25,6 +27,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     const [numPages, setNumPages] = useState();
     const [containerRef, setContainerRef] = useState(null);
     const [containerWidth, setContainerWidth] = useState();
+    const [isPinned, setIsPinned] = useState(false);
 
 
     const onResize = useCallback((entries) => {
@@ -46,6 +49,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         selectedFrequency,
         selectedPortion,
         quantityPortion, frequency,
+        pinNotif, unpinNotif, pinnedNotifs,
     } = useStateContext();
 
     const daysPortion = 15;
@@ -60,6 +64,11 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     /* Enable Posiologie */
     const [isOn, setIsOn] = useState(false);
 
+    useEffect(() => {
+        const isPinned = pinnedNotifs.some((pin) => pin.idnotifications === selectedNotification.idnotifications);
+        setIsPinned(isPinned);
+
+    }, []);
 
     /* Frequency */
 
@@ -305,6 +314,16 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
 
     const currentForm = posioData[formIndex];
 
+    const togglePin = () => {
+        if (isPinned) {
+            unpinNotif(selectedNotification);
+        }
+        else {
+            pinNotif(selectedNotification);
+        }
+        setIsPinned(!isPinned);
+    }
+
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
             <div className="bg-white w-max rounded-lg p-6 shadow-lg">
@@ -334,7 +353,14 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                     <div className="flex flex-col justify-between items-start">
                         {/* Info */}
                         <div className="flex flex-col justify-start items-start space-y-2">
-                            <h2 className="text-lg font-bold p-0">Confirmer l'achat?</h2>
+                            <span className='inline-flex grow justify-between items-center'>
+                                <h2 className="text-lg font-bold p-0">Confirmer l'achat?</h2>
+                                <div onClick={() => togglePin()}>
+                                    {isPinned ?
+                                        (<AiFillPushpin className={`text-[1.5rem] text-primary`} />) :
+                                        (<AiOutlinePushpin className='text-[1.5rem] cursor-pointer text-textSecoundary' />)}
+                                </div>
+                            </span>
                             <p className="text-gray-600 text-center">
                                 Vous pouvez envoyer la posologie des médicaments au client.
                             </p>
