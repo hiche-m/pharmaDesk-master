@@ -315,6 +315,8 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     const currentForm = posioData[formIndex];
 
     const togglePin = () => {
+        if (isPinned == null) return;
+
         if (isPinned) {
             unpinNotif(selectedNotification);
         }
