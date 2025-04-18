@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.12...v0.0.13) (2025-04-18)
+
+
+### Bug Fixes
+
+* Fixed some language mistakes. ([f600266](https://github.com/hiche-m/pharmaDesk-master/commit/f60026695f58427800c4cab6329a08e8ac6b4a8d))
+
 ### [0.0.12](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.11...v0.0.12) (2025-04-18)
 
 
