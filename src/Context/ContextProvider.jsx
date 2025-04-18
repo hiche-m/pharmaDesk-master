@@ -168,7 +168,7 @@ export const ContextProvider = ({ children }) => {
           userPic,
         } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Un client arrive!");
+          toast("Un client a choisi votre pharmacie !");
         }
         if (cachedNotificationSetting.confirmationSound) {
           const sound = new Audio(sound1);
@@ -196,7 +196,7 @@ export const ContextProvider = ({ children }) => {
           sound.play();
         }
         if (cachedNotificationSetting.showToast) {
-          toast("Nouvelle notification!");
+          toast("Nouvelle Commande !");
         }
         addNotif(data);
         // Display the notification in the front
