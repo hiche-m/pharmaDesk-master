@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.13...v0.0.14) (2025-04-18)
+
+
+### Bug Fixes
+
+* Fixed PDF not loading bug ([dc072d5](https://github.com/hiche-m/pharmaDesk-master/commit/dc072d5dfe269d7d883fa750f1ba83dd5aa1af09))
+
 ### [0.0.13](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.12...v0.0.13) (2025-04-18)
 
 
