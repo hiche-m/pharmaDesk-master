@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FaPen } from "react-icons/fa";
-import { MdManageAccounts } from "react-icons/md";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { FaTrashAlt } from "react-icons/fa";
 import { FaSave } from "react-icons/fa";
-import { IoMdAdd } from "react-icons/io";
 import pfp4 from "../Assets/Images/pfp4.svg"
 import SettingsInput from "../Components/SettingsInput.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
-import DropdownMenu from "../Components/DropDownMenu.jsx";
 import { toast } from "react-toastify";
-import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import axios from "axios";
 import { HOST } from "../Utils/Parameters.jsx";
 import useUpdateInfo from "../Services/useUpdateInfo.jsx";
+import { BiSolidImageAdd } from "react-icons/bi";
 
 const Settings = () => {
 
@@ -23,7 +18,7 @@ const Settings = () => {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const settingsTiles = ["Compte Pharmacie", "Compte Personnel", "Sécurité", "Notifications"/* , "Profils" */];
+    const settingsTiles = ["Compte Pharmacie", /* "Compte Personnel",  */"Sécurité", "Notifications"/* , "Profils" */];
 
     const [settingsInfo, setSettingsInfo] = useState(null);
 
@@ -61,12 +56,12 @@ const Settings = () => {
                 longitude: settingsInfo ? settingsInfo.longitude : null,
             });
 
-            setPersonalForm({
+            /* setPersonalForm({
                 lastName: settingsInfo ? settingsInfo.nameOwner.split(' ')[0] : '',
                 firstName: settingsInfo ? settingsInfo.nameOwner.split(' ')[1] : '',
                 phone: settingsInfo ? settingsInfo.phoneNumber : '',
                 adress: settingsInfo ? settingsInfo.adresse : '',
-            });
+            }); */
 
             setSecurityForm({
                 ...securityForm,
@@ -87,6 +82,7 @@ const Settings = () => {
                         const temp = res.data.data;
                         setSettingsInfo(res.data.data);
 
+
                         setdefaultPharmacyForm({
                             storeName: temp ? temp.storeName : '',
                             adress: temp ? temp.adresse : '',
@@ -96,12 +92,12 @@ const Settings = () => {
                             longitude: temp ? temp.longitude : null,
                         });
 
-                        setDefaultPersonalForm({
+                        /* setDefaultPersonalForm({
                             lastName: temp ? temp.nameOwner.split(' ')[0] : '',
                             firstName: temp ? temp.nameOwner.split(' ')[1] : '',
                             phone: temp ? temp.phoneNumber : '',
                             adress: temp ? temp.adresse : '',
-                        });
+                        }); */
 
                         setDefaultSecurityForm({
                             ...defaultSecurityForm,
@@ -177,16 +173,16 @@ const Settings = () => {
     };
 
     ////////////////////////////////////////////////// Personal Settings
-    const [defaultPersonalForm, setDefaultPersonalForm] = useState({
+    /* const [defaultPersonalForm, setDefaultPersonalForm] = useState({
         lastName: '',
         firstName: '',
         phone: '',
         adress: '',
-    });
+    }); */
 
-    const [personalForm, setPersonalForm] = useState(defaultPersonalForm);
+    /* const [personalForm, setPersonalForm] = useState(defaultPersonalForm); */
 
-    const changePersonalFormValue = (key, value) => {
+    /* const changePersonalFormValue = (key, value) => {
         setPersonalForm({
             ...personalForm,
             [key]: value,
@@ -224,7 +220,7 @@ const Settings = () => {
             console.log('Sending request...');
             updateProfile({}, form);
         }
-    };
+    }; */
 
     ////////////////////////////////////////////////// Security Settings
     const [defaultSecurityForm, setDefaultSecurityForm] = useState({
@@ -388,22 +384,99 @@ const Settings = () => {
         setAlertDialogShowing(true);
     };
 
+    ////////////////////////////////////////////////////// Profile Picture
+
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [profilePictureLoading, setProfilePictureLoading] = useState(false);
+    const [profilePictureError, setProfilePictureError] = useState(null);
+    const [profilePictureSuccess, setProfilePictureSuccess] = useState(false);
+    const [profilePictureResponse, setProfilePictureResponse] = useState(null);
+
+    const handleProfilePictureChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePicture(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    const handleProfilePictureUpload = async () => {
+        if (profilePicture) {
+            setProfilePictureLoading(true);
+            const formData = new FormData();
+            formData.append('profilePicture', profilePicture);
+            formData.append('pharmaId', localStorage.getItem('idpharma'));
+
+            try {
+                const response = await axios.post(`${HOST}/api/setProfilePic`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                setProfilePictureResponse(response.data);
+                setProfilePictureLoading(false);
+                setProfilePictureSuccess(true);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                setProfilePictureError('Error uploading file');
+                setProfilePictureLoading(false);
+            }
+        }
+    }
+
+    const handleProfilePictureDelete = async () => {
+        try {
+            setProfilePictureLoading(true);
+            const formData = new FormData();
+            formData.append('profilePicture', null);
+            formData.append('pharmaId', localStorage.getItem('idpharma'));
+            const response = await axios.post(`${HOST}/api/setProfilePic`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        } catch (error) {
+        }
+        setProfilePicture(null);
+        setProfilePictureSuccess(false);
+        setProfilePictureResponse(null);
+        setProfilePictureLoading(false);
+    }
+
+    useEffect(() => {
+        if (profilePicture) {
+            handleProfilePictureUpload();
+        }
+    }, [profilePicture]);
+
     return (<>
         {alertDialogShowing && (<TailwindAlertModal title={alertTitle} content={alertContent} actionLabel={alertActionLabel} actionFunction={alertActionFunction} />)}
         {/* {deleteDialogShowing && (<TailwindConfirmModal title='Vous êtes sûrs ?' content='Cela supprimera le profil sélectionné, cette action peut ne pas être réversible.' actionLabel='Supprimer' cancelLabel='Annuler' actionFunction={() => deleteProfileAction()} cancelAction={() => cancelAction()} />)} */}
         {/* Profile */}
-        <div className="col-span-12 row-span-3 ml-4 inline-flex flex-row justify-between items-center">
-            <div className="inline-flex flex-row space-x-2 items-center">
-                <img className="hidden sm:block h-12 w-12 rounded-full bg-gray-500" src={pfp4} />
-                <span className="flex flex-col">
-                    <span className="font-medium">Harrison Pfannerstill</span>
-                    <span className="text-sm text-textSecoundary">Administrateur</span>
-                </span>
-            </div>
+        <div className="col-span-12 row-span-3 ml-4 inline-flex flex-row justify-start items-center space-x-2">
             <div className="inline-flex flex-row space-x-1">
-                <span className="hidden sm:block rounded-full cursor-pointer bg-primary p-3 hover:bg-primary/90 text-white active:bg-darkPrimary" onClick={() => handleEditClick()}><FaPen /></span>
-                <span className={`hidden sm:block rounded-full ${selectedIndex === settingsTiles.indexOf('Profils') ? '' : 'cursor-pointer'} ${selectedIndex === settingsTiles.indexOf('Profils') ? 'bg-textSecoundary/70' : 'bg-disabled'} p-3 ${selectedIndex === settingsTiles.indexOf('Profils') ? '' : 'hover:bg-disabled/90'} text-textPrimary active:bg-textSecoundary/70`} onClick={selectedIndex === settingsTiles.indexOf('Profils') ? null : () => handleAccountClick()}><MdManageAccounts /></span>
-                <span className="rounded-full cursor-pointer bg-disabled p-3 hover:bg-disabled/90 text-textPrimary active:bg-textSecoundary/70" onClick={() => handleDropdownClick()}><HiDotsHorizontal /></span>
+                <label htmlFor="profilePictureInput" className="hidden sm:block rounded-full cursor-pointer bg-primary p-3 hover:bg-primary/90 text-white active:bg-darkPrimary">
+                    <BiSolidImageAdd />
+                </label>
+                <input
+                    id="profilePictureInput"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => handleProfilePictureChange(event)}
+                />
+                {/* <span className={`hidden sm:block rounded-full ${selectedIndex === settingsTiles.indexOf('Profils') ? '' : 'cursor-pointer'} ${selectedIndex === settingsTiles.indexOf('Profils') ? 'bg-textSecoundary/70' : 'bg-disabled'} p-3 ${selectedIndex === settingsTiles.indexOf('Profils') ? '' : 'hover:bg-disabled/90'} text-textPrimary active:bg-textSecoundary/70`} onClick={selectedIndex === settingsTiles.indexOf('Profils') ? null : () => handleAccountClick()}><MdManageAccounts /></span>
+                <span className="rounded-full cursor-pointer bg-disabled p-3 hover:bg-disabled/90 text-textPrimary active:bg-textSecoundary/70" onClick={() => handleDropdownClick()}><HiDotsHorizontal /></span> */}
+            </div>
+            <div className="inline-flex flex-row space-x-2 items-center">
+                <img className="hidden sm:block h-12 w-12 rounded-full bg-gray-500" src={settingsInfo && settingsInfo.userPic ? settingsInfo.userPic : pfp4} />
+                <span className="flex flex-col">
+                    <span className="font-medium">{pharmacyForm.storeName}</span>
+                    <span className="text-sm text-textSecoundary">{pharmacyForm.adress}</span>
+                </span>
             </div>
         </div>
 
@@ -455,7 +528,7 @@ const Settings = () => {
                 </div>
 
                 {/* Personal Info */}
-                <div className={`${selectedIndex === 1 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
+                {/* <div className={`${selectedIndex === 1 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations personnelles </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 overflow-y-auto gap-x-2 small:gap-x-10">
@@ -479,7 +552,7 @@ const Settings = () => {
                             </span>
                         </button>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Security */}
                 <div className={`${selectedIndex === 2 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>

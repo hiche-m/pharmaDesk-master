@@ -70,7 +70,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
             {/* Canvas overlay */}
             <canvas
                 ref={canvasRef}
-                className="absolute top-0 left-0 w-full h-full z-20 pointer-events-none"
+                className="absolute top-0 left-0 w-full h-full z-1 pointer-events-none"
             ></canvas>
             <div className="grid grid-cols-3 grid-rows-1 h-full mt-5 text-center pb-6">
                 <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">{sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 2))}</span>

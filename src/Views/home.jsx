@@ -20,6 +20,7 @@ import { useAuthContext } from '../Context/AuthProvider.jsx';
 import DashHeader from "../Components/DashboardHeader.jsx";
 import DashCard from "../Components/DashboardCard.jsx";
 import { Outlet, useNavigate } from 'react-router-dom';
+import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 
 
 const Home = () => {
@@ -110,28 +111,90 @@ const Home = () => {
         handleOpenModal();
     };
 
-    const handleDisconnect = () => {
+    /* const handleDisconnect = () => {
         handleLogout();
         navigate(0);
-    }
+    } */
 
-    return (<>
-        <div className="col-span-3 row-span-2 bg-lightShapes">
-            <SideContent userData={data} refreshVar={refresh} handleRefresh={handleRefresh} openNotification={openNotification} loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription} />
-        </div>
-        <div className="col-span-9 col-start-1 row-start-2 flex h-auto mb-10">
-            <div className="w-max">
-                <SideMenu option_list={[{ label: "Tableau de bord", route: '/dashboard' }, { label: "Boutique", disabled: true, route: '/dashboard/store' }, { label: "Annonces", disabled: true, route: '/dashboard/feed' }, { label: "Paramètres", route: '/dashboard/settings' }, { label: "Se déconnecter", action: () => handleDisconnect() }/* , { label: "Découvrir", disabled: true } */]/*  + Object.keys(data[0]) */} />
+    /////////////////////////////////////////////////////////////////// Delete Modal Dialog
+    const [disconnectDialogShowing, setDeleteDialogShowing] = useState(false);
+
+    const cancelAction = () => {
+        /* Closes Dialog */
+        setDeleteDialogShowing(false);
+    };
+
+    const disconnectAction = () => {
+        /* Disconnect */
+        handleLogout();
+        navigate(0);
+        setDeleteDialogShowing(false);
+    };
+
+    const handleDisconnectOnClick = (index) => {
+        /* Open Dialog */
+        setDeleteDialogShowing(true);
+    };
+
+    return (
+        <>
+            {disconnectDialogShowing && (
+                <TailwindConfirmModal
+                    className="absolute z-50"
+                    title="Êtes-vous sûr de vouloir vous déconnecter ?"
+                    content="Cela déconnectera votre session sur ce compte. Vous devrez saisir vos informations de connexion pour l'utiliser à nouveau."
+                    actionLabel="Se déconnecter"
+                    cancelLabel="Annuler"
+                    actionFunction={disconnectAction}
+                    cancelAction={cancelAction}
+                />
+            )}
+            <div className="col-span-3 row-span-2 bg-lightShapes">
+                <SideContent
+                    userData={data}
+                    refreshVar={refresh}
+                    handleRefresh={handleRefresh}
+                    openNotification={openNotification}
+                    loading={confirmRequestObject.isRequestLoading || isLoadingConfirmationPerscription}
+                />
             </div>
-            <div className="flex-1">
-                <div className="sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
-                    <Outlet />
+            <div className="col-span-9 col-start-1 row-start-2 flex h-auto mb-10">
+                <div className="w-max">
+                    <SideMenu
+                        option_list={[
+                            { label: "Tableau de bord", route: "/dashboard" },
+                            { label: "Boutique", disabled: true, route: "/dashboard/store" },
+                            { label: "Annonces", disabled: true, route: "/dashboard/feed" },
+                            { label: "Paramètres", route: "/dashboard/settings" },
+                            { label: "Aide", route: "/help", disabled: true },
+                            { label: "Se déconnecter", action: handleDisconnectOnClick },
+                        ]}
+                    />
+                </div>
+                <div className="flex-1">
+                    <div className="sm:max-w-[825px] min-h-[465px] max-h-[580px] grid grid-cols-12 grid-rows-14 w-full h-auto space-x-4 space-y-4 pb-3 pr-3 pt-4 mb-40 sm:mb-60">
+                        <Outlet />
+                    </div>
                 </div>
             </div>
-        </div>
-        {confirmType === 0 ? (<NotificationModal isOpen={isModalOpen} onClose={handleCloseModal} onRefuse={handleRefuse} onAccept={handleAccept} selectedNotification={selectedNot} />)
-            : (<ConfirmationModal isOpen={isModalOpen} onClose={handleCloseModal} onRefuse={handleRefuse} onConfirm={handleConfirm} selectedNotification={selectedNot} />)}
-    </>
+            {confirmType === 0 ? (
+                <NotificationModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onRefuse={handleRefuse}
+                    onAccept={handleAccept}
+                    selectedNotification={selectedNot}
+                />
+            ) : (
+                <ConfirmationModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onRefuse={handleRefuse}
+                    onConfirm={handleConfirm}
+                    selectedNotification={selectedNot}
+                />
+            )}
+        </>
     );
 }
 

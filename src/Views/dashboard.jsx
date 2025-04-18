@@ -7,12 +7,13 @@ import DailyIncome from "../Components/DailyIncome.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import { getTotalSalesForDates } from "../Utils/Functions.jsx";
 import LoadingSpinner from "../Components/LoadingSpinner.jsx";
+import PinSlideshow from "../Components/PinSlideshow.jsx";
 
 const Dashboard = () => {
 
     const {
         todayStats, setDailyWidgetDate, dailyWidgetData, setGraphWidgetBeginDate, setGraphWidgetEndDate,
-        dailyWidgetDate, graphWidgetData, graphWidgetBeginDate, graphWidgetEndDate
+        dailyWidgetDate, graphWidgetData, graphWidgetBeginDate, graphWidgetEndDate, pinnedNotifs,
     } = useStateContext();
 
     return (
@@ -25,12 +26,15 @@ const Dashboard = () => {
                 </div>)}
                 {todayStats && (<DashCard className={`w-full`} post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} todaySales={todayStats && todayStats.total_sales} />)}
 
-                <DashCard className='w-full' name="Dexter Elliot" adress="Boulevard des lions" />
-
                 {!dailyWidgetData && (<div className={`min-w-44 min-h-44 flex justify-center items-center`}>
                     <LoadingSpinner />
                 </div>)}
                 {dailyWidgetData && (<DailyIncome className={`min-w-44 min-h-44`} values={dailyWidgetData && dailyWidgetData.length > 0 && getTotalSalesForDates(dailyWidgetData, dailyWidgetDate)} />)}
+
+                {!pinnedNotifs && (<div className={`w-full flex justify-center items-center`}>
+                    <LoadingSpinner />
+                </div>)}
+                {pinnedNotifs && (<PinSlideshow className='w-full' />)}
 
             </div>
 

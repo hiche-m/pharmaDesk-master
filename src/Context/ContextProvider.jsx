@@ -19,7 +19,7 @@ const StateContext = createContext();
 
 export const ContextProvider = ({ children }) => {
 
-
+  /*                                                                                    */////// Variables
 
   const [connectedPharmacy, setConnectedPharmacy] = useState(null);
   const [triggerNavigate, setTriggerNavigate] = useState(false);
@@ -79,7 +79,9 @@ export const ContextProvider = ({ children }) => {
 
   const [idpharma, setIdpharma] = useState(null);
 
+  const [pinnedNotifs, setPinnedNotifs] = useState(null);
 
+  /*                                                                                    */////// Effects
   /* Dashboard */
   useEffect(() => {
     const jsonId = localStorage.getItem('idpharma')
@@ -259,6 +261,8 @@ export const ContextProvider = ({ children }) => {
     } else {
       console.log("hellllooooo from the socket ");
 
+      getPinnedNotifs();
+
       axios.get(`${HOST}/api/dashboard/${idpharma}/sales/today`).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching daily sales.');
@@ -304,9 +308,48 @@ export const ContextProvider = ({ children }) => {
     }
   }, [notificationSettings]);
 
+  /*                                                                                    */////// Functions
 
-  // Listen for the 'prescription_cancelled' event
+  const pinNotif = (notifObject) => {
+    const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
+    if (temp != null && notifObject != null) {
+      let arr = temp.slice();
+      arr.unshift(notifObject);
+      localStorage.setItem('pinnedNotifs', JSON.stringify(arr));
+      setPinnedNotifs(arr);
+    }
+  }
 
+  const unpinNotif = (notifObject) => {
+    const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
+    if (temp != null && notifObject != null) {
+      let arr = temp.slice();
+      const idnotifications = notifObject.idnotifications;
+      let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
+      localStorage.setItem('pinnedNotifs', JSON.stringify(newArr));
+      setPinnedNotifs(newArr);
+    }
+  }
+
+  const getPinnedNotifs = () => {
+    const jsonId = localStorage.getItem('idpharma');
+    const idpharma = JSON.parse(jsonId);
+    const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
+
+    if (idpharma == null) {
+      return "id empty";
+    } else if (temp == null) {
+      localStorage.setItem('pinnedNotifs', JSON.stringify([]));
+      setPinnedNotifs([]);
+      return [];
+    }
+    else {
+      if (temp.length > 0) {
+        setPinnedNotifs(temp);
+      }
+      return temp;
+    }
+  }
 
   const fetchNotif = async () => {
     console.log('Fetching Notif!');
@@ -444,10 +487,12 @@ export const ContextProvider = ({ children }) => {
   const getUserData = () => {
     const idpharma = localStorage.getItem('idpharma');
     const storeName = localStorage.getItem('storeName');
+    const profilePic = localStorage.getItem('profilePic');
 
     return {
       idpharma,
-      storeName
+      storeName,
+      profilePic
     };
   }
 
@@ -456,6 +501,7 @@ export const ContextProvider = ({ children }) => {
     setNotificationSettings(newSettings);
   }
 
+  /*                                                                                    */////// Return
 
   return (
 
@@ -472,7 +518,7 @@ export const ContextProvider = ({ children }) => {
       setSelectedPortion, quantityPortion, frequency, setFrequency, timing, setTiming,
       quantity, setQuantity, days, setDays, todayStats, setDailyWidgetDate, dailyWidgetData,
       setGraphWidgetBeginDate, setGraphWidgetEndDate, graphWidgetData, dailyWidgetDate,
-      graphWidgetBeginDate, graphWidgetEndDate
+      graphWidgetBeginDate, graphWidgetEndDate, getPinnedNotifs, pinNotif, unpinNotif, pinnedNotifs,
     }}>
 
       {children}
