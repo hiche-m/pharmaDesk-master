@@ -87,11 +87,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     };
 
     const toggleSwitch = () => {
-<<<<<<< HEAD
         /* setIsOn(!isOn); */
-=======
-        setIsOn(!isOn);
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
     };
 
     const addFrequency = () => {
@@ -360,11 +356,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                         {/* Info */}
                         <div className="flex flex-col justify-start items-start space-y-2">
                             <span className='inline-flex grow justify-between items-center'>
-<<<<<<< HEAD
                                 <h2 className="text-lg font-bold p-0">Confirmer l'achat ?</h2>
-=======
-                                <h2 className="text-lg font-bold p-0">Confirmer l'achat?</h2>
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                 <div onClick={() => togglePin()}>
                                     {isPinned ?
                                         (<AiFillPushpin className={`text-[1.5rem] text-primary`} />) :
@@ -372,17 +364,12 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 </div>
                             </span>
                             <p className="text-gray-600 text-center">
-<<<<<<< HEAD
                                 Confirmez l'achat et envoyer la posologie des médicaments au client.
-=======
-                                Vous pouvez envoyer la posologie des médicaments au client.
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                             </p>
                             <div className={`flex flex-col space-y-2 pt-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
                                 {/* Line 1 */}
                                 <div className="">
                                     <div className="inline-flex flex-row space-x-2 items-center justify-between">
-<<<<<<< HEAD
                                         <span className='opacity-35'>Posologie ?</span>
                                         <ToggleSwitch value={isOn} toggleSwitch={toggleSwitch} className='pointer-events-auto opacity-35' />
                                         <div className='inline-flex justify-center items-center space-x-1'>
@@ -395,26 +382,11 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                         <span className='text-textSecoundary italic'>
                                             Bientôt disponible
                                         </span>
-=======
-                                        <span>Posologie?</span>
-                                        <ToggleSwitch value={isOn} toggleSwitch={toggleSwitch} className='pointer-events-auto' />
-                                        <div className='inline-flex justify-center items-center space-x-1'>
-                                            <MdDeleteForever className={`text-[1.5rem] ${isOn && posioData.length > 1 ? 'cursor-pointer text-red-500' : 'text-gray-500'}`} onClick={() => deleteProduct()} />
-                                            {posioData.length > 1 && (<GrFormPrevious className="bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl" onClick={() => navigatePrevious()} />)}
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>Med {formIndex + 1}</span>
-                                            {posioData.length > 1 && (<MdNavigateNext className='bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl' onClick={() => navigateNext()} />)}
-                                            <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addProduct()} />
-                                        </div>
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                     </div>
                                 </div>
 
                                 {/* Line 2 */}
-<<<<<<< HEAD
                                 <div className="opacity-35">
-=======
-                                <div className="">
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>{'Fréquence de prise: '}</span>
                                         {frequencyTypes[posioData[formIndex].frequenceDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
@@ -433,11 +405,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 </div>
 
                                 {/* Line 3 */}
-<<<<<<< HEAD
                                 <div className="opacity-35">
-=======
-                                <div className="">
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                     <div className="inline-flex flex-row space-x-2 items-center">
                                         <span>Quelle quantité par prise?</span>
                                         {portionValues[posioData[formIndex].quantiteDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
@@ -455,11 +423,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 </div>
 
                                 {/* Line 4 */}
-<<<<<<< HEAD
                                 <div className="flex flex-col space-x-2 opacity-35">
-=======
-                                <div className="flex flex-col space-x-2">
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                     <span className='mb-2'>Quand prendre?</span>
                                     {Object.entries(timingList).map(([key, value], index) => (<div className='flex flex-row justify-start items-center space-x-1 mx-1' key={`timing-key-${index}`}>
                                         <input
@@ -473,11 +437,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 </div>
 
                                 {/* Line 5 */}
-<<<<<<< HEAD
                                 <div className=" mt-4 opacity-35">
-=======
-                                <div className=" mt-4">
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                     <span className='mr-2'>Durée de traitement: </span>
                                     <div className='inline-flex justify-center items-center space-x-1'>
                                         <FaMinus className='text-[1.2rem] text-textSecoundary cursor-pointer' onClick={() => minusDays()} />
@@ -495,32 +455,20 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 onClick={handleOnClose}
                                 className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
                             >
-<<<<<<< HEAD
                                 Annuler
-=======
-                                Ignore
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                             </button>
                             <div className="inline-flex">
                                 <button
                                     onClick={() => onRefuse(selectedNotification.idnotifications)}
                                     className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
                                 >
-<<<<<<< HEAD
                                     Refuser
-=======
-                                    Cancel
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                 </button>
                                 <button
                                     onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn)}
                                     className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
                                 >
-<<<<<<< HEAD
                                     Confirmer
-=======
-                                    Confirm
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
                                 </button>
                             </div>
                         </div>

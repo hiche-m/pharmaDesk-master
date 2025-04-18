@@ -54,12 +54,9 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                     )}
                 </div> */}
         <div className="flex flex-col">
-<<<<<<< HEAD
                 <div className="inline-flex mb-2">
                     <span className="font-bold text-lg">Notifications</span>
                 </div>
-=======
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
             <SearchBar />
             <div className="h-max w-full space-y-2">
                 <div className="inline-flex mb-2 justify-between items-center ">
@@ -67,28 +64,16 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 </div>
                 {(notificationListeRequestsConfirmation != null && notificationListeRequestsConfirmation.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications à confirmer.</span>)}
                 {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
-<<<<<<< HEAD
                 {notificationListeRequestsConfirmation != null && notificationListeRequestsConfirmation.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} isConfirm={true} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
-=======
-                {notificationListeRequestsConfirmation != null && notificationListeRequestsConfirmation.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
             </div>
             <div className="my-5" />
             <div className="h-max w-full space-y-2">
                 <div className="inline-flex mb-2">
-<<<<<<< HEAD
                     <span className="font-medium">Nouvelle Commande</span>
                 </div>
                 {(notificationListeRequests != null && notificationListeRequests.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications.</span>)}
                 {isLoadingNotification && <NotifictionsSkeleton />}
                 {notificationListeRequests != null && notificationListeRequests.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} isConfirm={false} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
-=======
-                    <span className="font-medium">Notifications d'ordonnances</span>
-                </div>
-                {(notificationListeRequests != null && notificationListeRequests.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications.</span>)}
-                {isLoadingNotification && <NotifictionsSkeleton />}
-                {notificationListeRequests != null && notificationListeRequests.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
             </div>
         </div>
     </div>);

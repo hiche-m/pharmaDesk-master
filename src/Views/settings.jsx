@@ -11,6 +11,7 @@ import axios from "axios";
 import { HOST } from "../Utils/Parameters.jsx";
 import useUpdateInfo from "../Services/useUpdateInfo.jsx";
 import { BiSolidImageAdd } from "react-icons/bi";
+import { ImUndo } from "react-icons/im";
 
 const Settings = () => {
 
@@ -136,7 +137,7 @@ const Settings = () => {
     const [pharmacyForm, setPharmacyForm] = useState(defaultPharmacyForm);
 
     const changePharmacyFormValue = (key, value) => {
-        if (value && value != '') {
+        if (value != null) {
             setPharmacyForm({
                 ...pharmacyForm,
                 [key]: value,
@@ -514,7 +515,7 @@ const Settings = () => {
                     <div className="inline-flex w-full justify-between">
                         <button className="text-textSecoundary" onClick={() => resetPharmacyForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
-                                <FaTrashAlt />
+                                <ImUndo />
                                 <span>Réinitialiser</span>
                             </span>
                         </button>
@@ -555,7 +556,7 @@ const Settings = () => {
                 </div> */}
 
                 {/* Security */}
-                <div className={`${selectedIndex === 2 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
+                <div className={`${selectedIndex === 1 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     <div className="flex flex-col space-y-2">
                         <span className="font-medium">Informations de sécurité</span>
                         <div className="grid grid-cols-1 overflow-y-auto mr-2 small:mr-20">
@@ -574,7 +575,7 @@ const Settings = () => {
                         <button className="text-textSecoundary" onClick={() => resetSecurityForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
                                 <FaTrashAlt />
-                                <span>Réinitialiser</span>
+                                <span>Vider</span>
                             </span>
                         </button>
                         <button className="bg-primary p-2 rounded-lg hover:bg-primary/90 active:bg-darkPrimary" onClick={() => handleSecurityFormSave()}>
@@ -587,7 +588,7 @@ const Settings = () => {
                 </div>
 
                 {/* Notification Settings */}
-                <div className={`${selectedIndex === 3 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
+                <div className={`${selectedIndex === 2 ? 'flex' : 'hidden'} flex-col h-full justify-between p-4 space-y-4`}>
                     {!notificationForm && (
                         <div className="h-full w-full flex grow justify-center items-center">Chargement...</div>
                     )}
@@ -597,8 +598,8 @@ const Settings = () => {
                             {/* First Row */}
                             <div className="inline-flex flex-row w-full justify-between">
                                 <span className="flex flex-col">
-                                    <span>Émettre un son lorsqu'une notification d'ordonnance arrive.</span>
-                                    <span className="text-textSecoundary italic text-sm">Nouvelle notification!</span>
+                                    <span>Émettre un son lorsqu'une nouvelle commande arrive.</span>
+                                    <span className="text-textSecoundary italic text-sm">Nouvelle Commande !</span>
                                 </span>
                                 <ToggleSwitch value={notificationForm.notificationSound} toggleSwitch={() => toggleNotificationFormValue('notificationSound')} />
                             </div>
@@ -606,15 +607,15 @@ const Settings = () => {
                             <div className="inline-flex flex-row w-full justify-between">
                                 <span className="flex flex-col">
                                     <span>Émettre un son lorsqu'un client confirme qu'il va venir.</span>
-                                    <span className="text-textSecoundary italic text-sm">Un client arrive!</span>
+                                    <span className="text-textSecoundary italic text-sm">Un client a choisi votre pharmacie !</span>
                                 </span>
                                 <ToggleSwitch value={notificationForm.confirmationSound} toggleSwitch={() => toggleNotificationFormValue('confirmationSound')} />
                             </div>
                             {/* Third Row */}
                             <div className="inline-flex flex-row w-full justify-between">
                                 <span className="flex flex-col">
-                                    <span>Afficher une boîte de dialogue toast lorsque des événements se produisent.</span>
-                                    <span className="text-textSecoundary underline text-sm cursor-pointer" onClick={() => toast('Un dialogue toast!')}>Cliquez ici pour prévisualiser</span>
+                                    <span>Afficher un message lorsqu'une notification arrive.</span>
+                                    <span className="text-textSecoundary underline text-sm cursor-pointer" onClick={() => toast('Vide')}>Cliquez ici pour prévisualiser</span>
                                 </span>
                                 <ToggleSwitch value={notificationForm.showToast} toggleSwitch={() => toggleNotificationFormValue('showToast')} />
                             </div>
@@ -623,7 +624,7 @@ const Settings = () => {
                     <div className="inline-flex w-full justify-between">
                         <button className="text-textSecoundary" onClick={() => resetNotificationForm()}>
                             <span className="inline-flex flex-row space-x-2 text-base items-center underline italic">
-                                <FaTrashAlt />
+                                <ImUndo />
                                 <span>Réinitialiser</span>
                             </span>
                         </button>

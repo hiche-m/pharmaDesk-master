@@ -8,6 +8,7 @@ import { useStateContext } from "../Context/ContextProvider.jsx";
 import { getTotalSalesForDates } from "../Utils/Functions.jsx";
 import LoadingSpinner from "../Components/LoadingSpinner.jsx";
 import PinSlideshow from "../Components/PinSlideshow.jsx";
+import LinearRadialBarWidget from "../Components/linearRadialBars.jsx";
 
 const Dashboard = () => {
 
@@ -18,18 +19,15 @@ const Dashboard = () => {
 
     return (
         <>
-<<<<<<< HEAD
             {/* <DashHeader className="hidden sm:flex row-span-3 col-span-12 ml-4" /> */}
-=======
-            <DashHeader className="hidden sm:flex row-span-3 col-span-12 ml-4" />
->>>>>>> 68eb42d746b61bf73ca6cf3b28376e7d3e7921e1
             <div className="row-span-5 col-span-12 flex-col space-y-4 small:space-y-0 small:flex small:flex-row small:justify-stretch small:space-x-4">
 
                 {!todayStats && (<div className={`w-full flex justify-center items-center`}>
                     <LoadingSpinner />
                 </div>)}
-                {todayStats && (<DashCard className={`w-full`} post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} todaySales={todayStats && todayStats.total_sales} />)}
-
+                {/* {todayStats && (<DashCard className={`w-full`} post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} todaySales={todayStats && todayStats.total_sales} />)}
+ */}
+                <LinearRadialBarWidget />
                 {!dailyWidgetData && (<div className={`min-w-44 min-h-44 flex justify-center items-center`}>
                     <LoadingSpinner />
                 </div>)}
