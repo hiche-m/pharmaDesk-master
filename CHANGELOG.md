@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.11...v0.0.12) (2025-04-18)
+
+
+### Features
+
+* **Dashboard:** Add pinned notifications feature and update ConfirmationModal ([e627109](https://github.com/hiche-m/pharmaDesk-master/commit/e627109c0e3d0145610d5c05806d45d175be0bb2))
+* **Home:** Add disconnect confirmation modal and refactor disconnect handling ([6a9fbe4](https://github.com/hiche-m/pharmaDesk-master/commit/6a9fbe421e75f0aceb92d53a7645cc8cc78cfeb8))
+* New colors ([68eb42d](https://github.com/hiche-m/pharmaDesk-master/commit/68eb42d746b61bf73ca6cf3b28376e7d3e7921e1))
+* **SearchBar:** Update styling and integrate SearchBar into SideContent ([465bf32](https://github.com/hiche-m/pharmaDesk-master/commit/465bf325cc3887c281a2b3f8db19b651f91f5ff7))
+* **Settings:** Add profile picture upload and delete functionality ([1f86d7e](https://github.com/hiche-m/pharmaDesk-master/commit/1f86d7e0d7edcbab7c169f9bf564e43cc09802cb))
+
 ### [0.0.11](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.10...v0.0.11) (2025-04-12)
 
 
