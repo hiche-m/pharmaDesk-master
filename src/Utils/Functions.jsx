@@ -124,7 +124,7 @@ export const sqlToFrenchDateDaily = (dateString) => {
     return date.toLocaleDateString('fr-FR', {
         day: '2-digit',
         month: 'short'
-    }).replace('.', '');
+    }).replace('.', '').replace(/^\d+\s(\w)/, (match, p1) => match.replace(p1, p1.toUpperCase()));
 }
 
 export const formattedPreviousDates = (dateString, number) => {
