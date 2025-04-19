@@ -1,12 +1,5 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useStateContext } from "../Context/ContextProvider.jsx";
-import { Document, Page } from 'react-pdf';
-import { useResizeObserver } from '@wojtekmaj/react-hooks';
-
-const resizeObserverOptions = {};
-
-const maxHeight = 370;
-const maxWidth = 305;
 
 const PinSlideshow = ({ className }) => {
 
@@ -14,31 +7,8 @@ const PinSlideshow = ({ className }) => {
         pinNotif, unpinNotif, pinnedNotifs,
     } = useStateContext();
 
-    const [numPages, setNumPages] = useState();
-    const [isImageLoading, setImageLoading] = useState(true);
-    const [containerRef, setContainerRef] = useState(null);
-    const [containerWidth, setContainerWidth] = useState();
-    const [containerHeight, setContainerHeight] = useState();
-
-
-    const onResize = useCallback((entries) => {
-        const [entry] = entries;
-
-        if (entry) {
-            setContainerWidth(entry.contentRect.width);
-            setContainerHeight(entry.contentRect.height);
-        }
-    }, []);
-
-    useResizeObserver(containerRef, resizeObserverOptions, onResize);
-
-    function onDocumentLoadSuccess({ numPages: nextNumPages }) {
-        setNumPages(nextNumPages);
-        setImageLoading(false);
-    }
-
     return (
-        <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full`}>
+        <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full p-4`}>
             {pinnedNotifs.length > 0 ? (
                 <div id="carousel" className="relative w-full h-full">
                     <div className="relative overflow-hidden rounded-lg h-full">
@@ -48,8 +18,8 @@ const PinSlideshow = ({ className }) => {
                             data-carousel
                         >
                             {pinnedNotifs.map((pin, index) => (
-                                <div key={index} className="carousel-item h-full">
-                                    <div ref={setContainerRef} className="flex justify-center items-center w-full h-full">
+                                <div key={pin} className="carousel-item h-full">
+                                    {/* <div ref={setContainerRef} className="flex justify-center items-center w-full h-full">
                                         <Document file={pin.url} onLoadSuccess={onDocumentLoadSuccess}>
                                             <Page
                                                 pageNumber={1}
@@ -59,7 +29,8 @@ const PinSlideshow = ({ className }) => {
                                                 className="object-cover w-full h-full"
                                             />
                                         </Document>
-                                    </div>
+                                    </div> */}
+                                    Test
                                 </div>
                             ))}
                         </div>

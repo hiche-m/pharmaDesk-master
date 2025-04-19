@@ -79,7 +79,7 @@ export const ContextProvider = ({ children }) => {
 
   const [idpharma, setIdpharma] = useState(null);
 
-  const [pinnedNotifs, setPinnedNotifs] = useState(null);
+  const [pinnedNotifs, setPinnedNotifs] = useState([]);
 
   /*                                                                                    */////// Effects
   /* Dashboard */
@@ -337,6 +337,7 @@ export const ContextProvider = ({ children }) => {
     const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
 
     if (idpharma == null) {
+      setPinnedNotifs([]);
       return "id empty";
     } else if (temp == null) {
       localStorage.setItem('pinnedNotifs', JSON.stringify([]));

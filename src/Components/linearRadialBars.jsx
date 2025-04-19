@@ -36,7 +36,6 @@ const LinearRadialBarWidget = () => {
     return (
         <div className="linear-radial-axis-widget">
             <div className="linear-radial-axis">
-                <Bar data={linearBarData} />
                 <Doughnut data={radialBarData} />
             </div>
             <div className="text-center mt-2">
@@ -45,5 +44,5 @@ const LinearRadialBarWidget = () => {
         </div>
     );
 }
- 
+
 export default LinearRadialBarWidget;

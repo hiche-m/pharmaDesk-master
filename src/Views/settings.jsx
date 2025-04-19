@@ -83,6 +83,9 @@ const Settings = () => {
                         const temp = res.data.data;
                         setSettingsInfo(res.data.data);
 
+                        console.log("DATA");
+                        console.log(res.data.data);
+
 
                         setdefaultPharmacyForm({
                             storeName: temp ? temp.storeName : '',
@@ -396,11 +399,7 @@ const Settings = () => {
     const handleProfilePictureChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfilePicture(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setProfilePicture(file);
         }
     }
 
@@ -409,10 +408,10 @@ const Settings = () => {
             setProfilePictureLoading(true);
             const formData = new FormData();
             formData.append('profilePicture', profilePicture);
-            formData.append('pharmaId', localStorage.getItem('idpharma'));
+            formData.append('id', localStorage.getItem('idpharma'));
 
             try {
-                const response = await axios.post(`${HOST}/api/setProfilePic`, formData, {
+                const response = await axios.post(`${HOST}/api/pharma/setProfilePic`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -432,9 +431,9 @@ const Settings = () => {
         try {
             setProfilePictureLoading(true);
             const formData = new FormData();
-            formData.append('profilePicture', null);
+            formData.append('profilePicture', "");
             formData.append('pharmaId', localStorage.getItem('idpharma'));
-            const response = await axios.post(`${HOST}/api/setProfilePic`, formData, {
+            const response = await axios.post(`${HOST}/api/pharma/setProfilePic`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

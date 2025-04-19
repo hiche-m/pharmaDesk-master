@@ -66,7 +66,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
                 <AiFillCaretDown size="0.5rem" />
             </span>
         </div>
-        <div className="relative h-full w-full">
+        <div className="relative h-full w-full p-2">
             {/* Canvas overlay */}
             <canvas
                 ref={canvasRef}
