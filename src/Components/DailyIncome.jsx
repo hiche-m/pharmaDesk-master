@@ -17,9 +17,6 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
         if (dailyWidgetData) {
             const values = getTotalSalesForDates(dailyWidgetData, dailyWidgetDate)
 
-            console.log(dailyWidgetData);
-            console.log(values);
-
             setResult(values);
 
             const canvas = canvasRef.current;
@@ -37,23 +34,26 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
             ctx.fillRect(0, 0, width, height);
             ctx.beginPath();
 
-            drawLine(ctx, third - third / 2,
-                height * (1 - calcPercentage(values[1], values[0])),
-                2 * third - third / 2,
-                height * 0.5);
-            drawLine(ctx, 2 * third - third / 2,
-                height * 0.5,
-                width - third / 2,
-                height * (1 - calcPercentage(values[1], values[2])));
+            console.log(values);
 
-            drawCircle(ctx, third - third / 2,
-                height * (1 - calcPercentage(values[1], values[0])),
+
+            drawLine(ctx, third - third / 2, // X1
+                (height * (1 - calcPercentage(values[1], values[0]))) + (values[0] > values[1] ? dotWidth + 2 : -dotWidth - 2), // Y1
+                2 * third - third / 2, // X2
+                height * 0.5); // Y2
+            drawLine(ctx, 2 * third - third / 2, // X1
+                height * 0.5, // Y1
+                width - third / 2, // X2
+                (height * (1 - calcPercentage(values[1], values[2]))) + (values[2] > values[1] ? dotWidth + 2 : -dotWidth - 2)); // Y2
+
+            drawCircle(ctx, third - third / 2, // X
+                (height * (1 - calcPercentage(values[1], values[0]))) + (values[0] > values[1] ? dotWidth + 2 : -dotWidth - 2), // Y
                 dotWidth);
-            drawCircle(ctx, 2 * third - third / 2,
-                height * 0.5,
+            drawCircle(ctx, 2 * third - third / 2, // X
+                height * 0.5, // Y
                 dotWidth);
-            drawCircle(ctx, width - third / 2,
-                height * (1 - calcPercentage(values[1], values[2])),
+            drawCircle(ctx, width - third / 2, // X
+                (height * (1 - calcPercentage(values[1], values[2]))) + (values[2] > values[1] ? dotWidth + 2 : -dotWidth - 2), // Y
                 dotWidth);
         }
     }, [dailyWidgetData]);
@@ -66,7 +66,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
                 <AiFillCaretDown size="0.5rem" />
             </span>
         </div>
-        <div className="relative h-full w-full p-2">
+        <div className="relative h-full w-full">
             {/* Canvas overlay */}
             <canvas
                 ref={canvasRef}
