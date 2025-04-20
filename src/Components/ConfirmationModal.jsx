@@ -13,6 +13,7 @@ import { Document, Page } from 'react-pdf';
 import { useResizeObserver } from '@wojtekmaj/react-hooks';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import TailwindCommentModal from './TailwindCommentModal.jsx';
 
 
 
@@ -313,21 +314,50 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     }
 
     const currentForm = posioData[formIndex];
+    /* DIALOG */
+    const [pinDialogShowing, setPinDialogShowing] = useState(false);
+
+    const [comment, setComment] = useState(selectedNotification.comment || '');
 
     const togglePin = () => {
         if (isPinned == null) return;
 
         if (isPinned) {
-            unpinNotif(selectedNotification);
+            unpinNotif(selectedNotification.idnotifications);
         }
         else {
-            pinNotif(selectedNotification);
+            pinNotif({
+                idnotifications: selectedNotification.idnotifications,
+                comment: comment,
+            });
         }
         setIsPinned(!isPinned);
     }
 
-    return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">
+    const cancelPinAction = () => {
+        /* Closes Dialog */
+        setPinDialogShowing(false);
+    };
+
+    const pinAction = () => {
+        /* Disconnect */
+        /* handleLogout();
+        navigate(0); */
+        togglePin();
+        setPinDialogShowing(false);
+    };
+
+    const handlePinOnClick = () => {
+        /* Open Dialog */
+        setPinDialogShowing(true);
+    };
+
+    const onCommentChange = (value) => {
+        setComment(value);
+    };
+
+    return (<>
+        <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40 select-none`}>
             <div className="bg-white w-max rounded-lg p-6 shadow-lg">
                 <div className="inline-flex w-max h-max space-x-4">
                     {/* {isImageLoading && (
@@ -357,7 +387,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                         <div className="flex flex-col justify-start items-start space-y-2">
                             <span className='inline-flex grow justify-between items-center'>
                                 <h2 className="text-lg font-bold p-0">Confirmer l'achat ?</h2>
-                                <div onClick={() => togglePin()}>
+                                <div onClick={() => handlePinOnClick()}>
                                     {isPinned ?
                                         (<AiFillPushpin className={`text-[1.5rem] text-primary`} />) :
                                         (<AiOutlinePushpin className='text-[1.5rem] cursor-pointer text-textSecoundary' />)}
@@ -476,7 +506,21 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                 </div>
             </div>
         </div>
+        {pinDialogShowing && (<TailwindCommentModal
+            className="absolute z-[100]"
+            title={isPinned ? "Retirer l'épingle de cette notification ?" : "Épingler cette notification ?"}
+            comment={comment}
+            isPinned={isPinned}
+            onCommentChange={onCommentChange}
+            color={isPinned ? 'red-600' : 'primary'}
+            actionLabel={isPinned ? "Retirer" : "Épingler"}
+            cancelLabel="Annuler"
+            actionFunction={pinAction}
+            cancelAction={cancelPinAction}
+        />)}
+    </>
     );
 }
+
 
 export default ConfirmationModal;

@@ -320,11 +320,10 @@ export const ContextProvider = ({ children }) => {
     }
   }
 
-  const unpinNotif = (notifObject) => {
+  const unpinNotif = (idnotifications) => {
     const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
-    if (temp != null && notifObject != null) {
+    if (temp != null && idnotifications != null) {
       let arr = temp.slice();
-      const idnotifications = notifObject.idnotifications;
       let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
       localStorage.setItem('pinnedNotifs', JSON.stringify(newArr));
       setPinnedNotifs(newArr);

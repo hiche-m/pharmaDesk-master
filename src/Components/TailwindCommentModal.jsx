@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { GoPin } from "react-icons/go";
 
-const TailwindConfirmModal = ({ title, content, actionLabel = 'Continuer', cancelLabel = 'Annuler', color = 'red-600', actionFunction, cancelAction }) => {
+const TailwindCommentModal = ({ title, comment, onCommentChange, isPinned, actionLabel = 'Continuer', cancelLabel = 'Annuler', color = 'red-600', actionFunction, cancelAction }) => {
+
     return (<div className="relative z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         {/* <!--
           Background backdrop, show/hide based on modal state.
@@ -15,7 +17,7 @@ const TailwindConfirmModal = ({ title, content, actionLabel = 'Continuer', cance
         <div className="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
 
         <div className="fixed inset-0 z-[100] w-screen overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div className="flex min-h-full min-w-min items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 {/* <!--
               Modal panel, show/hide based on modal state.
       
@@ -30,15 +32,13 @@ const TailwindConfirmModal = ({ title, content, actionLabel = 'Continuer', cance
                     <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div className="sm:flex sm:items-start">
                             <div className={`mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-opacity-10 bg-${color} sm:mx-0 sm:size-10`}>
-                                <svg className={`size-6 text-${color}`} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                                </svg>
+                                <GoPin className={`text-lg text-${color}`} />
                             </div>
                             <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                 <h3 className="text-base font-semibold text-gray-900" id="modal-title">{title}</h3>
-                                <div className="mt-2">
-                                    <p className="text-sm text-gray-500">{content}</p>
-                                </div>
+                                {!isPinned && (<div className="mt-2">
+                                    <textarea className="bg-lightShapes rounded-lg outline-none p-2 resize-none w-full" placeholder="Commentaire..." value={comment} onChange={(event) => onCommentChange(event.target.value)} />
+                                </div>)}
                             </div>
                         </div>
                     </div>
@@ -53,4 +53,4 @@ const TailwindConfirmModal = ({ title, content, actionLabel = 'Continuer', cance
     );
 }
 
-export default TailwindConfirmModal;
+export default TailwindCommentModal;

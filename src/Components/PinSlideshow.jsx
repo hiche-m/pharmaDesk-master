@@ -9,6 +9,9 @@ const PinSlideshow = ({ className }) => {
 
     return (
         <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full p-4`}>
+            <span className="font-bold text-xl">
+                Épingles
+            </span>
             {pinnedNotifs.length > 0 ? (
                 <div id="carousel" className="relative w-full h-full">
                     <div className="relative overflow-hidden rounded-lg h-full">
@@ -30,12 +33,14 @@ const PinSlideshow = ({ className }) => {
                                             />
                                         </Document>
                                     </div> */}
-                                    Test
+                                    <span>
+                                        {pin.comment}
+                                    </span>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <button
+                    {pinnedNotifs.length > 1 ? (<button
                         type="button"
                         className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
                         data-carousel-prev
@@ -58,8 +63,8 @@ const PinSlideshow = ({ className }) => {
                             </svg>
                             <span className="sr-only">Previous</span>
                         </span>
-                    </button>
-                    <button
+                    </button>) : <></>}
+                    {pinnedNotifs.length > 1 ? (<button
                         type="button"
                         className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
                         data-carousel-next
@@ -82,7 +87,7 @@ const PinSlideshow = ({ className }) => {
                             </svg>
                             <span className="sr-only">Next</span>
                         </span>
-                    </button>
+                    </button>) : <></>}
                 </div>
             ) : (
                 <span className="text-textSecoundary text-center">

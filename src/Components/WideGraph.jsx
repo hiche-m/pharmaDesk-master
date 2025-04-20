@@ -38,14 +38,14 @@ const WideGraph = ({ className = "" }) => {
                             null,
                         ]
                     },
-                    {
+                    /* {
                         ...stateData.datasets[1],
                         data: [
                             null,
                             ...dataObject.received,
                             null,
                         ]
-                    }
+                    } */
                 ],
             });
         }
@@ -74,7 +74,7 @@ const WideGraph = ({ className = "" }) => {
 
     return (
         <div className={`${className} bg-superClear rounded-xl shadow-md p-2 grid grid-rows-8`}>
-            <div className="row-span-1 grid grid-rows-1 grid-cols-2">
+            <div className="row-span-1 grid grid-rows-1 grid-cols-2 px-2">
                 <span className="flex flex-row grow row-span-1 font-medium items-center">Meilleures Postes</span>
                 <span className="flex flex-row grow row-span-1 text-sm justify-end items-center">
                     <span className="text-selectionBG">De</span>
@@ -91,7 +91,7 @@ const WideGraph = ({ className = "" }) => {
                         onChange={handleEndChange}
                     />
                     {/* <AiFillCaretDown size="0.5rem" /> */}
-                    <button className={(startDate != graphWidgetBeginDate || endDate != graphWidgetEndDate) ? "bg-primary p-2 rounded-lg mx-4 text-white cursor-pointer hover:bg-primary/90 active:bg-darkPrimary" : "bg-disabled p-2 rounded-lg mx-4 cursor-default text-textSecoundary"} onClick={() => handleDateChange()}>
+                    <button className={(startDate != graphWidgetBeginDate || endDate != graphWidgetEndDate) ? "bg-primary p-2 rounded-lg ml-4 text-white cursor-pointer hover:bg-primary/90 active:bg-darkPrimary" : "bg-disabled p-2 rounded-lg ml-4 cursor-default text-textSecoundary"} onClick={() => handleDateChange()}>
                         <span className="inline-flex flex-row space-x-2 text-sm items-center px-2">Appliquer</span>
                     </button>
                 </span>
