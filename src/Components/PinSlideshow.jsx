@@ -9,7 +9,7 @@ const PinSlideshow = ({ className }) => {
 
     return (
         <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full p-4`}>
-            <span className="font-bold text-xl">
+            <span className="text-sm font-medium">
                 Épingles
             </span>
             {pinnedNotifs.length > 0 ? (

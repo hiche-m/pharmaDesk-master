@@ -74,7 +74,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
         }
     }, [dailyWidgetData, result, canvasRef]);
 
-    return (<div className={`${className} bg-superClear rounded-xl shadow-md p-2 flex flex-col justify-center items-center`}>
+    return (<div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col justify-center items-center`}>
         {isLoading && (<LoadingSpinner />)}
 
         {!isLoading && hasError && (<div className="flex flex-col justify-center items-center h-full w-full">
