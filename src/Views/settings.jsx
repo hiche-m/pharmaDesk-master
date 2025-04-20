@@ -10,7 +10,7 @@ import { useStateContext } from "../Context/ContextProvider.jsx";
 import axios from "axios";
 import { HOST } from "../Utils/Parameters.jsx";
 import useUpdateInfo from "../Services/useUpdateInfo.jsx";
-import { BiSolidImageAdd } from "react-icons/bi";
+import { BiRefresh, BiSolidImageAdd } from "react-icons/bi";
 import { ImUndo } from "react-icons/im";
 
 const Settings = () => {
@@ -417,13 +417,14 @@ const Settings = () => {
                     },
                 });
                 setProfilePictureResponse(response.data);
-                setProfilePictureLoading(false);
                 setProfilePictureSuccess(true);
+                setProfilePictureError(null)
             } catch (error) {
                 console.error('Error uploading file:', error);
+                setProfilePictureSuccess(false);
                 setProfilePictureError('Error uploading file');
-                setProfilePictureLoading(false);
             }
+            setProfilePictureLoading(false);
         }
     }
 
@@ -446,6 +447,10 @@ const Settings = () => {
         setProfilePictureLoading(false);
     }
 
+    const refreshPage = () => {
+        window.location.reload();
+    };
+
     useEffect(() => {
         if (profilePicture) {
             handleProfilePictureUpload();
@@ -461,6 +466,9 @@ const Settings = () => {
                 <label htmlFor="profilePictureInput" className="hidden sm:block rounded-full cursor-pointer bg-primary p-3 hover:bg-primary/90 text-white active:bg-darkPrimary">
                     <BiSolidImageAdd />
                 </label>
+                {/* profilePictureLoading
+profilePictureError
+profilePictureSuccess */}
                 <input
                     id="profilePictureInput"
                     type="file"
@@ -472,10 +480,16 @@ const Settings = () => {
                 <span className="rounded-full cursor-pointer bg-disabled p-3 hover:bg-disabled/90 text-textPrimary active:bg-textSecoundary/70" onClick={() => handleDropdownClick()}><HiDotsHorizontal /></span> */}
             </div>
             <div className="inline-flex flex-row space-x-2 items-center">
-                <img className="hidden sm:block h-12 w-12 rounded-full bg-gray-500" src={settingsInfo && settingsInfo.userPic ? settingsInfo.userPic : pfp4} />
+                {!profilePictureLoading && (<img className="hidden sm:block h-12 w-12 rounded-full bg-disabled" src={settingsInfo && settingsInfo.userPic ? settingsInfo.userPic : pfp4} />)}
+                {profilePictureLoading && (<div className="hidden sm:block h-12 w-12 rounded-full bg-disabled animate-pulse" />)}
                 <span className="flex flex-col">
                     <span className="font-medium">{pharmacyForm.storeName}</span>
                     <span className="text-sm text-textSecoundary">{pharmacyForm.adress}</span>
+                </span>
+                <span className="text-sm flex justify-center items-center">
+                    {profilePictureError && (<span className="text-red-500">Un erreur s'est produit, veuillez réessayer plus tard.</span>)}
+                    {profilePictureSuccess && (<span className="text-green-500">Photo modifiée avec succès.</span>)}
+                    {(profilePictureError || profilePictureSuccess) && (<BiRefresh className="text-textSecoundary text-2xl cursor-pointer" onClick={() => refreshPage()} />)}
                 </span>
             </div>
         </div>
