@@ -14,7 +14,10 @@ module.exports = {
         textPrimary: '#000000',
         textSecoundary: '#6C6C6C',
         disabled: '#D9D9D9',
-        selectionBG: '#8A716A'
+        selection: '#F7C35F',
+        selectionBG: '#EA6F39',
+        highlight: '#52D3FF',
+        accent: '#F0A9F9'
       },
     },
     screens: {

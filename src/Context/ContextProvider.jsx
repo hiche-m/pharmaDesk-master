@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { getUserData, userSuccess, userFail } from '../Redux/userActions.jsx';
 import { userData } from '../Utils/Data/UserData.jsx';
 import { toast } from 'react-toastify';
-import { HOST, notification_load_limit, notification_sound_url } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, notification_load_limit, notification_sound_url, PORT } from "../Utils/Parameters.jsx";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -88,7 +88,7 @@ export const ContextProvider = ({ children }) => {
     const idpharma = JSON.parse(jsonId)
 
     if (idpharma && dailyWidgetDate) {
-      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/${dailyWidgetDate}`).then((res) => {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/sales/${dailyWidgetDate}`).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching daily widget data.');
         } else {
@@ -106,7 +106,7 @@ export const ContextProvider = ({ children }) => {
     const idpharma = JSON.parse(jsonId)
 
     if (idpharma && graphWidgetBeginDate && graphWidgetEndDate) {
-      axios.get(`${HOST}/api/dashboard/${idpharma}/prescriptions/${graphWidgetBeginDate}/${graphWidgetEndDate}`).then((res) => {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/prescriptions/${graphWidgetBeginDate}/${graphWidgetEndDate}`).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching graph widget data.');
         } else {
@@ -245,7 +245,7 @@ export const ContextProvider = ({ children }) => {
 
     if (!socket) {
 
-      const varSocket = io(HOST);
+      const varSocket = io(`${HOST}${HOST_PORT_SEPARATOR}${PORT}`);
       setSocket(varSocket);
 
     }
@@ -263,7 +263,7 @@ export const ContextProvider = ({ children }) => {
 
       getPinnedNotifs();
 
-      axios.get(`${HOST}/api/dashboard/${idpharma}/sales/today`).then((res) => {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/sales/today`).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching daily sales.');
         } else {
@@ -360,7 +360,7 @@ export const ContextProvider = ({ children }) => {
       return "id empty"
     }
     else {
-      axios.get(`${HOST}/api/demande/${idpharma}`).then(res => {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/demande/${idpharma}`).then(res => {
 
         if (res.data != null) {
 
@@ -415,7 +415,7 @@ export const ContextProvider = ({ children }) => {
       return "id empty"
     }
     else {
-      axios.get(`${HOST}/api/comming/${idpharma}`).then(res => {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/comming/${idpharma}`).then(res => {
 
         if (res.data != null) {
 
@@ -470,7 +470,7 @@ export const ContextProvider = ({ children }) => {
 
       console.log("this is the form posio ", idclient, posioData);
 
-      axios.post(`${HOST}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`, { idClient: idclient, posiologies: isOn ? posioData : [] })
+      axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/Confirmation_prescription/${idpharma}/${perscriptionId}`, { idClient: idclient, posiologies: isOn ? posioData : [] })
         .then(res => {
           console.log(res.data);
         })

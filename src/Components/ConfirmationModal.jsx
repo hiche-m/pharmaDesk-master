@@ -23,8 +23,6 @@ const maxWidth = 600;
 
 const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotification }) => {
 
-    if (!isOpen) return null;
-
     const [numPages, setNumPages] = useState();
     const [containerRef, setContainerRef] = useState(null);
     const [containerWidth, setContainerWidth] = useState();
@@ -355,6 +353,8 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     const onCommentChange = (value) => {
         setComment(value);
     };
+
+    if (!isOpen) return null;
 
     return (<>
         <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40 select-none`}>

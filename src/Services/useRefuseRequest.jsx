@@ -1,4 +1,4 @@
-import { HOST, PORT } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, PORT } from "../Utils/Parameters.jsx";
 import { useState } from 'react';
 import axios from "axios";
 
@@ -16,7 +16,7 @@ const useRefuseRequest = () => {
         setIsRRequestLoading(true);
 
         try {
-            axios.delete(`${HOST}/api/refuseOrder/${notificationId}`).then((res) => {
+            axios.delete(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/refuseOrder/${notificationId}`).then((res) => {
                 if (!res) {
                     throw new Error('An error has occured, please try again in a moment...');
                 } else {

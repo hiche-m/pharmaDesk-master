@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react"
-import { HOST } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, PORT } from "../Utils/Parameters.jsx";
 import { capFix } from "../Utils/Functions.jsx";
 import { toast } from "react-toastify";
 
@@ -45,7 +45,7 @@ const useUpdateInfo = () => {
         };
 
         try {
-            axios.put(`${HOST}/api/pharma/updateProfile/${idpharma}`, body, {
+            axios.put(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/updateProfile/${idpharma}`, body, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -109,7 +109,7 @@ const useUpdateInfo = () => {
         };
 
         try {
-            axios.patch(`${HOST}/api/pharma/updateProfile/pass/${idpharma}`, body).then((res) => {
+            axios.patch(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/updateProfile/pass/${idpharma}`, body).then((res) => {
                 if (!res) {
                     const err = 'Could not complete the patch request.'
                     setProfileUpdateError(err);

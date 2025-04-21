@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import TailwindAlertModal from "../Components/TailwindAlertModal.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import axios from "axios";
-import { HOST } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, PORT } from "../Utils/Parameters.jsx";
 import useUpdateInfo from "../Services/useUpdateInfo.jsx";
 import { BiRefresh, BiSolidImageAdd } from "react-icons/bi";
 import { ImUndo } from "react-icons/im";
@@ -75,7 +75,7 @@ const Settings = () => {
         if (!settingsInfo) {
             const pharmaId = localStorage.getItem('idpharma');
             if (pharmaId) {
-                axios.get(`${HOST}/api/pharma/accountInfo/${pharmaId}`).then((res) => {
+                axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/accountInfo/${pharmaId}`).then((res) => {
                     if (!res || !res.data) {
                         console.log('There was a problem fetching settings information...' + res);
                         setHasError('There was a problem fetching settings information');
@@ -411,7 +411,7 @@ const Settings = () => {
             formData.append('id', localStorage.getItem('idpharma'));
 
             try {
-                const response = await axios.post(`${HOST}/api/pharma/setProfilePic`, formData, {
+                const response = await axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/setProfilePic`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -434,7 +434,7 @@ const Settings = () => {
             const formData = new FormData();
             formData.append('profilePicture', "");
             formData.append('pharmaId', localStorage.getItem('idpharma'));
-            const response = await axios.post(`${HOST}/api/pharma/setProfilePic`, formData, {
+            const response = await axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/setProfilePic`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

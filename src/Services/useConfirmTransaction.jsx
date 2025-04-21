@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HOST } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, PORT } from "../Utils/Parameters.jsx";
 import { useState } from 'react';
 
 const useConfirmTransaction = () => {
@@ -21,7 +21,7 @@ const useConfirmTransaction = () => {
                 posiologies: formData,
             };
             console.log(body);
-            axios.post(`${HOST}/api/Confirmation_prescription/${userId}/${perscriptionId}`, body).then((res) => {
+            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/Confirmation_prescription/${userId}/${perscriptionId}`, body).then((res) => {
                 if (!res.ok) {
                     throw new Error('An error has occured, please try again in a moment...');
                 } else {
