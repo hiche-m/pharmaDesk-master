@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuthContext } from '../../Context/AuthProvider.jsx';
 import { validatePasswordLength, stringComparisonMatching } from '../../Utils/Functions.jsx';
 import { useNavigate } from 'react-router-dom';
+import logo from "../../Assets/SVG/logo_white_bg.svg";
 import "./styles/auth.css";
 
 export default function ResetPassword() {
@@ -83,8 +84,11 @@ export default function ResetPassword() {
                     <div className="mx-auto w-full">
                         <div className="mx-auto w-full max-w-md bg-white rounded-md shadow-[0_7px_14px_0_rgba(60,66,87,0.12),0_3px_6px_0_rgba(0,0,0,0.12)]">
                             <div className="px-12 py-12">
-                                <span className="block text-xl leading-7 text-[#1a1f36] pb-4">
-                                    Récupération de votre Mot de Passe.
+                                <span className="inline-flex justify-start items-start">
+                                    <IoIosArrowRoundBack className='text-textPrimary h-7 w-7 mr-2 cursor-pointer' onClick={() => navigate(-1)} />
+                                    <span className="block text-xl leading-7 text-[#1a1f36] pb-4">
+                                        Récupération de votre Mot de Passe.
+                                    </span>
                                 </span>
                                 <form id="stripe-login">
                                     <div className="mb-6">

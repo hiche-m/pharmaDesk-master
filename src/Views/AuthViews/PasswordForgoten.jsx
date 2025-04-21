@@ -3,6 +3,8 @@ import { validateEmail } from '../../Utils/Functions.jsx';
 import { useAuthContext } from '../../Context/AuthProvider.jsx';
 import { useStateContext } from '../../Context/ContextProvider.jsx';
 import { useNavigate } from 'react-router-dom';
+import logo from "../../Assets/SVG/logo_white_bg.svg";
+import { IoIosArrowRoundBack } from "react-icons/io";
 import "./styles/auth.css";
 
 export default function PasswordForgoten() {
@@ -68,10 +70,13 @@ export default function PasswordForgoten() {
           <div className="mx-auto w-full">
             <div className="mx-auto w-full max-w-[90%] bg-white rounded-md shadow-[0_15px_14px_0_rgba(60,66,87,0.12),0_3px_6px_0_rgba(0,0,0,0.12)]">
               <div className="px-12 py-12">
-                <span className="block text-xl leading-7 text-[#1a1f36] pb-4">
-                  Vous ne vous souvenez plus de votre mot de passe ?
+                <span className="inline-flex justify-start items-start">
+                  <IoIosArrowRoundBack className='text-textPrimary h-7 w-7 mr-2 cursor-pointer' onClick={() => navigate(-1)} />
+                  <span className="block text-xl leading-7 text-[#1a1f36] pb-4">
+                    Vous ne vous souvenez plus de votre mot de passe ?
+                  </span>
                 </span>
-                <span className="block text-lg text-gray-500 italic pb-4">
+                <span className="block text-textSecoundary pb-4">
                   Saisissez votre adresse email pour recevoir un message de réinitialisation de votre mot de passe.
                 </span>
                 <form id="stripe-login">

@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import "./styles/auth.css";
 
 function SignUp() {
-    const [stepFormSing, setStepFormSign] = useState({ 1: true, 2: false, 3: false });
+    const [stepFormSing, setStepFormSign] = useState({ 1: true, 2: false });
     const [couter, setConter] = useState(1);
     const navigate = useNavigate();
     const [validationForm, setValidationForm] = useState({
         storeName: true,
-        nameOwner: true,
+        /* nameOwner: true, */
         password: true,
-        phoneNumber: true,
+        /* phoneNumber: true, */
         phonePharmacy: true,
         description: true,
         email: true,
@@ -24,7 +24,7 @@ function SignUp() {
 
     const nextPage = (e) => {
         e.preventDefault();
-        if (couter < 3) {
+        if (couter < 2) {
             setConter(prev => {
                 setStepFormSign((data) => ({ ...data, [prev + 1]: true }));
                 return prev + 1;
@@ -48,9 +48,9 @@ function SignUp() {
         const { value, name } = e.target;
         setSignForm(prev => ({ ...prev, [name]: value }));
 
-        if (name === "phoneNumber") {
+        /* if (name === "phoneNumber") {
             setValidationForm(prev => ({ ...prev, "phoneNumber": validatePhoneNumber(value) }));
-        }
+        } */
         if (name === "email") {
             setValidationForm(prev => ({ ...prev, "email": validateEmail(value) }));
         }
@@ -110,19 +110,19 @@ function SignUp() {
                                 <div className={`w-10 h-10 ${stepFormSing[2] ? "bg-primary" : "bg-gray-400"} transition duration-500 text-white text-center rounded-sm flex items-center justify-center`}>
                                     <span>2</span>
                                 </div>
-                                <span className={`h-[1px] w-[30%] ${stepFormSing[3] ? "bg-primary" : "bg-gray-400"} transition duration-500`}></span>
+                                {/* <span className={`h-[1px] w-[30%] ${stepFormSing[3] ? "bg-primary" : "bg-gray-400"} transition duration-500`}></span>
                                 <div className={`w-10 h-10 ${stepFormSing[3] ? "bg-primary" : "bg-gray-400"} transition duration-500 text-white text-center rounded-sm flex items-center justify-center`}>
                                     <span>3</span>
-                                </div>
+                                </div> */}
                             </div>
 
                             <div className="w-full flex flex-col items-center justify-center relative duration-500">
                                 <div className="m-auto text-xl font-bold text-[#494949] flex flex-col justify-center items-center gap-5">
-                                    <h1>Bienvenue sur PharmaExpress !</h1>
+                                    <h1>Bienvenue sur Pharma Express Desktop !</h1>
                                     <h2 className="text-sm text-[#868686] font-medium">Remplissez le formulaire et rejoignez-nous dans cette aventure entièrement innovante.</h2>
                                 </div>
 
-                                <form className={`${couter != 1 ? "absolute right-[2000px]" : ""} grid grid-cols-2 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
+                                {/* <form className={`${couter != 1 ? "absolute right-[2000px]" : ""} grid grid-cols-2 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
                                     <div className="flex flex-col gap-2">
                                         <label className="font-semibold text-[#494949]">Nom complet</label>
                                         <input
@@ -165,11 +165,11 @@ function SignUp() {
                                             name="adresse"
                                         />
                                     </div>
-                                </form>
+                                </form> */}
 
-                                <form className={`${couter != 2 ? "absolute left-[2000px]" : ""} grid grid-cols-2 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
+                                <form className={`${couter != 1 ? "absolute left-[2000px]" : ""} grid grid-cols-2 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
                                     <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">Nom de votre Boutique</label>
+                                        <label className="font-semibold text-[#494949]">Nom de votre Officine</label>
                                         <input
                                             type="text"
                                             className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
@@ -179,7 +179,18 @@ function SignUp() {
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">Adresse boutique</label>
+                                        <label className="font-semibold text-[#494949]">Numéro de téléphone</label>
+                                        <input
+                                            type="text"
+                                            className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
+                                            onChange={Onchange}
+                                            value={signForm.phonePharmacy}
+                                            name="phonePharmacy"
+                                        />
+                                        {!validationForm.phonePharmacy && <span className="text-lg text-left text-red-500/70">Le Numero de téléphone est incorrect</span>}
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="font-semibold text-[#494949]">Adresse d'officine</label>
                                         <input
                                             type="malito"
                                             className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
@@ -189,15 +200,14 @@ function SignUp() {
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">Numéro de téléphone <span className="text-[#7e7e7e] text-sm">(pharmacie)</span></label>
-                                        <input
+                                        <label className="font-semibold text-[#494949]">Description</label>
+                                        <textarea
                                             type="text"
                                             className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
                                             onChange={Onchange}
-                                            value={signForm.phonePharmacy}
-                                            name="phonePharmacy"
+                                            value={signForm.description}
+                                            name="description"
                                         />
-                                        {!validationForm.phonePharmacy && <span className="text-lg text-left text-red-500/70">Le Numero de telephone est inccorect</span>}
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <label className="font-semibold text-[#494949]">Latitude</label>
@@ -219,19 +229,20 @@ function SignUp() {
                                             name="longitude"
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">Description</label>
-                                        <textarea
-                                            type="text"
-                                            className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
-                                            onChange={Onchange}
-                                            value={signForm.description}
-                                            name="description"
-                                        />
-                                    </div>
                                 </form>
 
-                                <form className={`${couter != 3 ? "absolute left-[2000px]" : ""} grid grid-cols-1 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
+                                <form className={`${couter != 2 ? "absolute left-[2000px]" : ""} grid grid-cols-1 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="font-semibold text-[#494949]">Adresse email</label>
+                                        <input
+                                            type="malito"
+                                            className="w-[350px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
+                                            onChange={Onchange}
+                                            value={signForm.email}
+                                            name="email"
+                                        />
+                                        {!validationForm.email && <span className="text-lg text-left text-red-500/70">L'adresse Email est incorrecte</span>}
+                                    </div>
                                     <div className="flex flex-col gap-2">
                                         <label className="font-semibold text-[#494949]">Mot de Passe</label>
                                         <input
@@ -254,9 +265,9 @@ function SignUp() {
                                         />
                                         {!validationForm.confirmation && <span className="text-lg text-left text-red-500/70 w-[350px]">Le Mot de Passe est incorrect.</span>}
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">accepter les conditions d'utilisation de <span className="text-[#7e7e7e] text-sm">© PharmaExpress</span></label>
+                                    <div className="inline-flex gap-2">
                                         <input type="checkbox" />
+                                        <label className="font-semibold text-[#494949]">Accepter les conditions d'utilisation de <span className="text-[#7e7e7e] text-sm">Pharma Express ©</span></label>
                                     </div>
                                 </form>
                             </div>
@@ -265,17 +276,17 @@ function SignUp() {
                                 <button
                                     className="py-2 px-5 text-white font-semibold rounded-md bg-primary"
                                     onClick={(e) => {
-                                        if (couter === 3) {
+                                        if (couter === 2) {
                                             if (areAllTrue(validationForm)) signRequest();
-                                            else alert("veuillez verifier les champs saisies ");
+                                            else alert("Veuillez verifier les champs saisies ");
                                         } else {
                                             nextPage(e);
                                         }
                                     }}
                                 >
-                                    {couter === 3 ? "S'inscrire" : "Suivant"}
+                                    {couter === 2 ? "S'inscrire" : "Suivant"}
                                 </button>
-                                <button className="py-2 px-5 text-white font-semibold rounded-md bg-slate-400" onClick={previousPage}>precedent</button>
+                                <button className="py-2 px-5 text-white font-semibold rounded-md bg-slate-400" onClick={previousPage}>Précédent</button>
                             </div>
                         </div>
                     </main>
