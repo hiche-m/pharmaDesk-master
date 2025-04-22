@@ -16,19 +16,12 @@ const initLoginForm = {
 const singForm = {
 
     storeName: "",
-    nameOwner: "",
     password: "",
-    store: "",
     confirmation: "",
-    services: "",
-    phoneNumber: "",
     description: "",
     email: "",
     latitude: "",
     longitude: "",
-    adresse: "",
-    commune: "",
-    wilaya: "",
     adressStore: "",
     phonePharmacy: ""
 
@@ -169,24 +162,25 @@ export const AuthProvider = ({ children }) => {
 
 
     const signRequest = () => {
-        if (signForm.email !== "" && signForm.phoneNumber !== "" && signForm.password !== "" && signForm.confirmation !== "") {
+
+        if (signForm.email !== "" && signForm.phonePharmacy !== "" && signForm.password !== "" && signForm.confirmation !== "") {
             axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/signup/v1`, signForm)
                 .then(res => {
                     if (res.data != null) {
                         if (res.data.message === "Registered successfully") {
-                            alert("Bravo ! Inscription complétée avec succès.");
                             toast('Confirmez votre compte avec votre email.');
                             setTriggerNavigateLogin(true);
+                            return null;
                         } else if (res.data.error === "Email or phoneNumber already registered") {
-                            alert("L'email ou le numéro de téléphone est déjà enregistré.");
+                            return "L'email ou le numéro de téléphone est déjà enregistré.";
                         }
                     }
                 })
                 .catch(e => {
-                    alert('Erreur lors de l\'inscription : ' + e);
+                    return "Erreur lors de l'inscription : " + e;
                 });
         } else {
-            alert('Veuillez remplir les zones obligatoires avant de soumettre.');
+            return "Veuillez remplir les zones obligatoires avant de soumettre.";
         }
     }
 

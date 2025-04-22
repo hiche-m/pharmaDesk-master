@@ -64,6 +64,22 @@ function SignUp() {
         }
     };
 
+    const handleSignUpClick = async (e) => {
+        e.preventDefault();
+        if (couter === 2) {
+            if (areAllTrue(validationForm)) {
+                const result = await signRequest();
+                if (result) {
+                    console.log(result);
+                } else {
+                    navigate("/");
+                }
+            } else alert("Veuillez verifier les champs saisies ");
+        } else {
+            nextPage(e);
+        }
+    }
+
     return (
         <div className="bg-white flex w-full min-h-screen overflow-hidden">
             <div className="flex flex-col h-screen flex-grow">
@@ -275,14 +291,7 @@ function SignUp() {
                             <div className="w-[90%] flex gap-4 flex-row-reverse">
                                 <button
                                     className="py-2 px-5 text-white font-semibold rounded-md bg-primary"
-                                    onClick={(e) => {
-                                        if (couter === 2) {
-                                            if (areAllTrue(validationForm)) signRequest();
-                                            else alert("Veuillez verifier les champs saisies ");
-                                        } else {
-                                            nextPage(e);
-                                        }
-                                    }}
+                                    onClick={(e) => handleSignUpClick(e)}
                                 >
                                     {couter === 2 ? "S'inscrire" : "Suivant"}
                                 </button>
