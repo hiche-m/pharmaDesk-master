@@ -3,6 +3,7 @@ import { useAuthContext } from '../../Context/AuthProvider.jsx';
 import { validateEmail, validatePhoneNumber, validatePasswordLength, stringComparisonMatching, areAllTrue } from '../../Utils/Functions.jsx';
 import { useNavigate } from 'react-router-dom';
 import "./styles/auth.css";
+import { toast } from 'react-toastify';
 
 function SignUp() {
     const [stepFormSing, setStepFormSign] = useState({ 1: true, 2: false });
@@ -71,10 +72,11 @@ function SignUp() {
                 const result = await signRequest();
                 if (result) {
                     console.log(result);
+                    toast.error(result);
                 } else {
                     navigate("/");
                 }
-            } else alert("Veuillez verifier les champs saisies ");
+            } else toast.error("Veuillez verifier les champs saisies !");
         } else {
             nextPage(e);
         }

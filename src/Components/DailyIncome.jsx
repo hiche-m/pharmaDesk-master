@@ -19,6 +19,8 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
 
     const [hasError, setHasError] = useState(false);
 
+    const [hovered, setHovered] = useState(null);
+
     useEffect(() => {
         if (dailyWidgetData && !result && canvasRef) {
             try {
@@ -84,24 +86,47 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
         </div>)}
 
         {!isLoading && !hasError && (
-            <div className="flex flex-row h-max items-center justify-between w-full">
+            <div className="flex flex-row h-max items-center justify-between w-full pb-2">
                 <span className="flex flex-row grow text-sm items-center justify-start font-medium">Profits quotidiens</span>
                 <span className="px-1 text-xs">{capFix(getFullMonthNameInFrench(formattedPreviousDates(dailyWidgetDate, 1)))}</span>
             </div>)}
         <div className="relative h-full w-full">
-            {/* Canvas overlay */}
-            <canvas
-                ref={canvasRef}
-                className="absolute top-0 left-0 w-full h-full z-1 pointer-events-none"
-            ></canvas>
-            {!isLoading && !hasError && (<div className="grid grid-cols-3 grid-rows-1 h-full mt-5 text-center pb-6">
-                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">{sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 2))}</span>
-                <div className="col-span-1 row-span-1 flex flex-col justify-between items-center bg-darkPrimary p-2 rounded-xl text-white text-sm">
-                    <span className="font-medium">{formatNumberWithComma(result[1])} Ventes</span>
-                    <span>{sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 1))}</span>
+            <span className="absolute top-0 left-0 w-full h-full z-20">
+                <div className="w-full h-full flex flex-row">
+                    {["first", "second", "third"].map((key, index) => (
+                        <div
+                            key={key}
+                            className="w-full h-full relative"
+                            onMouseEnter={() => setHovered(index)}
+                            onMouseLeave={() => setHovered(null)}
+                        >
+                            {hovered === index && (
+                                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full bg-black opacity-80 text-white text-center text-xs rounded-md px-2 py-1">
+                                    {result && `${result[index]} Ventes`}
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
-                <span className="col-span-1 row-span-1 text-textSecoundary flex flex-col items-center justify-end text-sm pb-2 px-2">{sqlToFrenchDateDaily(dailyWidgetDate)}</span>
-            </div>)}
+            </span>
+            {/* Canvas overlay */}
+            <span className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none">
+                <span className="flex flex-col h-full w-full items-center justify-between">
+                    <span className="text-white font-medium text-sm text-center w-1/3 h-min mx-auto pt-2">
+                        {!isLoading && !hasError && (`${formatNumberWithComma(result[1])} Ventes`)}
+                    </span>
+                    <canvas
+                        ref={canvasRef}
+                        className="w-full h-min min-h-40"
+                    ></canvas>
+                    <span className="inline-flex w-full h-min items-center justify-around pb-2">
+                        <span className="text-textSecoundary text-sm">{!isLoading && !hasError && (sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 2)))}</span>
+                        <span className="text-white text-sm">{!isLoading && !hasError && (sqlToFrenchDateDaily(formattedPreviousDates(dailyWidgetDate, 1)))}</span>
+                        <span className="text-textSecoundary text-sm">{!isLoading && !hasError && (sqlToFrenchDateDaily(dailyWidgetDate))}</span>
+                    </span>
+                </span>
+            </span>
+            <div className="h-full w-1/3 bg-darkPrimary mx-auto rounded-xl pt-2" />
         </div>
     </div>);
 }
