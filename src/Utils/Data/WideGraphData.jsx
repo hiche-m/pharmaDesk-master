@@ -54,7 +54,7 @@ export function formatPrescriptionData(prescriptions, graphWidgetBeginDate, grap
     const result = {
         labels: datesInRange,
         confirmed: Array(datesInRange.length).fill(0),
-        received: Array(datesInRange.length).fill(0),
+        /* received: Array(datesInRange.length).fill(0), */
     };
 
     // Map the prescriptions data to a date-based lookup
@@ -62,7 +62,7 @@ export function formatPrescriptionData(prescriptions, graphWidgetBeginDate, grap
         const dateFormatted = formatDate(prescription_date);
         acc[dateFormatted] = {
             confirmed: parseInt(confirmed_prescriptions, 10),
-            received: total_prescriptions,
+            /* received: total_prescriptions, */
         };
         return acc;
     }, {});
@@ -71,7 +71,7 @@ export function formatPrescriptionData(prescriptions, graphWidgetBeginDate, grap
     result.labels.forEach((label, index) => {
         if (prescriptionsMap[label]) {
             result.confirmed[index] = prescriptionsMap[label].confirmed;
-            result.received[index] = prescriptionsMap[label].received;
+            /* result.received[index] = prescriptionsMap[label].received; */
         }
     });
 
@@ -82,24 +82,13 @@ export const data = {
     labels: [`Jan ${new Date().getFullYear()}`, `Fév ${new Date().getFullYear()}`, `Mar ${new Date().getFullYear()}`, `Avr ${new Date().getFullYear()}`, `Mai ${new Date().getFullYear()}`, `Juin ${new Date().getFullYear()}`, `Juil ${new Date().getFullYear()}`, `Août ${new Date().getFullYear()}`, `Sep ${new Date().getFullYear()}`, `Oct ${new Date().getFullYear()}`, `Nov ${new Date().getFullYear()}`, `Déc ${new Date().getFullYear()}`,],
     datasets: [
         {
-            label: "Confirmed",
+            label: "Confirmation",
             data: [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
             borderColor: tailwindColors.primary,
             cubicInterpolationMode: 'monotone',
             pointBackgroundColor: '#FFFFFF',
             pointBorderWidth: 0,
             pointHoverBorderWidth: 2,
-            pointHitRadius: 10,
-            pointRadius: 0,
-        },
-        {
-            label: "Received",
-            data: [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
-            borderColor: tailwindColors.lightShapes,
-            cubicInterpolationMode: 'monotone',
-            pointBackgroundColor: '#FFFFFF',
-            pointBorderWidth: 0,
-            pointHoverBorderWidth: 1,
             pointHitRadius: 10,
             pointRadius: 0,
         },

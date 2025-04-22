@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HOST } from "../Utils/Parameters.jsx";
+import { HOST, HOST_PORT_SEPARATOR, PORT } from "../Utils/Parameters.jsx";
 import { useState } from 'react';
 
 const useConfirmRequest = () => {
@@ -23,7 +23,7 @@ const useConfirmRequest = () => {
         };
 
         try {
-            axios.post(`${HOST}/api/Accept_prescription/${clientId}/${idpharma}/${perscriptionId}`, body).then((res) => {
+            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/Accept_prescription/${clientId}/${idpharma}/${perscriptionId}`, body).then((res) => {
 
                 if (!res) {
                     throw new Error('An error has occured, please try again in a moment...');

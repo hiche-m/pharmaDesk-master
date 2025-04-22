@@ -1,0 +1,9 @@
+/* Custom animations and styles that can't be easily achieved with Tailwind */
+.loginbackground-gridContainer {
+    display: grid;
+    grid-template-columns: [start] 1fr [left-gutter] repeat(16, 86.6px) [left-gutter] 1fr [end];
+    grid-template-rows: [top] 1fr [top-gutter] repeat(8, 64px) [bottom-gutter] 1fr [bottom];
+    justify-content: center;
+    margin: 0 -2%;
+    transform: rotate(-12deg) skew(-12deg);
+}

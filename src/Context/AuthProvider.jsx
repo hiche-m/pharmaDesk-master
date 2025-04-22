@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { validateEmail, areAllTrue } from '../Utils/Functions.jsx'
 import { toast } from 'react-toastify';
 import { useStateContext } from './ContextProvider.jsx';
+import { HOST, HOST_PORT_SEPARATOR, PORT } from '../Utils/Parameters.jsx';
 
 const AuthContext = createContext();
 
@@ -15,19 +16,12 @@ const initLoginForm = {
 const singForm = {
 
     storeName: "",
-    nameOwner: "",
     password: "",
-    store: "",
     confirmation: "",
-    services: "",
-    phoneNumber: "",
     description: "",
     email: "",
     latitude: "",
     longitude: "",
-    adresse: "",
-    commune: "",
-    wilaya: "",
     adressStore: "",
     phonePharmacy: ""
 
@@ -70,7 +64,7 @@ export const AuthProvider = ({ children }) => {
 
     const handleLoginPost = () => {
 
-        axios.post("https://pharma-back.onrender.com/api/pharma/login/v1", loginForm).then((res) => {
+        axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/login/v1`, loginForm).then((res) => {
 
             if (res.data != null && res.data.token != null) {
                 localStorage.setItem('token', res.data.token);
@@ -106,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     const sendEmailForChangingPassword = () => {
         console.log("send email clicked");
 
-        axios.post("https://pharma-back.onrender.com/api/pharma/changingPassword/", { email: resetPasswordEmail }).then(res => {
+        axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/changingPassword/`, { email: resetPasswordEmail }).then(res => {
             console.log(res.data);
 
             if (res.data.message != null) {
@@ -141,7 +135,7 @@ export const AuthProvider = ({ children }) => {
         if (idpharma == null || undefined) return alert('Veuillez confirmer le lien envoyé à votre adresse email.');
 
         else {
-            axios.post(`https://pharma-back.onrender.com/api/pharma/approuveModif`, { password: resetPasswordForm.password, id: idpharma })
+            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/approuveModif`, { password: resetPasswordForm.password, id: idpharma })
                 .then(res => {
 
                     if (res.data.token != null) {
@@ -168,24 +162,25 @@ export const AuthProvider = ({ children }) => {
 
 
     const signRequest = () => {
-        if (signForm.email !== "" && signForm.phoneNumber !== "" && signForm.password !== "" && signForm.confirmation !== "") {
-            axios.post("https://pharma-back.onrender.com/api/pharma/signup/v1", signForm)
+
+        if (signForm.email !== "" && signForm.phonePharmacy !== "" && signForm.password !== "" && signForm.confirmation !== "") {
+            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/signup/v1`, signForm)
                 .then(res => {
                     if (res.data != null) {
                         if (res.data.message === "Registered successfully") {
-                            alert("Bravo ! Inscription complétée avec succès.");
                             toast('Confirmez votre compte avec votre email.');
                             setTriggerNavigateLogin(true);
+                            return null;
                         } else if (res.data.error === "Email or phoneNumber already registered") {
-                            alert("L'email ou le numéro de téléphone est déjà enregistré.");
+                            return "L'email ou le numéro de téléphone est déjà enregistré.";
                         }
                     }
                 })
                 .catch(e => {
-                    alert('Erreur lors de l\'inscription : ' + e);
+                    return "Erreur lors de l'inscription : " + e;
                 });
         } else {
-            alert('Veuillez remplir les zones obligatoires avant de soumettre.');
+            return "Veuillez remplir les zones obligatoires avant de soumettre.";
         }
     }
 

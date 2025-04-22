@@ -14,20 +14,6 @@ const maxWidth = 600;
 
 const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotification }) => {
 
-    if (!isOpen) return null;
-
-    const [numPages, setNumPages] = useState();
-    const [containerRef, setContainerRef] = useState(null);
-    const [containerWidth, setContainerWidth] = useState();
-
-    const [isImageLoading, setImageLoading] = useState(true);
-    const [error, setError] = useState("");
-    const handleOnClose = () => {
-        setError("");
-        onClose();
-    };
-
-
     const onResize = useCallback((entries) => {
         const [entry] = entries;
 
@@ -36,7 +22,20 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
         }
     }, []);
 
+
+    const [numPages, setNumPages] = useState();
+    const [containerRef, setContainerRef] = useState(null);
+    const [containerWidth, setContainerWidth] = useState();
+
+    const [isImageLoading, setImageLoading] = useState(true);
+    const [error, setError] = useState("");
+
     useResizeObserver(containerRef, resizeObserverOptions, onResize);
+
+    const handleOnClose = () => {
+        setError("");
+        onClose();
+    };
 
     function onDocumentLoadSuccess({ numPages: nextNumPages }) {
         setNumPages(nextNumPages);
@@ -76,6 +75,8 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
             ...genList.slice(index + 1)
         ]);
     };
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 select-none">

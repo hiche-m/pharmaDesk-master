@@ -9,6 +9,7 @@ import { getTotalSalesForDates } from "../Utils/Functions.jsx";
 import LoadingSpinner from "../Components/LoadingSpinner.jsx";
 import PinSlideshow from "../Components/PinSlideshow.jsx";
 import LinearRadialBarWidget from "../Components/linearRadialBars.jsx";
+import NestedDonutChart from "../Components/NestedDonutChart.jsx";
 
 const Dashboard = () => {
 
@@ -20,14 +21,14 @@ const Dashboard = () => {
     return (
         <>
             {/* <DashHeader className="hidden sm:flex row-span-3 col-span-12 ml-4" /> */}
-            <div className="row-span-5 col-span-12 flex-col space-y-4 small:space-y-0 small:flex small:flex-row small:justify-stretch small:space-x-4">
+            <div className="row-span-5 col-span-12 flex-col space-y-4 pl-4 small:space-y-0 small:flex small:flex-row small:justify-stretch small:space-x-4">
 
-                {!todayStats && (<div className={`w-full flex justify-center items-center`}>
+                {/* {!todayStats && (<div className={`w-full flex justify-center items-center`}>
                     <LoadingSpinner />
-                </div>)}
+                </div>)} */}
                 {/* {todayStats && (<DashCard className={`w-full`} post="Admin" name="You" adress="Boulevard des lions" imgSrc={pfp4} todaySales={todayStats && todayStats.total_sales} />)}
  */}
-                <LinearRadialBarWidget />
+                <NestedDonutChart />
                 {!dailyWidgetData && (<div className={`min-w-44 min-h-44 flex justify-center items-center`}>
                     <LoadingSpinner />
                 </div>)}
