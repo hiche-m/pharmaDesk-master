@@ -27,7 +27,7 @@ const Navbar = () => {
         <img className="h-20 bg-gray-300" src={banner} /> */}
         <div className="inline-flex items-center justify-start">
             <img src={logo} className="h-20" />
-            <img src={textSvg} className="h-16" />
+            <img src={textSvg} className="h-8" />
         </div>
         <div className="flex flex-row items-center space-x-2">
             <div className="font-medium text-textPrimary">{storeName}</div>
