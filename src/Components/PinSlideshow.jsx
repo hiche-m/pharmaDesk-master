@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStateContext } from "../Context/ContextProvider.jsx";
 import { AiFillPushpin } from "react-icons/ai";
 import { formatDate } from "../Utils/Functions.jsx";
@@ -13,6 +13,20 @@ const PinSlideshow = ({ className }) => {
 
     const [index, setIndex] = useState(0);
 
+
+
+    useEffect(() => {
+        const playNext = () => {
+            setIndex((prevIndex) => (prevIndex >= pinnedNotifs.length - 1 ? 0 : prevIndex + 1));
+        };
+
+        const interval = setInterval(() => {
+            playNext();
+        }, 5000); 
+
+        return () => clearInterval(interval);
+    }, [pinnedNotifs.length]);
+
     const handleOpenModal = (tile) => {
         openNotification(tile, 1);
                 /* openNotification(tile, 1)
@@ -25,7 +39,7 @@ const PinSlideshow = ({ className }) => {
     }
 
     return (
-        <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full p-4`}>
+        <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col relative h-full p-4`}>
             <span className="inline-flex justify-between items-center">
                 <span className="text-sm font-medium">
                     Épingles
@@ -46,7 +60,7 @@ const PinSlideshow = ({ className }) => {
                 </span>
             )}
             </div>
-            {pinnedNotifs.length > 1 && (<div className="absolute z-10 w-full h-full inline-flex justify-between items-center top-0 left-0 p-4">
+            {pinnedNotifs.length > 1 && (<div className="absolute z-10 w-full h-full inline-flex justify-between items-center top-0 left-0 p-4 opacity-10 hover:opacity-100 transition ease-out">
                 <div
                 className="cursor-pointer p-2 bg-textSecoundary/30 rounded-lg hover:bg-textSecoundary/40"
                  onClick={() => {
