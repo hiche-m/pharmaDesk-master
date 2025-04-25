@@ -44,7 +44,7 @@ const createWindow = () => {
     minHeight: 600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      devTools: false,
+      /* devTools: false, */
     },
     autoHideMenuBar: true,
     icon: getIconPath(),
@@ -73,11 +73,11 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  /* mainWindow.webContents.openDevTools(); */
+  mainWindow.webContents.openDevTools();
 
-  mainWindow.webContents.on('devtools-opened', () => {
+  /* mainWindow.webContents.on('devtools-opened', () => {
     mainWindow.webContents.closeDevTools(); // Force-close if somehow opened
-  });
+  }); */
 };
 
 // This method will be called when Electron has finished
