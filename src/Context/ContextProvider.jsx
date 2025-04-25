@@ -531,6 +531,30 @@ export const ContextProvider = ({ children }) => {
     setNotificationSettings(newSettings);
   }
 
+
+
+
+  const [selectedNot, setSelectedNot] = useState({});
+  
+      const [confirmType, setConfirmType] = useState(0);
+      
+      const [isModalOpen, setModalOpen] = useState(false);
+  
+      const handleOpenModal = () => {
+          setModalOpen(true);
+      };
+  
+      const openNotification = (notification_data, type) => {
+          setConfirmType(type);
+          setSelectedNot(notification_data);
+          handleOpenModal();
+      };
+
+
+
+
+
+
   /*                                                                                    */////// Return
 
   return (
@@ -549,6 +573,7 @@ export const ContextProvider = ({ children }) => {
       quantity, setQuantity, days, setDays, todayStats, setDailyWidgetDate, dailyWidgetData,
       setGraphWidgetBeginDate, setGraphWidgetEndDate, graphWidgetData, dailyWidgetDate,
       graphWidgetBeginDate, graphWidgetEndDate, getPinnedNotifs, pinNotif, unpinNotif, pinnedNotifs,
+      selectedNot, setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification
     }}>
 
       {children}

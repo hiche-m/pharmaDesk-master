@@ -24,15 +24,12 @@ import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 
 
 const Home = () => {
-
+    
     const [refresh, setRefresh] = useState(0);
 
-    const [selectedNot, setSelectedNot] = useState({});
-
-    const [confirmType, setConfirmType] = useState(0);
-
     const {
-        confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription,
+        confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription, selectedNot,
+        setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification
     } = useStateContext();
 
     const { handleLogout } = useAuthContext()
@@ -59,11 +56,6 @@ const Home = () => {
     const handleRefresh = () => {
         setRefresh(previous => previous + 1);
     }
-    const [isModalOpen, setModalOpen] = useState(false);
-
-    const handleOpenModal = () => {
-        setModalOpen(true);
-    };
 
     const handleCloseModal = () => {
         setSelectedNot({});
@@ -103,12 +95,6 @@ const Home = () => {
 
         confirmePerscription(clientId, pid, isOn)
         setModalOpen(false);
-    };
-
-    const openNotification = (notification_data, type) => {
-        setConfirmType(type);
-        setSelectedNot(notification_data);
-        handleOpenModal();
     };
 
     /* const handleDisconnect = () => {

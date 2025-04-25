@@ -1,99 +1,77 @@
 import React, { useState } from "react";
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import { AiFillPushpin } from "react-icons/ai";
+import { formatDate } from "../Utils/Functions.jsx";
+import Carousel from "./Carousel.jsx";
+import { MdNavigateNext } from "react-icons/md";
 
 const PinSlideshow = ({ className }) => {
 
     const {
-        pinNotif, unpinNotif, pinnedNotifs,
+        pinNotif, unpinNotif, pinnedNotifs, openNotification
     } = useStateContext();
+
+    const [index, setIndex] = useState(0);
+
+    const handleOpenModal = (tile) => {
+        openNotification(tile, 1);
+                /* openNotification(tile, 1)
+        filteredNewNotifications */
+    };
+
+    const handleUnpin = (id) => {
+        unpinNotif(id);
+        setIndex((prevIndex) => (prevIndex >= pinnedNotifs.length - 1 ? 0 : prevIndex));
+    }
 
     return (
         <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col space-y-2 relative h-full p-4`}>
-            <span className="text-sm font-medium">
-                Épingles
-            </span>
-            {pinnedNotifs.length > 0 ? (
-                <div id="carousel" className="relative w-full h-full">
-                    <div className="relative overflow-hidden rounded-lg h-full">
-                        <div
-                            id="carouselInstance"
-                            className="carousel h-full"
-                            data-carousel
-                        >
-                            {pinnedNotifs.map((pin, index) => (
-                                <div key={pin} className="carousel-item h-full">
-                                    {/* <div ref={setContainerRef} className="flex justify-center items-center w-full h-full">
-                                        <Document file={pin.url} onLoadSuccess={onDocumentLoadSuccess}>
-                                            <Page
-                                                pageNumber={1}
-                                                width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
-                                                height={containerHeight ? Math.min(containerHeight, maxHeight) : maxHeight}
-                                                renderMode="svg"
-                                                className="object-cover w-full h-full"
-                                            />
-                                        </Document>
-                                    </div> */}
-                                    <span>
-                                        {pin.comment}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    {pinnedNotifs.length > 1 ? (<button
-                        type="button"
-                        className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                        data-carousel-prev
-                    >
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                            <svg
-                                className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 6 10"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 1 1 5l4 4"
-                                />
-                            </svg>
-                            <span className="sr-only">Previous</span>
-                        </span>
-                    </button>) : <></>}
-                    {pinnedNotifs.length > 1 ? (<button
-                        type="button"
-                        className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                        data-carousel-next
-                    >
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                            <svg
-                                className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 6 10"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="m1 9 4-4-4-4"
-                                />
-                            </svg>
-                            <span className="sr-only">Next</span>
-                        </span>
-                    </button>) : <></>}
+            <span className="inline-flex justify-between items-center">
+                <span className="text-sm font-medium">
+                    Épingles
+                </span>
+                <div className="inline-flex">
+                    <span className="text-xs font-medium mr-2">
+                        {pinnedNotifs.length > 0 && (`${index + 1}/${pinnedNotifs.length}`)}
+                    </span>
+                <AiFillPushpin className="text-textSecoundary mr-1" />
                 </div>
-            ) : (
+            </span>
+            <div className="h-full w-full">
+            {pinnedNotifs.length > 0 ? 
+            (<Carousel pinnedNotifs={pinnedNotifs} index={index} />) 
+            : (
                 <span className="text-textSecoundary text-center">
-                    No pinned notifications available.
+                    Il n’y a aucune notification épinglée.
                 </span>
             )}
+            </div>
+            {pinnedNotifs.length > 1 && (<div className="absolute z-10 w-full h-full inline-flex justify-between items-center top-0 left-0 p-4">
+                <div
+                className="cursor-pointer p-2 bg-textSecoundary/30 rounded-lg hover:bg-textSecoundary/40"
+                 onClick={() => {
+                    setIndex(index - 1 < 0 ? pinnedNotifs.length - 1 : index - 1);
+                    }}>
+                        <MdNavigateNext className="text-textSecoundary text-sm rotate-180" />
+                </div>
+                <div 
+                className="cursor-pointer p-2 bg-textSecoundary/30 rounded-lg hover:bg-textSecoundary/40"
+                onClick={() => {
+                    setIndex(index + 1 >= pinnedNotifs.length ? 0 : index + 1);
+                    }
+                }
+                >
+                        <MdNavigateNext className="text-textSecoundary text-sm" />
+                </div>
+            </div>)}
+            {pinnedNotifs.length > 0 && (<div className="inline-flex justify-between items-center relative z-20">
+                <button className="text-textSecoundary text-xs font-medium hover:text-textSecoundary/70" onClick={() => handleUnpin(pinnedNotifs[index].idnotifications)}>
+                    Désépingler
+                </button>
+                <button className="text-textSecoundary text-xs font-medium hover:text-textSecoundary/70" onClick={() => handleOpenModal(pinnedNotifs[index])}>
+                    Ouvrir
+                </button>
+            </div>)}
         </div>
     );
 }
