@@ -89,26 +89,28 @@ export const ContextProvider = ({ children }) => {
     const storeName = localStorage.getItem('storeName');
     const profilePic = localStorage.getItem('profilePic');
 
-    axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/accountInfo/${idpharma}`).then((res) => {
-      if (!res || !res.data) {
-          console.log('There was a problem fetching settings information...' + res);
-          setHasError('There was a problem fetching settings information');
-      } else {
-          const temp = res.data.data;
-          
-          const fetchedStoreName = temp.storeName;
-          const fetchedProfilePic = temp.userPic;
-
-          if(storeName != fetchedStoreName) {
-              localStorage.setItem('storeName', fetchedStoreName);
-              setStoreName(fetchedStoreName);
-          }
-
-          if(profilePic != fetchedProfilePic) {
-              localStorage.setItem('profilePic', fetchedProfilePic);
-          }
-      }
-  });
+    if (idpharma) {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/accountInfo/${idpharma}`).then((res) => {
+        if (!res || !res.data) {
+            console.log('There was a problem fetching settings information...' + res);
+            setHasError('There was a problem fetching settings information');
+        } else {
+            const temp = res.data.data;
+            
+            const fetchedStoreName = temp.storeName;
+            const fetchedProfilePic = temp.userPic;
+  
+            if(storeName != fetchedStoreName) {
+                localStorage.setItem('storeName', fetchedStoreName);
+                setStoreName(fetchedStoreName);
+            }
+  
+            if(profilePic != fetchedProfilePic) {
+                localStorage.setItem('profilePic', fetchedProfilePic);
+            }
+        }
+    });
+    }
   }, []);
 
   useEffect(() => {
