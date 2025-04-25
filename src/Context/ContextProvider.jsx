@@ -177,7 +177,7 @@ export const ContextProvider = ({ children }) => {
           userPic,
           message } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Commande annulé!");
+          toast("Commande annulé !");
         }
         removeNotif(data);
         removeNotifComing(data);
@@ -249,7 +249,7 @@ export const ContextProvider = ({ children }) => {
           message
         } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Posiologie envoyé!");
+          toast("Posiologie envoyé !");
         }
         // Display the notification in the front
         removeNotifComing(data);

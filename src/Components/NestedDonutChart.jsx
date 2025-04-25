@@ -9,13 +9,13 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 export default function NestedDonutChart({ className }) {
     // Sample data for each ring
     const data = {
-        labels: ["Ring 1", "Ring 2", "Ring 3", "Ring 4", "Ring 5"],
+        labels: ["Acceptées", "Refusées", "Selectionnée", "Ventes", "Envoie d'instructions"],
         datasets: [
             // Outermost ring (largest)
             {
-                label: "Ring 1",
+                label: "Nombre de commandes acceptées",
                 data: [75, 25], // [filled, empty]
-                backgroundColor: [tailwindColors.primary, "transparent"],
+                backgroundColor: [tailwindColors.primary, tailwindColors.lightShapes],
                 borderColor: ["transparent", "transparent"],
                 borderWidth: 0,
                 circumference: 270, // 3/4 of a circle
@@ -25,9 +25,9 @@ export default function NestedDonutChart({ className }) {
             },
             // Second ring
             {
-                label: "Ring 2",
+                label: "Nombre de commandes refusées",
                 data: [60, 40], // [filled, empty]
-                backgroundColor: [tailwindColors.selectionBG, "transparent"],
+                backgroundColor: [tailwindColors.selectionBG, "#F3F3F3"],
                 borderColor: ["transparent", "transparent"],
                 borderWidth: 0,
                 circumference: 270,
@@ -37,9 +37,9 @@ export default function NestedDonutChart({ className }) {
             },
             // Third ring
             {
-                label: "Ring 3",
+                label: "Nombre de commandes sélectionnées par les clients",
                 data: [85, 15], // [filled, empty]
-                backgroundColor: [tailwindColors.accent, "transparent"],
+                backgroundColor: [tailwindColors.accent, "#F6F6F6"],
                 borderColor: ["transparent", "transparent"],
                 borderWidth: 0,
                 circumference: 270,
@@ -49,9 +49,9 @@ export default function NestedDonutChart({ className }) {
             },
             // Fourth ring
             {
-                label: "Ring 4",
+                label: "Nombre de ventes",
                 data: [45, 55], // [filled, empty]
-                backgroundColor: [tailwindColors.selection, "transparent"],
+                backgroundColor: [tailwindColors.selection, "#F9F9F9"],
                 borderColor: ["transparent", "transparent"],
                 borderWidth: 0,
                 circumference: 270,
@@ -61,9 +61,9 @@ export default function NestedDonutChart({ className }) {
             },
             // Innermost ring (smallest)
             {
-                label: "Ring 5",
+                label: "Nombre d'instructions envoyées",
                 data: [90, 10], // [filled, empty]
-                backgroundColor: [tailwindColors.highlight, "transparent"],
+                backgroundColor: [tailwindColors.highlight, "#FCFCFC"],
                 borderColor: ["transparent", "transparent"],
                 borderWidth: 0,
                 circumference: 270,
@@ -139,6 +139,9 @@ export default function NestedDonutChart({ className }) {
             <div className="aspect-square w-64 h-64 mx-auto">
                 <Doughnut data={data} options={options} />
             </div>
+            <span className="text-xs text-center text-textSecoundary">
+                Nombre totale de commandes reçu : 1000
+            </span>
         </div>
     )
 }
