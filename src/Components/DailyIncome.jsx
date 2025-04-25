@@ -76,7 +76,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
         }
     }, [dailyWidgetData, result, canvasRef]);
 
-    return (<div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col justify-center items-center`}>
+    return (<div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col justify-start items-start gap-2`}>
         {isLoading && (<LoadingSpinner />)}
 
         {!isLoading && hasError && (<div className="flex flex-col justify-center items-center h-full w-full">
@@ -86,10 +86,7 @@ const DailyIncome = ({ className = "", dotWidth = 5 }) => {
         </div>)}
 
         {!isLoading && !hasError && (
-            <div className="flex flex-row h-max items-center justify-between w-full pb-2">
-                <span className="flex flex-row grow text-sm items-center justify-start font-medium">Profits quotidiens</span>
-                <span className="px-1 text-xs">{capFix(getFullMonthNameInFrench(formattedPreviousDates(dailyWidgetDate, 1)))}</span>
-            </div>)}
+            <span className="text-sm font-medium">Profits quotidiens</span>)}
         <div className="relative h-full w-full">
             <span className="absolute top-0 left-0 w-full h-full z-20">
                 <div className="w-full h-full flex flex-row">
