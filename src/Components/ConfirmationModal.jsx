@@ -67,6 +67,8 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         const isPinned = pinnedNotifs.some((pin) => pin.idnotifications === selectedNotification.idnotifications);
         setIsPinned(isPinned);
 
+        setComment(selectedNotification.comment || '');
+
     }, [selectedNotification]);
 
     /* Frequency */
