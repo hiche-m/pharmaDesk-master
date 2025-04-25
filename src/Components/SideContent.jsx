@@ -40,11 +40,23 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
 
     const filterNotifications = (notifications) => {
         if (!searchQuery) return notifications;
-        return notifications.filter((tile) =>
-            tile.firstname?.toLowerCase().includes(searchQuery.toLowerCase()) /* ||
-            tile.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            tile.comment?.toLowerCase().includes(searchQuery.toLowerCase()) */
-        );
+
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+
+        return notifications.filter((tile) => {
+            const firstname = tile.firstname?.toLowerCase() || "";
+            const lastname = tile.lastname?.toLowerCase() || "";
+            const phoneNumbers = tile.phoneNumber?.split(";").map(num => num.trim()) || [];
+            const fullName = `${firstname} ${lastname}`;
+
+            return (
+                firstname.includes(normalizedQuery) ||
+                lastname.includes(normalizedQuery) ||
+                fullName.includes(normalizedQuery) ||
+                phoneNumbers.some(num => num.includes(normalizedQuery)) ||
+                phoneNumbers.some(num => `0${num}`.includes(normalizedQuery))
+            );
+        });
     };
 
     const filteredConfirmationNotifications = filterNotifications(notificationListeRequestsConfirmation);

@@ -392,13 +392,16 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                         <div className="flex flex-col justify-start items-start space-y-2">
                             <span className='inline-flex grow justify-between items-center'>
                                 <h2 className="text-lg font-bold p-0">Confirmer l'achat ?</h2>
-                                <div onClick={() => handlePinOnClick()}>
+                                <div className='ml-2' onClick={() => handlePinOnClick()}>
                                     {isPinned ?
                                         (<AiFillPushpin className={`text-[1.5rem] text-primary`} />) :
                                         (<AiOutlinePushpin className='text-[1.5rem] cursor-pointer text-textSecoundary' />)}
                                 </div>
                             </span>
-                            <p className="text-gray-600 text-center">
+                            <span className="text-gray-600 font-medium">
+                                {`${selectedNotification.firstname} ${selectedNotification.lastname}`} | {`0${selectedNotification.phoneNumber.split(";")[1]}`}
+                            </span>
+                            <p className="text-gray-600">
                                 Confirmez l'achat et envoyer la posologie des médicaments au client.
                             </p>
                             <div className={`flex flex-col space-y-2 pt-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
