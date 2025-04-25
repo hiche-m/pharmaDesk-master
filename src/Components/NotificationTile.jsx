@@ -13,7 +13,7 @@ const NotificationTile = ({ handleClick = () => { }, tile, index, isConfirm = fa
             <img src={persp} className="rounded-full w-1/5 mr-4" />
             <div className="flex flex-col mr-2 text-sm">
                 {/* tile.type === "order" && <span className="text-textSecoundary">Nouvelle commande</span> */}
-                <span>{isConfirm ? "Confirmez-vous l'achat de " : "Vous avez reçu une commande de "}<span className="font-medium">{tile.firstname}</span>{isConfirm ? "?" : "."}</span>
+                <span>{isConfirm ? "Confirmez-vous la vente à " : "Vous avez reçu une commande de "}<span className="font-medium">{tile.firstname}</span>{isConfirm ? "?" : "."}</span>
                 <span className="text-textSecoundary italic">Appuyez ici pour ouvrir</span>
             </div>
             <div className="text-xs italic text-center">{formattedTime}</div>

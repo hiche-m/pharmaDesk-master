@@ -374,7 +374,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                         <span className="text-lg text-red-500">{error}</span>
                     )}
                     {/* PDF */}
-                    <div className="max-h-[33vw] h-[33vw] max-w-[33vw] w-[33vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
+                    <div className="max-h-[75vh] h-[75vh] max-w-[50vw] w-[50vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
                         <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
                             {Array.from(new Array(numPages), (_el, index) => (
                                 <Page
@@ -402,7 +402,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 {`${selectedNotification.firstname} ${selectedNotification.lastname}`} | {`0${selectedNotification.phoneNumber.split(";")[1]}`}
                             </span>
                             <p className="text-gray-600">
-                                Confirmez l'achat et envoyer la posologie des médicaments au client.
+                                Confirmez la vente et envoyer la posologie des médicaments au client.
                             </p>
                             <div className={`flex flex-col space-y-2 pt-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
                                 {/* Line 1 */}

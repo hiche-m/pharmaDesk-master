@@ -72,7 +72,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 <div className="inline-flex mb-2 justify-between items-center ">
                     <span className="font-medium">Confirmation et Posiologie</span>
                 </div>
-                {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications à confirmer.</span>)}
+                {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de notifications à confirmer.</span>)}
                 {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
                 {filteredConfirmationNotifications != null && filteredConfirmationNotifications.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} isConfirm={true} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
             </div>
@@ -81,7 +81,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 <div className="inline-flex mb-2">
                     <span className="font-medium">Nouvelle Commande</span>
                 </div>
-                {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications.</span>)}
+                {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de nouvelles commandes.</span>)}
                 {isLoadingNotification && <NotifictionsSkeleton />}
                 {filteredNewNotifications != null && filteredNewNotifications.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} isConfirm={false} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
             </div>
