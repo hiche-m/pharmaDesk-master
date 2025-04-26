@@ -177,7 +177,7 @@ export const ContextProvider = ({ children }) => {
           userPic,
           message } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Commande annulé !");
+          toast("Commande annulée !");
         }
         removeNotif(data);
         removeNotifComing(data);
@@ -186,6 +186,19 @@ export const ContextProvider = ({ children }) => {
 
 
       });
+
+
+      /* socket.on('pharmacy_accept_sent', (data) => {
+        const { idnotifications } = data;
+        if (cachedNotificationSetting.showToast) {
+          toast("Commande acceptée !");
+        }
+        removeNotif(data);
+        // Display the notification in the front
+        console.log(`Notification accept: ${data}`);
+
+
+      }); */
 
       socket.on('client_confirmed_notification', (data) => {
         const { idnotifications,
@@ -430,11 +443,9 @@ export const ContextProvider = ({ children }) => {
 
   const removeNotif = (notifObject) => {
     setNotificationListeRequest(prev => {
-      let arr = prev.slice();
-      let idnotifications = notifObject.idnotifications;
-
-      let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
-      return newArr;
+      const notifMap = new Map(prev.map(elt => [elt.idnotifications, elt]));
+      notifMap.delete(notifObject.idnotifications);
+      return Array.from(notifMap.values());
     });
   };
 
@@ -563,7 +574,7 @@ export const ContextProvider = ({ children }) => {
       setIdpharma,
       triggerNavigate, setTriggerNavigate, getUserData, notificationSettings, updateNotificationSettings,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif, setNotificationSettings,
-      notificationListeRequests, setNotificationListeRequest,
+      notificationListeRequests, setNotificationListeRequest, removeNotif,
       isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
       , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation, storeName,

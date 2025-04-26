@@ -29,7 +29,7 @@ const Home = () => {
 
     const {
         confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription, selectedNot,
-        setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification
+        setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification, removeNotif
     } = useStateContext();
 
     const { handleLogout } = useAuthContext()
@@ -44,14 +44,6 @@ const Home = () => {
     const /* { refuseRequest, rsuccess, isRRequestLoading, rHasError } */ refuseRequestObject = useRefuseRequest();
 
     const { isLoading, data, error } = useSelector(state => state.user);
-
-    useEffect(() => {
-        /*    const interval = setInterval(() => {
-              setRefresh(prev => prev + 1);
-          }, refresh_rate * 1000);
-  
-          return () => clearInterval(interval);  */
-    }, []);
 
     const handleRefresh = () => {
         setRefresh(previous => previous + 1);
@@ -73,7 +65,7 @@ const Home = () => {
         setModalOpen(false);
     };
 
-    const handleAccept = async (pid, clientId, comment, genList) => {
+    const handleAccept = async (pid, clientId, notificationId, comment, genList) => {
 
         let gen = {};
 
@@ -81,9 +73,10 @@ const Home = () => {
             gen[index] = value;
         });
 
-        await confirmRequestObject.confirmRequest(pid, clientId, comment, gen);
+        await confirmRequestObject.confirmRequest(pid, clientId, notificationId, comment, gen);
         if (confirmRequestObject.success) {
             console.log("Request accepted.");
+            removeNotif({idnotifications: notificationId});
             setRefresh(previous => previous + 1);
         } else if (confirmRequestObject.hasError) {
             console.log("An error has occured: " + hasError);

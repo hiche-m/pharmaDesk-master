@@ -12,7 +12,7 @@ const useConfirmRequest = () => {
     //get ID from localstorage when loading 
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
-    const confirmRequest = async (perscriptionId, clientId, comment, gen) => {
+    const confirmRequest = async (perscriptionId, clientId, notificationId, comment, gen) => {
 
         setIsRequestLoading(true);
         //if (idpharma == null || undefined) return setHasError('id empty')
@@ -23,10 +23,12 @@ const useConfirmRequest = () => {
         };
 
         try {
-            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/Accept_prescription/${clientId}/${idpharma}/${perscriptionId}`, body).then((res) => {
+            axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/Accept_prescription/${clientId}/${idpharma}/${perscriptionId}/${notificationId}`, body).then((res) => {
 
                 if (!res) {
-                    throw new Error('An error has occured, please try again in a moment...');
+                    console.log("Error: ", res);
+                    setSuccess(false);
+                    setHasError(res);
                 } else {
                     setSuccess(true);
                 }

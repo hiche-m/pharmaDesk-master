@@ -1,8 +1,11 @@
-export const HOST = /* 'http://localhost' */'https://pharma-back.onrender.com';
+/* export const HOST = 'http://localhost'; */
+export const HOST = 'https://pharma-back.onrender.com'
 
-export const HOST_PORT_SEPARATOR = /* ':' */'';
+/* export const HOST_PORT_SEPARATOR = ':'; */
+export const HOST_PORT_SEPARATOR = '';
 
-export const PORT = /* '10000' */'';
+/* export const PORT = '10000'; */
+export const PORT = '';
 
 export const notification_load_limit = 20;
 

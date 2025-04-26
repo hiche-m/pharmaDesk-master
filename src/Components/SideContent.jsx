@@ -39,7 +39,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     const [searchQuery, setSearchQuery] = useState("");
 
     const filterNotifications = (notifications) => {
-        if (!searchQuery) return notifications;
+        if (!searchQuery || searchQuery.length < 1) return notifications;
 
         const normalizedQuery = searchQuery.trim().toLowerCase();
 
@@ -58,9 +58,23 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
             );
         });
     };
+    const [filteredNewNotifications, setFilteredNewNotifications] = useState(filterNotifications(notificationListeRequests));
+    const [filteredConfirmationNotifications, setFilteredConfirmationNotifications] = useState(filterNotifications(notificationListeRequestsConfirmation));
 
-    const filteredConfirmationNotifications = filterNotifications(notificationListeRequestsConfirmation);
-    const filteredNewNotifications = filterNotifications(notificationListeRequests);
+    useEffect(() => {
+
+        const notifTemp = filterNotifications(notificationListeRequests);
+        const confirmedNotifTemp = filterNotifications(notificationListeRequestsConfirmation);
+
+        if(filteredNewNotifications != notifTemp){
+            setFilteredNewNotifications(filterNotifications(notificationListeRequests));
+        }
+
+        if(filteredConfirmationNotifications != confirmedNotifTemp){
+            setFilteredConfirmationNotifications(filterNotifications(notificationListeRequestsConfirmation));
+        }
+
+    }, [notificationListeRequestsConfirmation, notificationListeRequests]);
 
     return (<div className="w-full h-[100vh] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
         <div className="flex flex-col">

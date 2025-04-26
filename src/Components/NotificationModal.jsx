@@ -168,20 +168,20 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
                                 onClick={handleOnClose}
                                 className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
                             >
-                                Ignore
+                                Ignorer
                             </button>
                             <div className="inline-flex">
                                 <button
                                     onClick={() => onRefuse(selectedNotification.idnotifications)}
                                     className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
                                 >
-                                    Refuse
+                                    Refuser
                                 </button>
                                 <button
-                                    onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient, comment, genList)}
+                                    onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient, selectedNotification.idnotifications, comment, genList)}
                                     className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
                                 >
-                                    Accept
+                                    Accepter
                                 </button>
                             </div>
                         </div>
