@@ -306,7 +306,13 @@ export const ContextProvider = ({ children }) => {
 
       getPinnedNotifs();
 
-      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/sales/today`).then((res) => {
+      const today = new Date();
+      /* const formattedToday = formatDateForSql(today);
+
+      axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/stats`, {
+        "startDate": formattedToday,
+        "endDate": null
+      }).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching daily sales.');
         } else {
@@ -314,13 +320,9 @@ export const ContextProvider = ({ children }) => {
         }
       }).catch((e) => {
         console.log('Error fetching daily sales.');
-      });
-
-
-
-
-
-      const today = new Date();
+      }); */
+      updateTodayStats();
+      
       setDailyWidgetDate(formatDateForSql(today));
 
       // Set graphWidgetBeginDate to the first day of the current year
@@ -352,6 +354,26 @@ export const ContextProvider = ({ children }) => {
   }, [notificationSettings]);
 
   /*                                                                                    */////// Functions
+
+  const updateTodayStats = () => {
+    const idpharma = localStorage.getItem('idpharma');
+    const today = new Date();
+
+    const formattedToday = formatDateForSql(today);
+
+      axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/stats`, {
+        "startDate": formattedToday,
+        "endDate": null
+      }).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching daily sales.');
+        } else {
+          setTodayStats(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching daily sales.');
+      });
+  }
 
   const pinNotif = (notifObject) => {
     const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
@@ -582,7 +604,7 @@ export const ContextProvider = ({ children }) => {
       quantity, setQuantity, days, setDays, todayStats, setDailyWidgetDate, dailyWidgetData,
       setGraphWidgetBeginDate, setGraphWidgetEndDate, graphWidgetData, dailyWidgetDate,
       graphWidgetBeginDate, graphWidgetEndDate, getPinnedNotifs, pinNotif, unpinNotif, pinnedNotifs,
-      selectedNot, setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification
+      selectedNot, setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification, updateTodayStats
     }}>
 
       {children}

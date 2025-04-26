@@ -22,6 +22,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
         };
 
         fetchData(); // Fetch data immediately when the effect runs
+        updateTodayStats(); // Update today stats immediately when the effect runs
 
         const interval = setInterval(() => {
             fetchData(); // Fetch data periodically every 10 seconds
@@ -34,7 +35,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
-    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
+    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, updateTodayStats, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
 
     const [searchQuery, setSearchQuery] = useState("");
 

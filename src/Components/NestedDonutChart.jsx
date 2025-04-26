@@ -1,78 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
 import { Doughnut } from "react-chartjs-2"
 import { tailwindColors } from "../Utils/Colors.jsx";
+import { useStateContext } from "../Context/ContextProvider.jsx";
+import LoadingSpinner from "./LoadingSpinner.jsx";
 
 // Register the required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 export default function NestedDonutChart({ className }) {
-    // Sample data for each ring
-    const data = {
-        labels: ["Acceptées", "Refusées", "Selectionnée", "Ventes", "Envoie d'instructions"],
-        datasets: [
-            // Outermost ring (largest)
-            {
-                label: "Nombre de commandes acceptées",
-                data: [75, 25], // [filled, empty]
-                backgroundColor: [tailwindColors.primary, tailwindColors.lightShapes],
-                borderColor: ["transparent", "transparent"],
-                borderWidth: 0,
-                circumference: 270, // 3/4 of a circle
-                rotation: -135, // Start from top
-                weight: 0.5, // Make all rings have equal visual weight
-                borderRadius: 20,
-            },
-            // Second ring
-            {
-                label: "Nombre de commandes refusées",
-                data: [60, 40], // [filled, empty]
-                backgroundColor: [tailwindColors.selectionBG, "#F3F3F3"],
-                borderColor: ["transparent", "transparent"],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: -135,
-                weight: 0.5,
-                borderRadius: 20,
-            },
-            // Third ring
-            {
-                label: "Nombre de commandes sélectionnées par les clients",
-                data: [85, 15], // [filled, empty]
-                backgroundColor: [tailwindColors.accent, "#F6F6F6"],
-                borderColor: ["transparent", "transparent"],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: -135,
-                weight: 0.5,
-                borderRadius: 20,
-            },
-            // Fourth ring
-            {
-                label: "Nombre de ventes",
-                data: [45, 55], // [filled, empty]
-                backgroundColor: [tailwindColors.selection, "#F9F9F9"],
-                borderColor: ["transparent", "transparent"],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: -135,
-                weight: 0.5,
-                borderRadius: 20,
-            },
-            // Innermost ring (smallest)
-            {
-                label: "Nombre d'instructions envoyées",
-                data: [90, 10], // [filled, empty]
-                backgroundColor: [tailwindColors.highlight, "#FCFCFC"],
-                borderColor: ["transparent", "transparent"],
-                borderWidth: 0,
-                circumference: 270,
-                rotation: -135,
-                weight: 0.5,
-                borderRadius: 20,
-            },
-        ],
-    }
+
+
+    const { todayStats } = useStateContext();
+
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        if (todayStats) {
+            setData({
+                labels: [
+                    "Acceptées",
+                    "Refusées",
+                    "Selectionnée",
+                    "Ventes",
+                    "Envoie d'instructions",
+                ],
+                datasets: [
+                    {
+                        label: "Acceptées",
+                        data: [
+                            (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100,
+                            100 - (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100,
+                        ],
+                        backgroundColor: [tailwindColors.primary, tailwindColors.lightShapes],
+                        borderColor: ["transparent", "transparent"],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: -135,
+                        weight: 0.5,
+                        borderRadius: 20,
+                    },
+                    {
+                        label: "Refusées",
+                        data: [
+                            (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100,
+                            100 - (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100,
+                        ],
+                        backgroundColor: [tailwindColors.selectionBG, "#F3F3F3"],
+                        borderColor: ["transparent", "transparent"],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: -135,
+                        weight: 0.5,
+                        borderRadius: 20,
+                    },
+                    {
+                        label: "Selectionnée",
+                        data: [
+                            (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100,
+                            100 - (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100,
+                        ],
+                        backgroundColor: [tailwindColors.accent, "#F6F6F6"],
+                        borderColor: ["transparent", "transparent"],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: -135,
+                        weight: 0.5,
+                        borderRadius: 20,
+                    },
+                    {
+                        label: "Ventes",
+                        data: [
+                            (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100,
+                            100 - (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100,
+                        ],
+                        backgroundColor: [tailwindColors.selection, "#F9F9F9"],
+                        borderColor: ["transparent", "transparent"],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: -135,
+                        weight: 0.5,
+                        borderRadius: 20,
+                    },
+                    {
+                        label: "Envoie d'instructions",
+                        data: [
+                            (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100,
+                            100 - (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100,
+                        ],
+                        backgroundColor: [tailwindColors.highlight, "#FCFCFC"],
+                        borderColor: ["transparent", "transparent"],
+                        borderWidth: 0,
+                        circumference: 270,
+                        rotation: -135,
+                        weight: 0.5,
+                        borderRadius: 20,
+                    },
+                ],
+            });
+        }
+    }, [todayStats]);
 
     const options = {
         responsive: true,
@@ -134,14 +161,18 @@ export default function NestedDonutChart({ className }) {
     }
 
     return (
-        <div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col space-y-2`}>
-            <h2 className="text-sm font-medium">Statistiques</h2>
+        <div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col space-y-2 justify-center items-start`}>
+            {!data && (<LoadingSpinner />)}
+        { data && 
+        (<>
+            <span className="text-sm font-medium">Statistiques d'aujourd'hui</span>
             <div className="aspect-square w-64 h-64 mx-auto">
                 <Doughnut data={data} options={options} />
             </div>
-            <span className="text-xs text-center text-textSecoundary">
-                Nombre totale de commandes reçu : 1000
+            <span className="text-xs text-center text-textSecoundary mx-auto">
+                Nombre totale de commandes reçu : {todayStats.total_notifications_received}
             </span>
+            </>)}
         </div>
     )
 }
