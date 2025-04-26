@@ -442,11 +442,9 @@ export const ContextProvider = ({ children }) => {
   }
 
   const removeNotif = (notifObject) => {
-    setNotificationListeRequest(prev => {
-      const notifMap = new Map(prev.map(elt => [elt.idnotifications, elt]));
-      notifMap.delete(notifObject.idnotifications);
-      return Array.from(notifMap.values());
-    });
+    setNotificationListeRequest(prev => 
+      prev.filter(elt => elt.idnotifications !== notifObject.idnotifications)
+    );
   };
 
   const fetchCommingClients = async () => {
