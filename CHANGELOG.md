@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.17...v0.0.18) (2025-04-29)
+
+
+### Bug Fixes
+
+* Update spacing in Navbar and correct label in SideContent ([aeac22d](https://github.com/hiche-m/pharmaDesk-master/commit/aeac22db7b4715db7d44d00038353fcb6e0f0e20))
+
 ### [0.0.17](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.16...v0.0.17) (2025-04-29)
 
 
