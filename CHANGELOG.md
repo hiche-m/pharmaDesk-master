@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.15...v0.0.16) (2025-04-29)
+
+
+### Features
+
+* Added working carousel effect to the Pins widget; fixed some bugs; ([3d3fdb9](https://github.com/hiche-m/pharmaDesk-master/commit/3d3fdb954abd6b780d077221553f127adbd81053))
+* Enhanced Carousel and PinSlideshow components; added auto-play functionality and improved display of user information in Carousel ([066a347](https://github.com/hiche-m/pharmaDesk-master/commit/066a3478c510f0976bd1287cf0d59f3e6b3d1b74))
+* Improve ConfirmationModal display and enhance SideContent notification filtering ([5d77e0b](https://github.com/hiche-m/pharmaDesk-master/commit/5d77e0bbee0556843aeb6adf169242d78b747109))
+* Navbar now gets information from backend ([77b69d0](https://github.com/hiche-m/pharmaDesk-master/commit/77b69d0a24c1eb4a8570198305d1fc8832693581))
+* NestedDonutChart now functional ([f230010](https://github.com/hiche-m/pharmaDesk-master/commit/f2300103ec41ef06a802b8b149d5d93f1ad1ecdb))
+* Update ConfirmationModal and NotificationModal styles; improve notification messages in SideContent ([dd4c5d4](https://github.com/hiche-m/pharmaDesk-master/commit/dd4c5d47212e1e20d6252ac730afcf6d0ea71c99))
+* Update NestedDonutChart labels and colors; modify toast messages in ContextProvider; change dataset label in WideGraphData ([1bd405b](https://github.com/hiche-m/pharmaDesk-master/commit/1bd405bed287b5f74a4775282e657a39e2d12db7))
+
+
+### Bug Fixes
+
+* Fixed comment not changing bug in Confirmation Model ([5e95481](https://github.com/hiche-m/pharmaDesk-master/commit/5e954812ba3f41981eb6db482b2ba073a21cfa8f))
+* Fixed padding bug in DailyIncome widget ([deb92f8](https://github.com/hiche-m/pharmaDesk-master/commit/deb92f8eb47463b36b83cd539dd792b0a5071ac9))
+* Fixed padding in sign up indexes ([2354ed5](https://github.com/hiche-m/pharmaDesk-master/commit/2354ed5f3f069b8a64b5ca0c965173d003d10d3a))
+* Fixed transparency problem ([dd951a1](https://github.com/hiche-m/pharmaDesk-master/commit/dd951a1e893882718ca3732860d8ac4525c40000))
+* Notifications now gets deleted instantly when accepted by pharmacy. ([e514482](https://github.com/hiche-m/pharmaDesk-master/commit/e5144820a2ad363145ca352014683dbc0613460f))
+
 ### [0.0.15](https://github.com/hiche-m/pharmaDesk-master/compare/v0.0.14...v0.0.15) (2025-04-22)
 
 
