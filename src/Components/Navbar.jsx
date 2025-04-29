@@ -43,7 +43,7 @@ const Navbar = () => {
             <img src={logo} className="h-20" />
             <img src={textSvg} className="h-8" />
         </div>
-        <div className="flex flex-row items-center space-x-2">
+        <div className="flex flex-row items-center space-x-3">
             <div className="font-medium text-textPrimary">{storeInfo.storeName}</div>
             {/* <div className="flex flex-col items-start p-4">
                 <div className="text-sm font-medium text-textPrimary">{storeName}</div>
