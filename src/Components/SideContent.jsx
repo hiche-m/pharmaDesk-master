@@ -94,7 +94,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
             <div className="my-5" />
             <div className="h-max w-full space-y-2">
                 <div className="inline-flex mb-2">
-                    <span className="font-medium">Nouvelle Commande</span>
+                    <span className="font-medium">Nouvelles Commandes</span>
                 </div>
                 {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de nouvelles commandes.</span>)}
                 {isLoadingNotification && <NotifictionsSkeleton />}

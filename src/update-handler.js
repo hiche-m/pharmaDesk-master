@@ -2,7 +2,7 @@ const { autoUpdater } = require('electron-updater');
 const { ipcMain } = require('electron');
 
 module.exports = (mainWindow) => {
-  autoUpdater.autoDownload = false; // Let users choose when to download
+  autoUpdater.autoDownload = true; // Let users choose when to download
   autoUpdater.autoInstallOnAppQuit = true; // Auto-install on app close
 
   // Check for updates when the app starts
