@@ -73,4 +73,16 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'hiche-m',
+          name: 'pharmaDesk-master'
+        },
+        prerelease: false
+      }
+    }
+  ]
 };

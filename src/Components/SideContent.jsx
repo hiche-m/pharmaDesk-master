@@ -22,6 +22,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
         };
 
         fetchData(); // Fetch data immediately when the effect runs
+        updateTodayStats(); // Update today stats immediately when the effect runs
 
         const interval = setInterval(() => {
             fetchData(); // Fetch data periodically every 10 seconds
@@ -34,21 +35,47 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
-    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, setIsLoadingNotifaction, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
+    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, updateTodayStats, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
 
     const [searchQuery, setSearchQuery] = useState("");
 
     const filterNotifications = (notifications) => {
-        if (!searchQuery) return notifications;
-        return notifications.filter((tile) =>
-            tile.firstname?.toLowerCase().includes(searchQuery.toLowerCase()) /* ||
-            tile.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            tile.comment?.toLowerCase().includes(searchQuery.toLowerCase()) */
-        );
-    };
+        if (!searchQuery || searchQuery.length < 1) return notifications;
 
-    const filteredConfirmationNotifications = filterNotifications(notificationListeRequestsConfirmation);
-    const filteredNewNotifications = filterNotifications(notificationListeRequests);
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+
+        return notifications.filter((tile) => {
+            const firstname = tile.firstname?.toLowerCase() || "";
+            const lastname = tile.lastname?.toLowerCase() || "";
+            const phoneNumbers = tile.phoneNumber?.split(";").map(num => num.trim()) || [];
+            const fullName = `${firstname} ${lastname}`;
+
+            return (
+                firstname.includes(normalizedQuery) ||
+                lastname.includes(normalizedQuery) ||
+                fullName.includes(normalizedQuery) ||
+                phoneNumbers.some(num => num.includes(normalizedQuery)) ||
+                phoneNumbers.some(num => `0${num}`.includes(normalizedQuery))
+            );
+        });
+    };
+    const [filteredNewNotifications, setFilteredNewNotifications] = useState(filterNotifications(notificationListeRequests));
+    const [filteredConfirmationNotifications, setFilteredConfirmationNotifications] = useState(filterNotifications(notificationListeRequestsConfirmation));
+
+    useEffect(() => {
+
+        const notifTemp = filterNotifications(notificationListeRequests);
+        const confirmedNotifTemp = filterNotifications(notificationListeRequestsConfirmation);
+
+        if(filteredNewNotifications != notifTemp){
+            setFilteredNewNotifications(filterNotifications(notificationListeRequests));
+        }
+
+        if(filteredConfirmationNotifications != confirmedNotifTemp){
+            setFilteredConfirmationNotifications(filterNotifications(notificationListeRequestsConfirmation));
+        }
+
+    }, [notificationListeRequestsConfirmation, notificationListeRequests]);
 
     return (<div className="w-full h-[100vh] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
         <div className="flex flex-col">
@@ -60,7 +87,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 <div className="inline-flex mb-2 justify-between items-center ">
                     <span className="font-medium">Confirmation et Posiologie</span>
                 </div>
-                {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications à confirmer.</span>)}
+                {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de notifications à confirmer.</span>)}
                 {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
                 {filteredConfirmationNotifications != null && filteredConfirmationNotifications.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} isConfirm={true} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
             </div>
@@ -69,7 +96,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 <div className="inline-flex mb-2">
                     <span className="font-medium">Nouvelle Commande</span>
                 </div>
-                {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Il n'y a pas de notifications.</span>)}
+                {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de nouvelles commandes.</span>)}
                 {isLoadingNotification && <NotifictionsSkeleton />}
                 {filteredNewNotifications != null && filteredNewNotifications.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} isConfirm={false} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
             </div>

@@ -14,7 +14,7 @@ import NestedDonutChart from "../Components/NestedDonutChart.jsx";
 const Dashboard = () => {
 
     const {
-        todayStats, setDailyWidgetDate, dailyWidgetData, setGraphWidgetBeginDate, setGraphWidgetEndDate,
+        setDailyWidgetDate, dailyWidgetData, setGraphWidgetBeginDate, setGraphWidgetEndDate,
         dailyWidgetDate, graphWidgetData, graphWidgetBeginDate, graphWidgetEndDate, pinnedNotifs,
     } = useStateContext();
 

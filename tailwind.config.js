@@ -46,7 +46,7 @@ module.exports = {
   },
   plugins: [],
   future: {
-    disableColorOpacityUtilitiesByDefault: true, // Ensures CSS vars are generated
+    disableColorOpacityUtilitiesByDefault: false, // Ensures CSS vars are generated
   },
 }
 

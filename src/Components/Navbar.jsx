@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import home_full from "../Assets/SVG/home_filled.svg"
 import home_outline from "../Assets/SVG/home_outline.svg"
 import { Link, useLocation } from "react-router-dom";
@@ -9,14 +9,28 @@ import logo from "../Assets/SVG/logo_white_bg.svg"
 import textSvg from "../Assets/SVG/text_color.svg"
 import banner from "../Assets/GIF/banner1.gif"
 import { useStateContext } from "../Context/ContextProvider.jsx";
+import LoadingSpinner from "./LoadingSpinner.jsx";
 
 const Navbar = () => {
     const location = useLocation();
     const { getUserData } = useStateContext();
 
-    const storeName = getUserData().storeName;
+    const [storeInfo, setStoreInfo] = useState(null);
 
-    return (<div className="col-span-9 row-span-1 inline-flex items-center justify-between text-base font-medium text-textSecoundary py-2 px-4 space-x-4 border-b-2 border-lightShapes">
+    useEffect(() => {
+        const info = getUserData();
+        setStoreInfo(info);
+        console.log(info);
+        
+    }, [location.pathname]);
+
+    if(!storeInfo) {
+        return (
+            <LoadingSpinner />
+        );
+    }
+
+    return (<div className="col-span-9 inline-flex items-center justify-between text-base font-medium text-textSecoundary px-4 space-x-4 border-b-2 border-lightShapes">
         {/* <div className="self-end flex flex-row items-center">
             <img src={pfp4} className="h-8 w-8 rounded-full" />
             <div className="flex flex-col items-start p-4">
@@ -30,12 +44,12 @@ const Navbar = () => {
             <img src={textSvg} className="h-8" />
         </div>
         <div className="flex flex-row items-center space-x-2">
-            <div className="font-medium text-textPrimary">{storeName}</div>
+            <div className="font-medium text-textPrimary">{storeInfo.storeName}</div>
             {/* <div className="flex flex-col items-start p-4">
                 <div className="text-sm font-medium text-textPrimary">{storeName}</div>
                 <div className="text-xs text-textSecoundary">Administrateur</div>
             </div> */}
-            <img src={pfp4} className="h-8 w-8 rounded-full" />
+            <img src={storeInfo.profilePic ?? pfp4} className="h-8 w-8 rounded-full" />
         </div>
         {/* <Link to={location.pathname === '/' ? undefined : '/'}><img className="h-6 w-6 justify-center items-center" src={location.pathname === '/' ? home_full : home_outline} /></Link> */}
         {/* <Link to={location.pathname === '/stock' ? undefined : '/stock'}> */}

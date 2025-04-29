@@ -120,11 +120,11 @@ function SignUp() {
                 <div className="flex flex-col flex-grow z-10">
                     <main className="w-screen h-screen flex justify-center items-center overflow-hidden">
                         <div className="bg-white w-4/5 min-h-[80%] shadow-xl rounded-md flex flex-col py-10 justify-between items-center">
-                            <div className="flex w-[70%] items-center justify-between">
+                            <div className="inline-flex w-[70%] items-center justify-center gap-4">
                                 <div className={`w-10 h-10 bg-primary text-white text-center rounded-sm flex items-center justify-center transition duration-500`}>
                                     <span>1</span>
                                 </div>
-                                <span className={`h-[1px] w-[30%] ${stepFormSing[2] ? "bg-primary" : "bg-gray-400"} transition duration-500`}></span>
+                                <span className={`h-[1px] w-[33%] ${stepFormSing[2] ? "bg-primary" : "bg-gray-400"} transition duration-500`}></span>
                                 <div className={`w-10 h-10 ${stepFormSing[2] ? "bg-primary" : "bg-gray-400"} transition duration-500 text-white text-center rounded-sm flex items-center justify-center`}>
                                     <span>2</span>
                                 </div>

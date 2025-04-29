@@ -83,6 +83,36 @@ export const ContextProvider = ({ children }) => {
 
   /*                                                                                    */////// Effects
   /* Dashboard */
+
+  useEffect(() => {
+    const idpharma = localStorage.getItem('idpharma');
+    const storeName = localStorage.getItem('storeName');
+    const profilePic = localStorage.getItem('profilePic');
+
+    if (idpharma) {
+      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/accountInfo/${idpharma}`).then((res) => {
+        if (!res || !res.data) {
+            console.log('There was a problem fetching settings information...' + res);
+            setHasError('There was a problem fetching settings information');
+        } else {
+            const temp = res.data.data;
+            
+            const fetchedStoreName = temp.storeName;
+            const fetchedProfilePic = temp.userPic;
+  
+            if(storeName != fetchedStoreName) {
+                localStorage.setItem('storeName', fetchedStoreName);
+                setStoreName(fetchedStoreName);
+            }
+  
+            if(profilePic != fetchedProfilePic) {
+                localStorage.setItem('profilePic', fetchedProfilePic);
+            }
+        }
+    });
+    }
+  }, []);
+
   useEffect(() => {
     const jsonId = localStorage.getItem('idpharma')
     const idpharma = JSON.parse(jsonId)
@@ -147,7 +177,7 @@ export const ContextProvider = ({ children }) => {
           userPic,
           message } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Commande annulé!");
+          toast("Commande annulée !");
         }
         removeNotif(data);
         removeNotifComing(data);
@@ -156,6 +186,19 @@ export const ContextProvider = ({ children }) => {
 
 
       });
+
+
+      /* socket.on('pharmacy_accept_sent', (data) => {
+        const { idnotifications } = data;
+        if (cachedNotificationSetting.showToast) {
+          toast("Commande acceptée !");
+        }
+        removeNotif(data);
+        // Display the notification in the front
+        console.log(`Notification accept: ${data}`);
+
+
+      }); */
 
       socket.on('client_confirmed_notification', (data) => {
         const { idnotifications,
@@ -219,7 +262,7 @@ export const ContextProvider = ({ children }) => {
           message
         } = data;
         if (cachedNotificationSetting.showToast) {
-          toast("Posiologie envoyé!");
+          toast("Posiologie envoyé !");
         }
         // Display the notification in the front
         removeNotifComing(data);
@@ -263,7 +306,13 @@ export const ContextProvider = ({ children }) => {
 
       getPinnedNotifs();
 
-      axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/sales/today`).then((res) => {
+      const today = new Date();
+      /* const formattedToday = formatDateForSql(today);
+
+      axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/stats`, {
+        "startDate": formattedToday,
+        "endDate": null
+      }).then((res) => {
         if (!res || !res.data) {
           console.log('Error fetching daily sales.');
         } else {
@@ -271,13 +320,9 @@ export const ContextProvider = ({ children }) => {
         }
       }).catch((e) => {
         console.log('Error fetching daily sales.');
-      });
-
-
-
-
-
-      const today = new Date();
+      }); */
+      updateTodayStats();
+      
       setDailyWidgetDate(formatDateForSql(today));
 
       // Set graphWidgetBeginDate to the first day of the current year
@@ -309,6 +354,26 @@ export const ContextProvider = ({ children }) => {
   }, [notificationSettings]);
 
   /*                                                                                    */////// Functions
+
+  const updateTodayStats = () => {
+    const idpharma = localStorage.getItem('idpharma');
+    const today = new Date();
+
+    const formattedToday = formatDateForSql(today);
+
+      axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/dashboard/${idpharma}/stats`, {
+        "startDate": formattedToday,
+        "endDate": null
+      }).then((res) => {
+        if (!res || !res.data) {
+          console.log('Error fetching daily sales.');
+        } else {
+          setTodayStats(res.data.data);
+        }
+      }).catch((e) => {
+        console.log('Error fetching daily sales.');
+      });
+  }
 
   const pinNotif = (notifObject) => {
     const temp = JSON.parse(localStorage.getItem('pinnedNotifs'));
@@ -399,13 +464,9 @@ export const ContextProvider = ({ children }) => {
   }
 
   const removeNotif = (notifObject) => {
-    setNotificationListeRequest(prev => {
-      let arr = prev.slice();
-      let idnotifications = notifObject.idnotifications;
-
-      let newArr = arr.filter(elt => elt.idnotifications !== idnotifications);
-      return newArr;
-    });
+    setNotificationListeRequest(prev => 
+      prev.filter(elt => elt.idnotifications !== notifObject.idnotifications)
+    );
   };
 
   const fetchCommingClients = async () => {
@@ -501,6 +562,30 @@ export const ContextProvider = ({ children }) => {
     setNotificationSettings(newSettings);
   }
 
+
+
+
+  const [selectedNot, setSelectedNot] = useState({});
+  
+      const [confirmType, setConfirmType] = useState(0);
+      
+      const [isModalOpen, setModalOpen] = useState(false);
+  
+      const handleOpenModal = () => {
+          setModalOpen(true);
+      };
+  
+      const openNotification = (notification_data, type) => {
+          setConfirmType(type);
+          setSelectedNot(notification_data);
+          handleOpenModal();
+      };
+
+
+
+
+
+
   /*                                                                                    */////// Return
 
   return (
@@ -509,7 +594,7 @@ export const ContextProvider = ({ children }) => {
       setIdpharma,
       triggerNavigate, setTriggerNavigate, getUserData, notificationSettings, updateNotificationSettings,
       resetPasswordEmail, setResetPasswordEmail, socket, fetchNotif, setNotificationSettings,
-      notificationListeRequests, setNotificationListeRequest,
+      notificationListeRequests, setNotificationListeRequest, removeNotif,
       isLoadingNotification, setIsLoadingNotifaction, fetchCommingClients,
       notificationListeRequestsConfirmation, setNotificationListeRequestConfirmation
       , isLoadingNotificationConfirmation, setIsLoadingNotifactionConfirmation, storeName,
@@ -519,6 +604,7 @@ export const ContextProvider = ({ children }) => {
       quantity, setQuantity, days, setDays, todayStats, setDailyWidgetDate, dailyWidgetData,
       setGraphWidgetBeginDate, setGraphWidgetEndDate, graphWidgetData, dailyWidgetDate,
       graphWidgetBeginDate, graphWidgetEndDate, getPinnedNotifs, pinNotif, unpinNotif, pinnedNotifs,
+      selectedNot, setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification, updateTodayStats
     }}>
 
       {children}

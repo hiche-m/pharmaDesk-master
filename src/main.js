@@ -1,24 +1,52 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
-const { Server } = require('socket.io');
-const http = require('http');
+const fs = require('fs');
+const setupUpdater = require('./update-handler.js');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+function getIconPath() {
+  const basePaths = [
+    // Development paths (webpack)
+    path.join(__dirname, '..', 'Assets', 'Icons'),
+    path.join(__dirname, 'Assets', 'Icons'),
+
+    // Production paths
+    path.join(process.resourcesPath, 'Assets', 'Icons'),
+    path.join(__dirname, '..', '..', 'Assets', 'Icons'),
+  ];
+
+  const ext = process.platform === 'win32' ? '.ico' :
+    process.platform === 'darwin' ? '.icns' : '.png';
+
+  for (const basePath of basePaths) {
+    const fullPath = path.join(basePath, `icon${ext}`);
+    if (fs.existsSync(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  console.error('Icon not found in any location');
+  return null;
+}
+
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    minWidth: 512,
-    minHeight: 420,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      /* devTools: false, */
     },
     autoHideMenuBar: true,
+    icon: getIconPath(),
   });
 
   // maximize the window
@@ -34,7 +62,7 @@ const createWindow = () => {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self' http://res.cloudinary.com;" +
-          " connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com http://res.cloudinary.com;" +
+          " connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
           " img-src 'self' http://res.cloudinary.com data:;" +
           " script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
           " style-src 'self' 'unsafe-inline';"
@@ -44,7 +72,11 @@ const createWindow = () => {
   });
 
   // Open the DevTools.
-  /* mainWindow.webContents.openDevTools(); */
+  mainWindow.webContents.openDevTools();
+
+  /* mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.closeDevTools(); // Force-close if somehow opened
+  }); */
 };
 
 // This method will be called when Electron has finished
@@ -60,6 +92,9 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+
+  if (!app.isPackaged) return;
+  setupUpdater(BrowserWindow.getAllWindows()[0]); // Pass the main window to the updater
 });
 /* 
 // Set up HTTP and Socket.IO server

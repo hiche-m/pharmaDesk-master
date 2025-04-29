@@ -109,7 +109,7 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
 
 
 
-                    <div className="max-h-[33vw] h-[33vw] max-w-[33vw] w-[33vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
+                    <div className="max-h-[75vh] h-[75vh] max-w-[50vw] w-[50vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
                         <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
                             {Array.from(new Array(numPages), (_el, index) => (
                                 <Page
@@ -127,17 +127,18 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
 
                     <div className="flex flex-col items-start space-y-2 max-h-full">
                         {/* Info */}
-                        <h2 className="text-lg font-bold m-0 p-0">Accepter l'ordonnance?</h2>
-                        <p className="text-gray-600 text-center">
-                            <b>{selectedNotification.firstname}</b> a envoyé une ordonnance.
+                        <h2 className="text-lg font-bold m-0 p-0">Accepter la commande?</h2>
+                        <p className="text-gray-600 text-center mb-2">
+                            <b>{selectedNotification.firstname}</b> a envoyé une nouvelle commande.
                         </p>
 
                         {/* Form */}
                         <div className="h-full flex flex-col mt-2">
-                            <textarea className="bg-lightShapes rounded-lg outline-none p-2 resize-none" placeholder="Commentaire..." value={comment} onChange={(event) => onCommentChange(event.target.value)} />
+                        <span className='font-medium'>Commentaire:</span>
+                            <textarea className="bg-lightShapes rounded-lg outline-none p-2 resize-none mt-2" placeholder="Écrire un commentaire..." value={comment} onChange={(event) => onCommentChange(event.target.value)} />
                             <div className="w-full inline-flex justify-between mt-4">
-                                <span className='text-textSecoundary font-medium'>Disponibilité ({(!genList || genList.length === 0) ? '/' : genList.length})</span>
-                                <span className='text-textPrimary'>Générique?</span>
+                                <span className='font-medium'>Disponibilité ({(!genList || genList.length === 0) ? '/' : genList.length}):</span>
+                                <span className='text-textSecoundary'>Générique?</span>
                             </div>
                             <div className="flex flex-col overflow-y-auto max-h-72 space-y-2 mt-2">
                                 <span className="flex justify-start items-center text-textSecoundary italic text-sm cursor-pointer">
@@ -167,20 +168,20 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
                                 onClick={handleOnClose}
                                 className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
                             >
-                                Ignore
+                                Ignorer
                             </button>
                             <div className="inline-flex">
                                 <button
                                     onClick={() => onRefuse(selectedNotification.idnotifications)}
                                     className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
                                 >
-                                    Refuse
+                                    Refuser
                                 </button>
                                 <button
-                                    onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient, comment, genList)}
+                                    onClick={() => onAccept(selectedNotification.idprescription, selectedNotification.idClient, selectedNotification.idnotifications, comment, genList)}
                                     className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
                                 >
-                                    Accept
+                                    Accepter
                                 </button>
                             </div>
                         </div>

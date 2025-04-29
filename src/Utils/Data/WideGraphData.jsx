@@ -82,7 +82,7 @@ export const data = {
     labels: [`Jan ${new Date().getFullYear()}`, `Fév ${new Date().getFullYear()}`, `Mar ${new Date().getFullYear()}`, `Avr ${new Date().getFullYear()}`, `Mai ${new Date().getFullYear()}`, `Juin ${new Date().getFullYear()}`, `Juil ${new Date().getFullYear()}`, `Août ${new Date().getFullYear()}`, `Sep ${new Date().getFullYear()}`, `Oct ${new Date().getFullYear()}`, `Nov ${new Date().getFullYear()}`, `Déc ${new Date().getFullYear()}`,],
     datasets: [
         {
-            label: "Confirmation",
+            label: "Ventes",
             data: [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
             borderColor: tailwindColors.primary,
             cubicInterpolationMode: 'monotone',
