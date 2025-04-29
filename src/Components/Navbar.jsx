@@ -30,7 +30,7 @@ const Navbar = () => {
         );
     }
 
-    return (<div className="col-span-9 row-span-1 inline-flex items-center justify-between text-base font-medium text-textSecoundary py-2 px-4 space-x-4 border-b-2 border-lightShapes">
+    return (<div className="col-span-9 inline-flex items-center justify-between text-base font-medium text-textSecoundary px-4 space-x-4 border-b-2 border-lightShapes">
         {/* <div className="self-end flex flex-row items-center">
             <img src={pfp4} className="h-8 w-8 rounded-full" />
             <div className="flex flex-col items-start p-4">

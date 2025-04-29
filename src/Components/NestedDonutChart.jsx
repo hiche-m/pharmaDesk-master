@@ -29,8 +29,8 @@ export default function NestedDonutChart({ className }) {
                     {
                         label: "Acceptées",
                         data: [
-                            (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100,
-                            100 - (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100,
+                            Math.round((todayStats.notifications_accepted / todayStats.total_notifications_received) * 100),
+                            Math.round(100 - (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100),
                         ],
                         backgroundColor: [tailwindColors.primary, tailwindColors.lightShapes],
                         borderColor: ["transparent", "transparent"],
@@ -43,8 +43,8 @@ export default function NestedDonutChart({ className }) {
                     {
                         label: "Refusées",
                         data: [
-                            (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100,
-                            100 - (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100,
+                            Math.round((todayStats.notifications_rejected / todayStats.total_notifications_received) * 100),
+                            Math.round(100 - (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100),
                         ],
                         backgroundColor: [tailwindColors.selectionBG, "#F3F3F3"],
                         borderColor: ["transparent", "transparent"],
@@ -57,8 +57,8 @@ export default function NestedDonutChart({ className }) {
                     {
                         label: "Selectionnée",
                         data: [
-                            (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100,
-                            100 - (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100,
+                            Math.round((todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100),
+                            Math.round(100 - (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100),
                         ],
                         backgroundColor: [tailwindColors.accent, "#F6F6F6"],
                         borderColor: ["transparent", "transparent"],
@@ -71,8 +71,8 @@ export default function NestedDonutChart({ className }) {
                     {
                         label: "Ventes",
                         data: [
-                            (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100,
-                            100 - (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100,
+                            Math.round((todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100),
+                            Math.round(100 - (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100),
                         ],
                         backgroundColor: [tailwindColors.selection, "#F9F9F9"],
                         borderColor: ["transparent", "transparent"],
@@ -85,8 +85,8 @@ export default function NestedDonutChart({ className }) {
                     {
                         label: "Envoie d'instructions",
                         data: [
-                            (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100,
-                            100 - (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100,
+                            Math.round((todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100),
+                            Math.round(100 - (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100),
                         ],
                         backgroundColor: [tailwindColors.highlight, "#FCFCFC"],
                         borderColor: ["transparent", "transparent"],
@@ -152,6 +152,9 @@ export default function NestedDonutChart({ className }) {
                             const label = data.labels[datasetIndex] || "";
                             const value = context.raw || 0;
                             return `${label}: ${value}%`;
+                        } else {
+                            const value = context.raw || 0;
+                            return `Vide: ${value}%`;
                         }
                         return "";
                     },

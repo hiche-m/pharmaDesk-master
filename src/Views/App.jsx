@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar.jsx";
-import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import NotFound from "../Components/NotFound.jsx";
 import Home from "./home.jsx";
 import Layout from "./layout.jsx";
@@ -32,7 +32,7 @@ export default function App() {
 
         const notificationSettingsJson = localStorage.getItem("notification");
 
-        if (dataJson && idPharmaJson && storeNameJson) {
+        if (dataJson && idPharmaJson && storeNameJson) { 
             if (!notificationSettingsJson) {
                 localStorage.setItem("notification", JSON.stringify(default_notification_settings));
             }
