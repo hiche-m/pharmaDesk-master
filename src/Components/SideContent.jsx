@@ -77,7 +77,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
 
     }, [notificationListeRequestsConfirmation, notificationListeRequests]);
 
-    return (<div className="w-full h-[100vh] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
+    return (<div className="w-full h-[100vh] min-h-[940px] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
         <div className="flex flex-col">
             <div className="inline-flex mb-2">
                 <span className="font-bold text-lg">Notifications</span>
