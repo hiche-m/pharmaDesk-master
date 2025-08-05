@@ -17,8 +17,9 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 
-const root = createRoot(document.getElementById("root"));
-root.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);root.render(
     <Provider store={store}>
         <ContextProvider>
             <AuthProvider>
