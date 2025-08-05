@@ -23,7 +23,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/': {
-        target: 'https://pharma-back.onrender.com',  // Backend server URL
+        target: 'https://pharma-express-00ro.onrender.com',  // Backend server URL
         secure: false,                    // If using https, set this to true
         changeOrigin: true,               // Needed for virtual hosted sites
       },

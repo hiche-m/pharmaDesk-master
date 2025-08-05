@@ -1,12 +1,39 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
-const setupUpdater = require('./update-handler.js');
+const { updateElectronApp } = require('update-electron-app');
+const https = require('https');
+const { dialog } = require('electron');
+
+async function fetchLatestVersion() {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.github.com',
+      path: '/repos/hiche-m/pharmaDesk-master/releases/latest',
+      headers: {
+        'User-Agent': 'pharma-exp-desk' // GitHub requires this
+      }
+    };
+
+    https.get(options, res => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        const release = JSON.parse(data);
+        resolve(release.tag_name); // Returns something like "v1.0.3"
+      });
+    }).on('error', err => {
+      reject(err);
+    });
+  });
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+updateElectronApp(); // additional configuration options available
 
 function getIconPath() {
   const basePaths = [
@@ -55,14 +82,14 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Modify headers to allow https://pharma-back.onrender.com requests
+  // Modify headers to allow https://pharma-express-00ro.onrender.com requests
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self' http://res.cloudinary.com;" +
-          " connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
+          " connect-src 'self' ws://pharma-back.onrender.com https://pharma-express-00ro.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
           " img-src 'self' http://res.cloudinary.com data:;" +
           " script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
           " style-src 'self' 'unsafe-inline';"
@@ -83,6 +110,19 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  /* const currentVersion = app.getVersion();
+  fetchLatestVersion()
+    .then(latestVersion => {
+      if (currentVersion !== latestVersion) {
+        // Import dialog module since it's used here
+        dialog.showErrorBox("Update Required", "Please restart the app to install the latest update.");
+        app.quit();
+      }
+    })
+    .catch(err => {
+      console.error('Failed to check for updates:', err);
+    }); */
+
   createWindow();
 
   // On OS X it's common to re-create a window in the app when the
@@ -94,7 +134,6 @@ app.whenReady().then(() => {
   });
 
   if (!app.isPackaged) return;
-  setupUpdater(BrowserWindow.getAllWindows()[0]); // Pass the main window to the updater
 });
 /* 
 // Set up HTTP and Socket.IO server

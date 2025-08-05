@@ -81,7 +81,7 @@ module.exports = {
           owner: 'hiche-m',
           name: 'pharmaDesk-master'
         },
-        prerelease: false
+        prerelease: true
       }
     }
   ]
