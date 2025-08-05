@@ -7,6 +7,9 @@ import store from './Redux/store.jsx';
 import { ContextProvider } from './Context/ContextProvider.jsx';
 import { AuthProvider } from './Context/AuthProvider.jsx';
 import { pdfjs } from 'react-pdf';
+import "leaflet/dist/leaflet.css" // Essential Leaflet CSS
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css" // For default marker icons
+import "leaflet-defaulticon-compatibility" // For default marker icons
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',

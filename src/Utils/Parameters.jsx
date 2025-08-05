@@ -1,7 +1,7 @@
 /* 
 export const HOST = 'http://localhost';
  */
-export const HOST = 'https://pharma-back.onrender.com'
+export const HOST = 'https://pharma-express-00ro.onrender.com'
 /* 
 export const HOST_PORT_SEPARATOR = ':';
  */

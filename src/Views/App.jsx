@@ -63,12 +63,12 @@ export default function App() {
                     http-equiv="Content-Security-Policy"
                     content=
                     {"default-src 'self' http://res.cloudinary.com;" +
-                        " connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
+                        " connect-src 'self' ws://pharma-back.onrender.com https://pharma-express-00ro.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
                         " img-src 'self' http://res.cloudinary.com data:;" +
                         " script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
                         " style-src 'self' 'unsafe-inline';"}
                 /* "default-src 'self';
-                 connect-src 'self' ws://pharma-back.onrender.com https://pharma-back.onrender.com;
+                 connect-src 'self' ws://pharma-back.onrender.com https://pharma-express-00ro.onrender.com;
                   img-src 'self' http://res.cloudinary.com data:; script-src 'self' 'unsafe-inline'
                    'unsafe-eval'; style-src 'self' 'unsafe-inline';" */
                 />
