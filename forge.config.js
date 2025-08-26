@@ -18,24 +18,24 @@ module.exports = {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
     },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {
-        icon: './src/Assets/Icons/icon.png'
-      },
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {
-        icon: './src/Assets/Icons/icon.png'
-      },
-    },
-    {
-      name: '@electron-forge/maker-dmg',
-      config: {
-        icon: './src/Assets/Icons/icon.icns'
-      }
-    },
+    // {
+    //   name: '@electron-forge/maker-deb',
+    //   config: {
+    //     icon: './src/Assets/Icons/icon.png'
+    //   },
+    // },
+    // {
+    //   name: '@electron-forge/maker-rpm',
+    //   config: {
+    //     icon: './src/Assets/Icons/icon.png'
+    //   },
+    // },
+    // {
+    //   name: '@electron-forge/maker-dmg',
+    //   config: {
+    //     icon: './src/Assets/Icons/icon.icns'
+    //   }
+    // },
   ],
   plugins: [
     {

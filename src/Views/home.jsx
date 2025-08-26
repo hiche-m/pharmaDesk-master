@@ -22,31 +22,48 @@ import DashCard from "../Components/DashboardCard.jsx";
 import { Outlet, useNavigate } from 'react-router-dom';
 import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
 
-
 const Home = () => {
-    
     const [refresh, setRefresh] = useState(0);
 
+    // Remove local dismissed state - use context instead
     const {
-        confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription, selectedNot,
-        setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification, removeNotif
+        confirmePerscription, 
+        isLoadingConfirmationPerscription, 
+        setIsLoadingConfirmationPerscription, 
+        selectedNot,
+        setSelectedNot, 
+        confirmType, 
+        isModalOpen, 
+        setModalOpen, 
+        handleOpenModal, 
+        openNotification, 
+        removeNotif,
+        dismissNotif,  // Use context's dismiss function
+        fetchNotif,    // Add these to force refresh when needed
+        fetchCommingClients
     } = useStateContext();
 
-    const { handleLogout } = useAuthContext()
-    const navigate = useNavigate(0);
+    const { handleLogout } = useAuthContext();
+    const navigate = useNavigate();
 
-    //useFetch(refresh);
+    // Force refresh notifications on component mount
+    useEffect(() => {
+        console.log('Home component mounted, fetching notifications...');
+        fetchNotif();
+        fetchCommingClients();
+    }, []);
 
-    //useFetchConfirmed(refresh);
-
-    const /* { confirmRequest, success, isRequestLoading, hasError } */ confirmRequestObject = useConfirmRequest();
-
-    const /* { refuseRequest, rsuccess, isRRequestLoading, rHasError } */ refuseRequestObject = useRefuseRequest();
+    const confirmRequestObject = useConfirmRequest();
+    const refuseRequestObject = useRefuseRequest();
 
     const { isLoading, data, error } = useSelector(state => state.user);
 
     const handleRefresh = () => {
+        console.log('Manual refresh triggered');
         setRefresh(previous => previous + 1);
+        // Force fetch notifications
+        fetchNotif();
+        fetchCommingClients();
     }
 
     const handleCloseModal = () => {
@@ -55,63 +72,87 @@ const Home = () => {
     };
 
     const handleRefuse = async (nid) => {
-        await refuseRequestObject.refuseRequest(nid);
-        if (refuseRequestObject.rsuccess) {
-            console.log("Request refused.");
-            setRefresh(previous => previous + 1);
-        } else if (refuseRequestObject.rHasError) {
-            console.log("An error has occured: " + refuseRequestObject.rHasError);
+        console.log('Refusing notification:', nid);
+        
+        try {
+            await refuseRequestObject.refuseRequest(nid);
+            if (refuseRequestObject.rsuccess) {
+                console.log("Request refused.");
+                // Use context's dismiss function instead of local one
+                dismissNotif(nid);
+                setRefresh(previous => previous + 1);
+            } else if (refuseRequestObject.rHasError) {
+                console.log("An error has occurred: " + refuseRequestObject.rHasError);
+            }
+        } catch (error) {
+            console.error('Error refusing request:', error);
         }
+        
         setModalOpen(false);
     };
 
-    const handleAccept = async (pid, clientId, notificationId, comment, genList) => {
+const handleAccept = async (pid, clientId, notificationId, comment, genList) => {
+  console.log('Accepting notification:', notificationId);
 
-        let gen = {};
+  let gen = {};
+  genList.map((value, index) => {
+    gen[index] = value;
+  });
 
-        genList.map((value, index) => {
-            gen[index] = value;
-        });
-
-        await confirmRequestObject.confirmRequest(pid, clientId, notificationId, comment, gen);
-        if (confirmRequestObject.success) {
-            console.log("Request accepted.");
-            removeNotif({idnotifications: notificationId});
-            setRefresh(previous => previous + 1);
-        } else if (confirmRequestObject.hasError) {
-            console.log("An error has occured: " + hasError);
-        }
-        setModalOpen(false);
-    };
+  try {
+    await confirmRequestObject.confirmRequest(pid, clientId, notificationId, comment, gen);
+    if (confirmRequestObject.success) {
+      console.log("Request accepted.");
+      
+      // Remove from new notifications without dismissing
+      removeNotif({ idnotifications: notificationId });
+      
+      // Optional: If sockets are unreliable, force fetch after a delay
+      // setTimeout(() => fetchCommingClients(), 500);
+      
+      setRefresh(previous => previous + 1);
+    } else if (confirmRequestObject.hasError) {
+      console.log("An error has occurred: " + confirmRequestObject.hasError);
+    }
+  } catch (error) {
+    console.error('Error accepting request:', error);
+  }
+  
+  setModalOpen(false);
+};
 
     const handleConfirm = async (pid, clientId, isOn) => {
+        console.log('Confirming prescription:', pid, 'for client:', clientId);
 
-        confirmePerscription(clientId, pid, isOn)
+        try {
+            await confirmePerscription(clientId, pid, isOn);
+            console.log('Prescription confirmed successfully');
+            
+            // Don't dismiss here - let the socket event handle it
+            // The 'prescription_confirmed_notification' socket event should remove it
+            setRefresh(previous => previous + 1);
+        } catch (error) {
+            console.error('Error confirming prescription:', error);
+        }
+        
         setModalOpen(false);
     };
-
-    /* const handleDisconnect = () => {
-        handleLogout();
-        navigate(0);
-    } */
 
     /////////////////////////////////////////////////////////////////// Delete Modal Dialog
     const [disconnectDialogShowing, setDeleteDialogShowing] = useState(false);
 
     const cancelAction = () => {
-        /* Closes Dialog */
         setDeleteDialogShowing(false);
     };
 
     const disconnectAction = () => {
-        /* Disconnect */
-        handleLogout();
-        navigate(0);
-        setDeleteDialogShowing(false);
-    };
+  handleLogout();
+  clearDismissedNotifs();  // Add this to reset dismissed list
+  navigate(0);
+  setDeleteDialogShowing(false);
+};
 
     const handleDisconnectOnClick = (index) => {
-        /* Open Dialog */
         setDeleteDialogShowing(true);
     };
 

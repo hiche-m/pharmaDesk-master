@@ -4,7 +4,7 @@
   "version": "0.0.19",
   "description": "The Pharma Express pharmacy desktop app.",
   "main": ".webpack/main",
-  "proxy": "https://pharma-express-00ro.onrender.com",
+  "proxy": "http://localhost",
   "repository": {
     "type": "git",
     "url": "https://github.com/hiche-m/pharmaDesk-master.git"
@@ -34,7 +34,7 @@
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "autoprefixer": "^10.4.20",
     "css-loader": "^6.11.0",
-    "electron": "31.4.0",
+    "electron": "^31.4.0",
     "electron-builder": "^25.1.8",
     "html-webpack-plugin": "^5.6.3",
     "node-loader": "^2.0.0",

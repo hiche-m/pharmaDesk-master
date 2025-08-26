@@ -1,0 +1,287 @@
+[
+  {
+    "city": "Adrar",
+    "latitude": "26.512151525418872",
+    "longitude": "-1.06261687958897"
+  },
+  {
+    "city": "Aïn Defla",
+    "latitude": "36.18478042590184",
+    "longitude": "2.0652626871478508"
+  },
+  {
+    "city": "Aïn Témouchent",
+    "latitude": "35.35064813912524",
+    "longitude": "-1.0554340490380683"
+  },
+  {
+    "city": "Algiers",
+    "latitude": "36.77536059982082",
+    "longitude": "3.0601881999999994"
+  },
+  {
+    "city": "Annaba",
+    "latitude": "36.91580151695424",
+    "longitude": "7.74099499600762"
+  },
+  {
+    "city": "Batna",
+    "latitude": "35.420681144041154",
+    "longitude": "5.8733785018369105"
+  },
+  {
+    "city": "Béchar",
+    "latitude": "31.37068029797366",
+    "longitude": "-1.917015161218022"
+  },
+  {
+    "city": "Béjaïa",
+    "latitude": "36.77039108395994",
+    "longitude": "5.002888994145038"
+  },
+  {
+    "city": "Bel Abbès",
+    "latitude": "34.70968033149061",
+    "longitude": "-0.5041902735594525"
+  },
+  {
+    "city": "Biskra",
+    "latitude": "34.74889491378574",
+    "longitude": "5.902570897131308"
+  },
+  {
+    "city": "Blida",
+    "latitude": "36.48439421344702",
+    "longitude": "2.802382116057229"
+  },
+  {
+    "city": "Bordj Bou Arréridj",
+    "latitude": "36.0721741735873",
+    "longitude": "4.761586168093615"
+  },
+  {
+    "city": "Bouïra",
+    "latitude": "36.37390119977469",
+    "longitude": "3.9007007"
+  },
+  {
+    "city": "Boumerdès",
+    "latitude": "36.72853351472814",
+    "longitude": "3.6369908950368033"
+  },
+  {
+    "city": "Chlef",
+    "latitude": "36.2385270061574",
+    "longitude": "1.255181651262886"
+  },
+  {
+    "city": "Constantine",
+    "latitude": "36.35559358538787",
+    "longitude": "6.63112639589485"
+  },
+  {
+    "city": "Djanet",
+    "latitude": "23.92621761972457",
+    "longitude": "10.026315485931386"
+  },
+  {
+    "city": "Djelfa",
+    "latitude": "34.396589228567706",
+    "longitude": "3.528337168570854"
+  },
+  {
+    "city": "El Bayadh",
+    "latitude": "32.57941301378505",
+    "longitude": "0.9112675485256649"
+  },
+  {
+    "city": "El Eulma",
+    "latitude": "36.152905699751074",
+    "longitude": "5.6911588"
+  },
+  {
+    "city": "El M’Ghair",
+    "latitude": "33.935192600227566",
+    "longitude": "5.705380354234764"
+  },
+  {
+    "city": "El Menia",
+    "latitude": "31.153002374070752",
+    "longitude": "2.9446056741414663"
+  },
+  {
+    "city": "El Oued",
+    "latitude": "33.14089534555294",
+    "longitude": "7.299366300282309"
+  },
+  {
+    "city": "El Tarf",
+    "latitude": "36.713514644171234",
+    "longitude": "8.144669667883141"
+  },
+  {
+    "city": "Ghardaïa",
+    "latitude": "32.536443767014745",
+    "longitude": "3.6835743751408736"
+  },
+  {
+    "city": "Guelma",
+    "latitude": "36.39629171756449",
+    "longitude": "7.394755316319312"
+  },
+  {
+    "city": "Illizi",
+    "latitude": "27.890698422200728",
+    "longitude": "7.900913956645941"
+  },
+  {
+    "city": "In Amenas",
+    "latitude": "28.038664799941927",
+    "longitude": "9.5761505"
+  },
+  {
+    "city": "In Salah",
+    "latitude": "28.000027199946235",
+    "longitude": "2.9999825"
+  },
+  {
+    "city": "Jijel",
+    "latitude": "36.701449211416886",
+    "longitude": "5.970055695367773"
+  },
+  {
+    "city": "Khenchela",
+    "latitude": "34.98550698232951",
+    "longitude": "6.995603359537241"
+  },
+  {
+    "city": "Laghouat",
+    "latitude": "33.61139024210551",
+    "longitude": "2.7267917821447565"
+  },
+  {
+    "city": "M’Sila",
+    "latitude": "35.29110578323372",
+    "longitude": "4.258018896596511"
+  },
+  {
+    "city": "Mascara",
+    "latitude": "35.39236373461976",
+    "longitude": "0.15790136293286877"
+  },
+  {
+    "city": "Médéa",
+    "latitude": "35.98024055955512",
+    "longitude": "2.9227689721647407"
+  },
+  {
+    "city": "Mila",
+    "latitude": "36.29413105496777",
+    "longitude": "6.1449730079873595"
+  },
+  {
+    "city": "Mostaganem",
+    "latitude": "35.98804570381376",
+    "longitude": "0.3327481805847213"
+  },
+  {
+    "city": "Naâma",
+    "latitude": "33.30996902153398",
+    "longitude": "-0.769160851791702"
+  },
+  {
+    "city": "Oran",
+    "latitude": "35.70327509970735",
+    "longitude": "-0.6492976000000001"
+  },
+  {
+    "city": "Ouargla",
+    "latitude": "31.01792030530157",
+    "longitude": "6.10376858696904"
+  },
+  {
+    "city": "Oum El Bouaghi",
+    "latitude": "35.837079884616855",
+    "longitude": "7.063468949044973"
+  },
+  {
+    "city": "Relizane",
+    "latitude": "35.801587181253765",
+    "longitude": "0.8003930167462352"
+  },
+  {
+    "city": "Saïda",
+    "latitude": "34.738407125863255",
+    "longitude": "0.2801080342868156"
+  },
+  {
+    "city": "Sétif",
+    "latitude": "36.189275099754866",
+    "longitude": "5.403493"
+  },
+  {
+    "city": "Sidi Bel Abbès",
+    "latitude": "34.70968033149061",
+    "longitude": "-0.5041902735594525"
+  },
+  {
+    "city": "Skikda",
+    "latitude": "36.782457215148625",
+    "longitude": "6.832688182785269"
+  },
+  {
+    "city": "Souk Ahras",
+    "latitude": "36.150182313439416",
+    "longitude": "7.883522228392449"
+  },
+  {
+    "city": "Tamanrasset",
+    "latitude": "23.509016560474734",
+    "longitude": "5.192424419809804"
+  },
+  {
+    "city": "Tébessa",
+    "latitude": "35.38920852255702",
+    "longitude": "8.077603578536273"
+  },
+  {
+    "city": "Tiaret",
+    "latitude": "34.967710403816334",
+    "longitude": "1.5296487186560614"
+  },
+  {
+    "city": "Timimoun",
+    "latitude": "29.59753057504177",
+    "longitude": "1.2982622960235835"
+  },
+  {
+    "city": "Tindouf",
+    "latitude": "27.7061572666831",
+    "longitude": "-6.0641687105300734"
+  },
+  {
+    "city": "Tipaza",
+    "latitude": "36.519139435245194",
+    "longitude": "2.2164639109545923"
+  },
+  {
+    "city": "Tissemsilt",
+    "latitude": "35.75787743948586",
+    "longitude": "1.8106600743519286"
+  },
+  {
+    "city": "Tizi Ouzou",
+    "latitude": "36.67517451674294",
+    "longitude": "4.203135348397631"
+  },
+  {
+    "city": "Tlemcen",
+    "latitude": "34.88178899964393",
+    "longitude": "-1.3166989999999998"
+  },
+  {
+    "city": "Touggourt",
+    "latitude": "33.10989679958743",
+    "longitude": "6.066102"
+  }
+]

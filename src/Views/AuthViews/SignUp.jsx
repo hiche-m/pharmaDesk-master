@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import "./styles/auth.css";
 import { toast } from 'react-toastify';
 import MapComponent from '../../Components/Map.jsx';
+import cities from '../../Utils/cities.json';
 
 function SignUp() {
     const [stepFormSing, setStepFormSign] = useState({ 1: true, 2: false, 3: false });
     const [couter, setConter] = useState(1);
+    const [showMap, setShowMap] = useState(true);
     const navigate = useNavigate();
     const [validationForm, setValidationForm] = useState({
         storeName: true,
@@ -134,15 +136,37 @@ function SignUp() {
                                         {!validationForm.phonePharmacy && <span className="text-lg text-left text-red-500/70">Le Numero de téléphone est incorrect</span>}
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <label className="font-semibold text-[#494949]">Adresse d'officine</label>
-                                        <input
-                                            type="text"
-                                            className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
-                                            onChange={Onchange}
-                                            value={signForm.adressStore}
-                                            name="adressStore"
-                                        />
-                                    </div>
+  <label className="font-semibold text-[#494949]">Adresse d'officine</label>
+  <select
+    className="w-[250px] px-2 py-2 border border-[#bebebe] outline-primary rounded-md"
+    value={signForm.adressStore}
+    name="adressStore"
+    onChange={(e) => {
+  const selectedCity = cities.find(c => c.city === e.target.value);
+  const lat = selectedCity ? Number(selectedCity.latitude) : null;
+  const lng = selectedCity ? Number(selectedCity.longitude) : null;
+
+  setSignForm(prev => ({
+    ...prev,
+    adressStore: e.target.value,
+    latitude: lat,
+    longitude: lng,
+  }));
+  setValidationForm(prev => ({
+    ...prev,
+    latitude: !!lat,
+    longitude: !!lng,
+  }));
+}}
+  >
+    <option value="">-- Sélectionnez une ville --</option>
+    {cities.map((c, idx) => (
+      <option key={idx} value={c.city}>
+        {c.city}
+      </option>
+    ))}
+  </select>
+</div>
                                     <div className="flex flex-col gap-2">
                                         <label className="font-semibold text-[#494949]">Description</label>
                                         <textarea
@@ -154,10 +178,42 @@ function SignUp() {
                                     </div>
                                 </form>
 
-                                {/* Map Form */}
-                                <div className={`${couter != 2 ? "absolute left-[2000px]" : ""} w-full h-[400px] transition duration-1000`}>
-                                    <MapComponent />
-                                </div>
+                                Map Form
+{couter === 2 && (
+  <div className="w-full transition duration-1000 flex flex-col items-center">
+    <button
+      type="button"
+      onClick={() => setShowMap(prev => !prev)}
+      className="mb-2 px-4 py-2 bg-blue-500 text-white rounded"
+    >
+      {showMap ? "Masquer la carte" : "Afficher la carte"}
+    </button>
+
+    {showMap && (
+      <div className="w-full h-[400px]">
+        <MapComponent
+  latitude={signForm.latitude}
+  longitude={signForm.longitude}
+  onLocationSelect={(lat, lng) => {
+    setSignForm((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+    }));
+    setValidationForm((prev) => ({
+      ...prev,
+      latitude: !!lat,
+      longitude: !!lng,
+    }));
+  }}
+/>
+
+      </div>
+    )}
+  </div>
+)}
+
+
 
                                 {/* Final Form */}
                                 <form className={`${couter != 3 ? "absolute left-[2000px]" : ""} grid grid-cols-1 gap-4 w-full justify-items-center py-5 transition duration-1000`}>
