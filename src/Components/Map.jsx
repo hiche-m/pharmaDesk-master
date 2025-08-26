@@ -64,7 +64,7 @@ export default function MapComponent({ onLocationSelect, latitude: propLat, long
       if (!document.getElementById("google-maps-sdk")) {
         const script = document.createElement("script");
         script.id = "google-maps-sdk";
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyC6e7dvimAdU4QF1pyVh1UaKfwjHcFG3CI`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
         script.async = true;
         script.defer = true;
         script.onload = initMap;
