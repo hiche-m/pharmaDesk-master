@@ -1,42 +1,111 @@
-import * as React from 'react';
-import { useState, useMemo, useCallback } from "react"
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
+import React, { useState, useRef, useCallback, useEffect } from "react";
 
-function LocationMarker({ onLocationChange }) {
-  const [position, setPosition] = useState(null)
-  const map = useMapEvents({
-    click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng])
-      onLocationChange(e.latlng.lat, e.latlng.lng)
-    },
-  })
+export default function MapComponent({ onLocationSelect, latitude: propLat, longitude: propLng }) {
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  return position === null ? null : <Marker position={position} />
-}
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markerRef = useRef(null);
 
-export default function MapComponent() {
-  const [latitude, setLatitude] = useState(null)
-  const [longitude, setLongitude] = useState(null)
+  const defaultCenter = { lat: 36.7538, lng: 3.0588 }; // Algiers
 
-  const handleLocationChange = useCallback((lat, lng) => {
-    setLatitude(lat)
-    setLongitude(lng)
-  }, [])
+  const placeMarker = (lat, lng, map) => {
+    setLatitude(lat);
+    setLongitude(lng);
+    onLocationSelect?.(lat, lng);
 
-  const defaultCenter = useMemo(() => [51.505, -0.09], []) // Default to London
+    if (markerRef.current) markerRef.current.setMap(null);
+
+    markerRef.current = new window.google.maps.Marker({
+      position: { lat, lng },
+      map,
+      draggable: true,
+    });
+
+    markerRef.current.addListener("dragend", (e) => {
+      const newLat = e.latLng.lat();
+      const newLng = e.latLng.lng();
+      setLatitude(newLat);
+      setLongitude(newLng);
+      onLocationSelect?.(newLat, newLng);
+    });
+  };
+
+  const initMap = useCallback(() => {
+    // Use props if available at init
+    const hasProps = propLat != null && propLng != null;
+    const initialCenter = hasProps
+      ? { lat: Number(propLat), lng: Number(propLng) }
+      : defaultCenter;
+
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: initialCenter,
+      zoom: hasProps ? 12 : 8,
+    });
+
+    map.addListener("click", (e) => {
+      placeMarker(e.latLng.lat(), e.latLng.lng(), map);
+    });
+
+    mapInstance.current = map;
+    setIsMapReady(true);
+
+    // Drop marker if props already provided on mount
+    if (hasProps) {
+      placeMarker(Number(propLat), Number(propLng), map);
+    }
+  }, [propLat, propLng]);
+
+  // Load Google Maps script once
+  useEffect(() => {
+    if (!window.google) {
+      if (!document.getElementById("google-maps-sdk")) {
+        const script = document.createElement("script");
+        script.id = "google-maps-sdk";
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = initMap;
+        document.body.appendChild(script);
+      }
+    } else {
+      initMap();
+    }
+  }, [initMap]);
+
+  // Recenter when props change AND map is ready
+  useEffect(() => {
+    if (!isMapReady || mapInstance.current == null) return;
+    if (propLat == null || propLng == null) return;
+
+    const lat = Number(propLat);
+    const lng = Number(propLng);
+
+    // Avoid redundant re-center if same position
+    if (latitude !== null && longitude !== null) {
+      const same =
+        Math.abs(latitude - lat) < 1e-9 && Math.abs(longitude - lng) < 1e-9;
+      if (same) return;
+    }
+
+    mapInstance.current.setCenter({ lat, lng });
+    mapInstance.current.setZoom(12);
+    placeMarker(lat, lng, mapInstance.current);
+  }, [propLat, propLng, isMapReady]); // intentionally NOT depending on latitude/longitude
 
   return (
     <div className="flex flex-col items-center p-4 w-full max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Click on the Map to Get Coordinates</h1>
-      <div className="w-full h-[500px] rounded-lg overflow-hidden shadow-lg mb-4">
-        <MapContainer center={defaultCenter} zoom={13} scrollWheelZoom={true} className="h-full w-full">
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" // Default OpenStreetMap tiles
-          />
-          <LocationMarker onLocationChange={handleLocationChange} />
-        </MapContainer>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">
+        Cliquez sur la carte ou sélectionnez une ville
+      </h1>
+
+      <div
+        ref={mapRef}
+        className="w-full h-[500px] rounded-lg overflow-hidden shadow-lg mb-4"
+      />
+
       {latitude !== null && longitude !== null && (
         <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md text-center">
           <p className="text-lg font-medium">
@@ -48,5 +117,5 @@ export default function MapComponent() {
         </div>
       )}
     </div>
-  )
+  );
 }
