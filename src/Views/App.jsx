@@ -58,21 +58,7 @@ export default function App() {
 
     return (
         <HashRouter>
-            <Helmet>
-                <meta
-                    http-equiv="Content-Security-Policy"
-                    content=
-                    {"default-src 'self' http://res.cloudinary.com;" +
-                        " connect-src 'self' ws://pharma-express-00ro.onrender.com https://pharma-express-00ro.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000;" +
-                        " img-src 'self' http://res.cloudinary.com data:;" +
-                        " script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
-                        " style-src 'self' 'unsafe-inline';"}
-                /* "default-src 'self';
-                 connect-src 'self' ws://pharma-express-00ro.onrender.com https://pharma-express-00ro.onrender.com;
-                  img-src 'self' http://res.cloudinary.com data:; script-src 'self' 'unsafe-inline'
-                   'unsafe-eval'; style-src 'self' 'unsafe-inline';" */
-                />
-            </Helmet>
+            
             <Routes>
 
                 <Route path='/' element={isAuth ? <Layout /> : <Login />}>
