@@ -4,6 +4,7 @@ const fs = require('fs');
 const { updateElectronApp } = require('update-electron-app');
 const https = require('https');
 const { dialog } = require('electron');
+require('dotenv').config();
 
 async function fetchLatestVersion() {
   return new Promise((resolve, reject) => {
@@ -84,19 +85,24 @@ const createWindow = () => {
 
   // Modify headers to allow https://pharma-express-00ro.onrender.com requests
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        'Content-Security-Policy': [
-          "default-src 'self'; " +
-      "connect-src 'self' ws://pharma-express-00ro.onrender.com https://pharma-express-00ro.onrender.com wss://pharma-express-00ro.onrender.com http://res.cloudinary.com http://localhost:10000 ws://localhost:10000; " +
-      "style-src 'self' 'unsafe-inline'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-      "img-src 'self' data: http://res.cloudinary.com https://*.tile.openstreetmap.org;"
-        ]
-      }
-    });
+  callback({
+    responseHeaders: {
+      ...details.responseHeaders,
+      'Content-Security-Policy': [
+        "default-src 'self'; " +
+        "connect-src 'self'  http://res.cloudinary.com https://api.pharmaexpress.app http://localhost:10000 ws://localhost:10000 wss://localhost:10000 ws://api.pharmaexpress.app wss://api.pharmaexpress.app https://maps.googleapis.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com; " +
+        "img-src 'self' data: http://res.cloudinary.com https://*.tile.openstreetmap.org https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://fonts.gstatic.com; " +
+        "font-src 'self' https://fonts.gstatic.com;"
+      ]
+    }
   });
+});
+
+
+
+
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
