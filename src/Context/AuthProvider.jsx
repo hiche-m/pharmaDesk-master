@@ -63,38 +63,56 @@ export const AuthProvider = ({ children }) => {
 
 
     const handleLoginPost = () => {
-
-        axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/login/v1`, loginForm).then((res) => {
-
+    axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/login/v1`, loginForm)
+        .then((res) => {
             if (res.data != null && res.data.token != null) {
                 localStorage.setItem('token', res.data.token);
-                localStorage.setItem('idpharma', res.data.data[0].idpharma);
-                localStorage.setItem('storeName', res.data.data[0].storeName);
+                localStorage.setItem('idpharma', res.data.data.idpharma);
+                localStorage.setItem('storeName', res.data.data.storeName);
 
-                setIdpharma(JSON.parse(res.data.data[0].idpharma));
+                setIdpharma(res.data.data.idpharma);
 
-                setIncorrectAuth(false)
-                setIsAuth(true)
-            }
-
-
-
-        }).catch((e) => {
-            console.log(e);
-
-            if (e.request.status == 400) {
-                const parsedmessage = JSON.parse(e.request.response)
-                if (parsedmessage.message == 'Email or password incorrect') {
-                    // set a message for incorrect email or password 
-                    setIncorrectAuth(true)
-                    console.log("incrorrect credetials ");
-                    setIsAuth(false)
-                }
+                setIncorrectAuth(false);
+                setIsAuth(true);
             }
         })
+        .catch((error) => {
+            console.log(error);
 
+            // Check if it's an axios error with response
+            if (error.response) {
+                const status = error.response.status;
+                const responseData = error.response.data;
 
-    }
+                if (status === 400) {
+                    if (responseData.message === 'Email or password incorrect') {
+                        setIncorrectAuth(true);
+                        console.log("Incorrect credentials");
+                        setIsAuth(false);
+                    }
+                } else if (status === 403) {
+                    // Handle email verification required
+                    if (responseData.message === 'Please verify your email before logging in.') {
+                        // You can set a specific state for email verification needed
+                        setIncorrectAuth(false);
+                        setIsAuth(false);
+                        // Add a state for email verification if you haven't already
+                        // setEmailVerificationNeeded(true);
+                        alert('Please verify your email before logging in.');
+                        console.log("Email verification required");
+                    }
+                }
+            } else if (error.request) {
+                // Network error - no response received
+                console.log("Network error:", error.request);
+                setIsAuth(false);
+            } else {
+                // Something else happened
+                console.log("Error:", error.message);
+                setIsAuth(false);
+            }
+        });
+};
 
 
     const sendEmailForChangingPassword = () => {
