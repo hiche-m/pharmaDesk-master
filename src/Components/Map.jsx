@@ -1,19 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-
-
+import config from '../config';
 
 export default function MapComponent({ onLocationSelect, latitude: propLat, longitude: propLng }) {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [isMapReady, setIsMapReady] = useState(false);
-  console.log("API KEY:", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
-
 
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markerRef = useRef(null);
-  const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-
 
   const defaultCenter = { lat: 36.7538, lng: 3.0588 }; // Algiers
 
@@ -66,26 +61,26 @@ export default function MapComponent({ onLocationSelect, latitude: propLat, long
 
   // Load Google Maps script once
   useEffect(() => {
-  if (!GOOGLE_MAPS_API_KEY) {
-    console.error("Google Maps API key is missing!");
-    return;
-  }
-
-  if (!window.google) {
-    if (!document.getElementById("google-maps-sdk")) {
-      const script = document.createElement("script");
-      script.id = "google-maps-sdk";
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      script.onload = initMap;
-      document.body.appendChild(script);
+    if (!window.google) {
+      if (!document.getElementById("google-maps-sdk")) {
+        const script = document.createElement("script");
+        script.id = "google-maps-sdk";
+        // Remove callback parameter - we'll call initMap directly after script loads
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}`;
+        script.async = true;
+        script.defer = true;
+        
+        // Call initMap directly when script loads
+        script.onload = () => {
+          initMap();
+        };
+        
+        document.body.appendChild(script);
+      }
+    } else {
+      initMap();
     }
-  } else {
-    initMap();
-  }
-}, [initMap]);
-
+  }, [initMap]);
 
   // Recenter when props change AND map is ready
   useEffect(() => {
