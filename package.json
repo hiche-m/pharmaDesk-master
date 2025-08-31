@@ -1,7 +1,7 @@
 {
   "name": "pharma-exp-desk",
   "productName": "Pharma Express Desktop",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "The Pharma Express pharmacy desktop app.",
   "main": ".webpack/main",
   "proxy": "http://localhost",
@@ -12,7 +12,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "build":  "webpack --mode production",
+    "build": "webpack --mode production",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
