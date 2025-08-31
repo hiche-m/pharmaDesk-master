@@ -12,12 +12,13 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
+    "build":  "webpack --mode production",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "release": "standard-version",
     "app:dir": "electron-builder --dir",
-    "app:dist": "electron-builder"
+    "app:dist": "electron-builder --publish=always"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
@@ -95,8 +96,9 @@
   },
   "build": {
     "appId": "com.pharmaexpress.desktop",
-    "mac": {
-      "category": "public.app-category.medical"
+    "productName": "Pharma Express Desktop",
+    "directories": {
+      "output": "dist"
     }
   }
 }

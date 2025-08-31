@@ -1,40 +1,18 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
-const { updateElectronApp } = require('update-electron-app');
-const https = require('https');
+const { autoUpdater } = require('electron-updater');
 const { dialog } = require('electron');
 require('dotenv').config();
-
-async function fetchLatestVersion() {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.github.com',
-      path: '/repos/hiche-m/pharmaDesk-master/releases/latest',
-      headers: {
-        'User-Agent': 'pharma-exp-desk' // GitHub requires this
-      }
-    };
-
-    https.get(options, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        const release = JSON.parse(data);
-        resolve(release.tag_name); // Returns something like "v1.0.3"
-      });
-    }).on('error', err => {
-      reject(err);
-    });
-  });
-}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-updateElectronApp(); // additional configuration options available
+// Configure auto-updater
+autoUpdater.checkForUpdatesAndNotify();
+
 
 function getIconPath() {
   const basePaths = [
@@ -61,7 +39,6 @@ function getIconPath() {
   return null;
 }
 
-
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -71,7 +48,8 @@ const createWindow = () => {
     minHeight: 600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      /* devTools: false, */
+      nodeIntegration: false,
+      contextIsolation: true,
     },
     autoHideMenuBar: true,
     icon: getIconPath(),
@@ -82,96 +60,142 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 
-  // Modify headers to allow https://pharma-express-00ro.onrender.com requests
+  mainWindow.once("ready-to-show", () => {
+    if (app.isPackaged) {
+      // Check for updates when app is ready
+      autoUpdater.checkForUpdatesAndNotify();
+    }
+  });
+
+  // Modify headers to allow necessary requests
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-  callback({
-    responseHeaders: {
-      ...details.responseHeaders,
-      'Content-Security-Policy': [
-        "default-src 'self'; " +
-        "connect-src 'self'  http://res.cloudinary.com https://api.pharmaexpress.app http://localhost:10000 ws://localhost:10000 wss://localhost:10000 ws://api.pharmaexpress.app wss://api.pharmaexpress.app https://maps.googleapis.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com; " +
-        "img-src 'self' data: http://res.cloudinary.com https://*.tile.openstreetmap.org https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://fonts.gstatic.com; " +
-        "font-src 'self' https://fonts.gstatic.com;"
-      ]
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "default-src 'self'; " +
+          "connect-src 'self' http://res.cloudinary.com https://api.pharmaexpress.app http://localhost:10000 ws://localhost:10000 wss://localhost:10000 ws://api.pharmaexpress.app wss://api.pharmaexpress.app https://maps.googleapis.com; " +
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com; " +
+          "img-src 'self' data: http://res.cloudinary.com https://*.tile.openstreetmap.org https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://fonts.gstatic.com; " +
+          "font-src 'self' https://fonts.gstatic.com;"
+        ]
+      }
+    });
+  });
+
+  return mainWindow;
+};
+
+// Auto-updater event handlers
+autoUpdater.on("checking-for-update", () => {
+  console.log("Checking for update...");
+});
+
+autoUpdater.on("update-available", (info) => {
+  console.log("Update available.");
+  dialog.showMessageBox({
+    type: "info",
+    title: "Mise à jour disponible",
+    message: `Une nouvelle version (${info.version}) de Pharma Express est disponible. Voulez-vous la télécharger ?`,
+    buttons: ["Télécharger", "Plus tard"],
+    defaultId: 0,
+    cancelId: 1
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.downloadUpdate();
     }
   });
 });
 
+autoUpdater.on("update-not-available", (info) => {
+  console.log("Update not available.");
+});
 
+autoUpdater.on("error", (err) => {
+  console.log("Error in auto-updater. " + err);
+});
 
+autoUpdater.on("download-progress", (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
+  log_message = log_message + " (" + progressObj.transferred + "/" + progressObj.total + ")";
+  console.log(log_message);
+});
 
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  /* mainWindow.webContents.on('devtools-opened', () => {
-    mainWindow.webContents.closeDevTools(); // Force-close if somehow opened
-  }); */
-};
+autoUpdater.on("update-downloaded", (info) => {
+  console.log("Update downloaded");
+  dialog.showMessageBox({
+    type: "info",
+    title: "Mise à jour prête",
+    message: `La mise à jour vers la version ${info.version} a été téléchargée. Redémarrer l'application pour appliquer ?`,
+    buttons: ["Redémarrer maintenant", "Plus tard"],
+    defaultId: 0,
+    cancelId: 1
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  /* const currentVersion = app.getVersion();
-  fetchLatestVersion()
-    .then(latestVersion => {
-      if (currentVersion !== latestVersion) {
-        // Import dialog module since it's used here
-        dialog.showErrorBox("Update Required", "Please restart the app to install the latest update.");
-        app.quit();
-      }
-    })
-    .catch(err => {
-      console.error('Failed to check for updates:', err);
-    }); */
-
   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
   });
-
-  if (!app.isPackaged) return;
 });
-/* 
-// Set up HTTP and Socket.IO server
-const server = http.createServer();
-const io = new Server(server);
 
-server.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-
-  // Handle events here
-  socket.on('message', (data) => {
-    console.log('Message received:', data);
-    // Send a response back to the client
-    socket.emit('reply', 'Message received on server');
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-}); */
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Quit when all windows are closed, except on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+// Security: Prevent new window creation
+app.on('web-contents-created', (event, contents) => {
+  contents.on('new-window', (event, navigationUrl) => {
+    event.preventDefault();
+  });
+});
+
+// Optional: Add menu for manual update check
+const { Menu } = require('electron');
+
+const template = [
+  {
+    label: 'Aide',
+    submenu: [
+      {
+        label: 'Vérifier les mises à jour',
+        click: () => {
+          if (app.isPackaged) {
+            autoUpdater.checkForUpdatesAndNotify();
+          } else {
+            dialog.showMessageBox({
+              type: 'info',
+              title: 'Mode développement',
+              message: 'Les mises à jour ne sont disponibles qu\'en mode production.'
+            });
+          }
+        }
+      }
+    ]
+  }
+];
+
+app.whenReady().then(() => {
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+});
