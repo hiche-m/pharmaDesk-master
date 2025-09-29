@@ -1,7 +1,7 @@
 {
   "name": "pharma-exp-desk",
   "productName": "Pharma Express Desktop",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "The Pharma Express pharmacy desktop app.",
   "main": ".webpack/main",
   "proxy": "https://pharma-back-production.up.railway.app",
@@ -18,7 +18,7 @@
     "lint": "echo \"No linting configured\"",
     "release": "standard-version",
     "app:dir": "electron-builder --dir",
-    "dist": "electron-builder --publish=always"
+    "dist": "electron-builder"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",

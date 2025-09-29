@@ -116,7 +116,10 @@ const cancelAction = () => {
 
     return (
         <>
-
+        <div style={{position: 'fixed', bottom: 10, right: 10, background: '#000', color: '#fff', padding: '5px 10px', borderRadius: 5}}>
+        Version 0.0.21 - UPDATE TEST ✅
+        </div>
+        
         {disconnectDialogShowing && (
                 <TailwindConfirmModal
                     className="absolute z-50"
@@ -128,6 +131,7 @@ const cancelAction = () => {
                     cancelAction={cancelAction}
                 />
             )}
+            
         <div className="col-span-9 inline-flex items-center justify-between text-base font-medium text-textSecoundary px-4 space-x-4 border-b-2 border-lightShapes">
             <div className="inline-flex items-center justify-start">
                 <img src={logo} className="h-20 p-4" />
