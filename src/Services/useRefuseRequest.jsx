@@ -3,34 +3,38 @@ import { useState } from 'react';
 import axios from "axios";
 
 const useRefuseRequest = () => {
+  const [rsuccess, setRSuccess] = useState(null);
+  const [isRRequestLoading, setIsRRequestLoading] = useState(false);
+  const [rHasError, setRHasError] = useState(null);
 
-    const [rsuccess, setRSuccess] = useState(null);
+  const refuseRequest = async (notificationId) => {
+    setIsRRequestLoading(true);
+    setRSuccess(null);
+    setRHasError(null);
 
-    const [isRRequestLoading, setIsRRequestLoading] = useState(false);
+    try {
+      const res = await axios.delete(
+        `${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/refuseOrder/${notificationId}`
+      );
 
-    const [rHasError, setRHasError] = useState(null);
-
-    const refuseRequest = async (notificationId) => {
-        console.log('this is notification id ', notificationId);
-
-        setIsRRequestLoading(true);
-
-        try {
-            axios.delete(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/refuseOrder/${notificationId}`).then((res) => {
-                if (!res) {
-                    throw new Error('An error has occured, please try again in a moment...');
-                } else {
-                    setRSuccess(true);
-                }
-            });
-        } catch (error) {
-            setRHasError(error);
-            console.log(error);
-        }
-        setIsRRequestLoading(false);
+      if (res.status === 200 && res.data.success) {
+        setRSuccess(true);
+        return { success: true, error: null }; // Return result directly
+      } else {
+        const errorMsg = res.data?.message || "Failed to refuse order";
+        setRHasError(errorMsg);
+        return { success: false, error: errorMsg };
+      }
+    } catch (error) {
+      const errorMsg = error.message;
+      setRHasError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setIsRRequestLoading(false);
     }
+  };
 
-    return { refuseRequest, rsuccess, isRRequestLoading, rHasError };
+  return { refuseRequest, rsuccess, isRRequestLoading, rHasError };
 };
 
 export default useRefuseRequest;

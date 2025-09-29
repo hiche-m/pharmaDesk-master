@@ -5,7 +5,7 @@ import { data, formatPrescriptionData, options } from "../Utils/Data/WideGraphDa
 import { AiFillCaretDown } from "react-icons/ai";
 import { formatDateForSql, sqlToFrenchDateDaily } from "../Utils/Functions.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
-
+import CalendarComponent from "../Components/calander.jsx";
 const WideGraph = ({ className = "" }) => {
     ChartJS.register(CategoryScale,
         Legend,
@@ -71,37 +71,48 @@ const WideGraph = ({ className = "" }) => {
             console.log("End Date: ", end);
         }
     }
+    const [showCalendar, setShowCalendar] = useState(false);
+
 
     return (
+        <>
         <div className={`${className} bg-superClear rounded-xl shadow-md p-2 grid grid-rows-8`}>
             <div className="row-span-1 grid grid-rows-1 grid-cols-2 px-2">
                 <span className="flex flex-row grow row-span-1 font-medium items-center">Statistiques des ventes totales</span>
                 <span className="flex flex-row grow row-span-1 text-sm justify-end items-center">
-                    <span className="text-selectionBG">De</span>
-                    {/* <span className="px-1 text-xs">{sqlToFrenchDateDaily(graphWidgetBeginDate)}</span> */}
-                    <input type="date" className="text-end"
-                        value={startDate}
-                        onChange={handleStartChange}
-                        min="2024-01-01"
-                    />
                     {/* <AiFillCaretDown size="0.5rem" /> */}
-                    <span className="text-selectionBG pl-2">Jusqu'à</span>
-                    {/* <span className="px-1 text-xs">{sqlToFrenchDateDaily(graphWidgetEndDate)}</span> */}
-                    <input type="date" className="text-end"
-                        value={endDate}
-                        onChange={handleEndChange}
-                        min="2024-01-01"
-                    />
-                    {/* <AiFillCaretDown size="0.5rem" /> */}
-                    <button className={(startDate != graphWidgetBeginDate || endDate != graphWidgetEndDate) ? "bg-primary p-2 rounded-lg ml-4 text-white cursor-pointer hover:bg-primary/90 active:bg-darkPrimary" : "bg-disabled p-2 rounded-lg ml-4 cursor-default text-textSecoundary"} onClick={() => handleDateChange()}>
-                        <span className="inline-flex flex-row space-x-2 text-sm items-center px-2">Appliquer</span>
+                    <button
+                        className="bg-primary p-2 rounded-lg ml-4 text-white cursor-pointer hover:bg-primary/90 active:bg-darkPrimary"
+                        onClick={() => setShowCalendar(!showCalendar)}
+                        >
+                        <span className="inline-flex flex-row space-x-2 text-sm items-center px-2">
+                            Filtrer par date
+                        </span>
                     </button>
                 </span>
             </div>
             <div className="row-span-7">
                 <Line options={options} data={stateData} />
             </div>
-        </div>);
+        </div>
+        {showCalendar && (
+  <div className="absolute z-50 bg-white shadow-lg p-4 rounded-lg">
+    <CalendarComponent 
+      onClose={() => setShowCalendar(false)} 
+      onApply={({ start, end }) => {
+        // format dates if needed
+        const sqlStart = formatDateForSql(start);
+        const sqlEnd = formatDateForSql(end);
+
+        setGraphWidgetBeginDate(sqlStart);
+        setGraphWidgetEndDate(sqlEnd);
+        setShowCalendar(false);  // close calendar after apply
+      }} 
+    />
+  </div>
+)}
+        </>
+        );
 }
 
 export default WideGraph;

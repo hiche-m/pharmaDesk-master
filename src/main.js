@@ -1,18 +1,13 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
 const { autoUpdater } = require('electron-updater');
-const { dialog } = require('electron');
 require('dotenv').config();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
-
-// Configure auto-updater
-autoUpdater.checkForUpdatesAndNotify();
-
 
 function getIconPath() {
   const basePaths = [
@@ -79,7 +74,7 @@ const createWindow = () => {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self'; " +
-          "connect-src 'self' http://res.cloudinary.com https://api.pharmaexpress.app http://localhost:10000 ws://localhost:10000 wss://localhost:10000 ws://api.pharmaexpress.app wss://api.pharmaexpress.app https://maps.googleapis.com; " +
+          "connect-src 'self' http://res.cloudinary.com https://pharma-back-production.up.railway.app ws://pharma-back-production.up.railway.app wss://pharma-back-production.up.railway.app http://localhost:10000 ws://localhost:10000 wss://localhost:10000 ws://api.pharmaexpress.app wss://api.pharmaexpress.app https://maps.googleapis.com; " +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
           "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com; " +
           "img-src 'self' data: http://res.cloudinary.com https://*.tile.openstreetmap.org https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://fonts.gstatic.com; " +
@@ -144,35 +139,7 @@ autoUpdater.on("update-downloaded", (info) => {
   });
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
-
-// Quit when all windows are closed, except on macOS
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-// Security: Prevent new window creation
-app.on('web-contents-created', (event, contents) => {
-  contents.on('new-window', (event, navigationUrl) => {
-    event.preventDefault();
-  });
-});
-
-// Optional: Add menu for manual update check
-const { Menu } = require('electron');
-
+// Menu template - DEFINE BEFORE USING
 const template = [
   {
     label: 'Aide',
@@ -195,7 +162,33 @@ const template = [
   }
 ];
 
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
 app.whenReady().then(() => {
+  // Set up menu FIRST
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+  
+  // Then create window
+  createWindow();
+
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// Quit when all windows are closed, except on macOS
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+// Security: Prevent new window creation
+app.on('web-contents-created', (event, contents) => {
+  contents.on('new-window', (event, navigationUrl) => {
+    event.preventDefault();
+  });
 });

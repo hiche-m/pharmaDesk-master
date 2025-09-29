@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuthContext } from '../../Context/AuthProvider.jsx';
 import { validatePasswordLength, stringComparisonMatching } from '../../Utils/Functions.jsx';
 import { useNavigate } from 'react-router-dom';
+import { IoIosArrowRoundBack } from "react-icons/io";
 import logo from "../../Assets/SVG/logo_white_bg.svg";
 import "./styles/auth.css";
 

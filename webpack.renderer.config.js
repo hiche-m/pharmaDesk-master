@@ -23,7 +23,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/': {
-        target: 'http://localhost',  // Backend server URL
+        target: 'https://pharma-back-production.up.railway.app',  // Backend server URL
         secure: false,                    // If using https, set this to true
         changeOrigin: true,               // Needed for virtual hosted sites
       },

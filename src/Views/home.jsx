@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SideMenu from "../Components/SideMenu.jsx";
 import HalfSlabs from "../Components/HalfSlabs.jsx";
 import IncomePerPost from "../Components/IncomePerPost.jsx";
@@ -8,6 +8,8 @@ import WideGraph from "../Components/WideGraph.jsx";
 import SideContent from "../Components/SideContent.jsx";
 import useFetch from "../Services/UseFetch.jsx";
 import { refresh_rate } from "../Utils/Parameters.jsx";
+import { toast } from 'react-toastify';
+
 import NotificationModal from "../Components/NotificationModal.jsx";
 import ConfirmationModal from "../Components/ConfirmationModal.jsx";
 import useConfirmRequest from "../Services/useConfirmRequest.jsx";
@@ -21,6 +23,12 @@ import DashHeader from "../Components/DashboardHeader.jsx";
 import DashCard from "../Components/DashboardCard.jsx";
 import { Outlet, useNavigate } from 'react-router-dom';
 import TailwindConfirmModal from "../Components/TailwindConfirmModal.jsx";
+import DashboardIcon from "../Assets/SVG/Dashboard.svg";
+import HistoryIcon from "../Assets/SVG/histor.svg";
+import SettingsIcon from "../Assets/SVG/settings-02.svg";
+import HelpIcon from "../Assets/SVG/help.svg";
+//import LogoutIcon from "./Assets/SVG/logout.svg";
+
 
 
 const Home = () => {
@@ -31,9 +39,6 @@ const Home = () => {
         confirmePerscription, isLoadingConfirmationPerscription, setIsLoadingConfirmationPerscription, selectedNot,
         setSelectedNot, confirmType, isModalOpen, setModalOpen, handleOpenModal, openNotification, removeNotif
     } = useStateContext();
-
-    const { handleLogout } = useAuthContext()
-    const navigate = useNavigate(0);
 
     //useFetch(refresh);
 
@@ -54,41 +59,69 @@ const Home = () => {
         setModalOpen(false);
     };
 
-    const handleRefuse = async (nid) => {
-        await refuseRequestObject.refuseRequest(nid);
-        if (refuseRequestObject.rsuccess) {
-            console.log("Request refused.");
-            setRefresh(previous => previous + 1);
-        } else if (refuseRequestObject.rHasError) {
-            console.log("An error has occured: " + refuseRequestObject.rHasError);
-        }
-        setModalOpen(false);
-    };
+  const handleRefuse = async (nid) => {
+  const result = await refuseRequestObject.refuseRequest(nid);
+  
+  if (result.success) {
+    console.log("Commande refused.");
+    removeNotif({ idnotifications: nid });
+    toast("Commande refusée !");
+    setRefresh(prev => prev + 1);
+  } else {
+    console.error("Commande refusal error:", result.error);
+  }
+  setModalOpen(false);
+};
+
+const handleRefuseConfirmation = async (nid) => {
+  const result = await refuseRequestObject.refuseRequest(nid);
+  
+  if (result.success) {
+    console.log("Vente refused.");
+    removeNotif({ idnotifications: nid });
+    toast("Vente refusée !"); 
+  } else {
+    console.error("Vente refusal error:", result.error);
+  }
+  setModalOpen(false);
+};
+
 
     const handleAccept = async (pid, clientId, notificationId, comment, genList) => {
+  let gen = {};
+  genList.forEach((value, index) => {
+    gen[index] = value;
+  });
 
-        let gen = {};
+  const ok = await confirmRequestObject.confirmRequest(pid, clientId, notificationId, comment, gen);
 
-        genList.map((value, index) => {
-            gen[index] = value;
-        });
+  if (ok) {
+    console.log("Request accepted.");
+    removeNotif({ idnotifications: notificationId }); // ✅ always remove
+    setRefresh(previous => previous + 1);
+  } else {
+    console.log("An error has occurred: ", confirmRequestObject.hasError);
+  }
 
-        await confirmRequestObject.confirmRequest(pid, clientId, notificationId, comment, gen);
-        if (confirmRequestObject.success) {
-            console.log("Request accepted.");
-            removeNotif({idnotifications: notificationId});
-            setRefresh(previous => previous + 1);
-        } else if (confirmRequestObject.hasError) {
-            console.log("An error has occured: " + hasError);
-        }
-        setModalOpen(false);
-    };
+  setModalOpen(false);
+};
+
 
     const handleConfirm = async (pid, clientId, isOn) => {
-
-        confirmePerscription(clientId, pid, isOn)
-        setModalOpen(false);
-    };
+  console.log('handleConfirm called with:', { pid, clientId, isOn, selectedNotId: selectedNot.idnotifications });
+  
+  const ok = await confirmePerscription(clientId, pid, isOn);
+  if (ok) {
+    // Remove notification from UI immediately
+    removeNotif({ idnotifications: selectedNot.idnotifications });
+    console.log('Notification removed from state');
+    // Don't refresh immediately - let the socket handle updates
+    // setRefresh(prev => prev + 1); // Remove this line
+  } else {
+    console.error('Confirmation failed');
+  }
+  setModalOpen(false);
+};
 
     /* const handleDisconnect = () => {
         handleLogout();
@@ -96,38 +129,9 @@ const Home = () => {
     } */
 
     /////////////////////////////////////////////////////////////////// Delete Modal Dialog
-    const [disconnectDialogShowing, setDeleteDialogShowing] = useState(false);
-
-    const cancelAction = () => {
-        /* Closes Dialog */
-        setDeleteDialogShowing(false);
-    };
-
-    const disconnectAction = () => {
-        /* Disconnect */
-        handleLogout();
-        navigate(0);
-        setDeleteDialogShowing(false);
-    };
-
-    const handleDisconnectOnClick = (index) => {
-        /* Open Dialog */
-        setDeleteDialogShowing(true);
-    };
 
     return (
         <>
-            {disconnectDialogShowing && (
-                <TailwindConfirmModal
-                    className="absolute z-50"
-                    title="Êtes-vous sûr de vouloir vous déconnecter ?"
-                    content="Cela déconnectera votre session sur ce compte. Vous devrez saisir vos informations de connexion pour l'utiliser à nouveau."
-                    actionLabel="Se déconnecter"
-                    cancelLabel="Annuler"
-                    actionFunction={disconnectAction}
-                    cancelAction={cancelAction}
-                />
-            )}
             <div className="col-span-3 row-span-2 bg-lightShapes">
                 <SideContent
                     userData={data}
@@ -141,12 +145,12 @@ const Home = () => {
                 <div className="w-max">
                     <SideMenu
                         option_list={[
-                            { label: "Tableau de bord", route: "/dashboard" },
-                            { label: "Boutique", disabled: true, route: "/dashboard/store" },
-                            { label: "Annonces", disabled: true, route: "/dashboard/feed" },
-                            { label: "Paramètres", route: "/dashboard/settings" },
-                            { label: "Aide", route: "/help", disabled: true },
-                            { label: "Se déconnecter", action: handleDisconnectOnClick },
+                            { label: "Tableau de bord", route: "/dashboard",icon: DashboardIcon  },
+                            { label: "Historique", route: "/dashboard/store",icon: HistoryIcon   },
+                            //{ label: "Annonces", disabled: true, route: "/dashboard/feed" },
+                            { label: "Paramètres", route: "/dashboard/settings",icon: SettingsIcon   },
+                            { label: "Aide", route: "/dashboard/help",icon: HelpIcon   },
+                            //{ label: "Se déconnecter", action: handleDisconnectOnClick },
                         ]}
                     />
                 </div>
@@ -166,11 +170,11 @@ const Home = () => {
                 />
             ) : (
                 <ConfirmationModal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
-                    onRefuse={handleRefuse}
-                    onConfirm={handleConfirm}
-                    selectedNotification={selectedNot}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onRefuse={handleRefuseConfirmation}
+                onConfirm={handleConfirm}
+                selectedNotification={selectedNot}
                 />
             )}
         </>

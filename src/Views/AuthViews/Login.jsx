@@ -100,12 +100,6 @@ const Login = () => {
                       <span className="text-lg text-left text-red-500/70">Mot de Passe trop Court</span>
                     )}
                   </div>
-                  <div className="mb-6 flex items-center">
-                    <label htmlFor="checkbox" className="flex items-center">
-                      <input type="checkbox" name="checkbox" className="w-5 h-4 mr-1.5" />
-                      <span className="text-sm font-semibold">Restez connecté pendant une semaine</span>
-                    </label>
-                  </div>
                   <div className="mb-6">
                     <input
                       type="submit"

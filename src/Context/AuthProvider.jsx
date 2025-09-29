@@ -202,6 +202,38 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    useEffect(() => {
+  const validateToken = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setIsAuth(false);
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/checkToken`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data && res.data.access) {
+        setIsAuth(true);
+        setIdpharma(res.data.user.idpharma); // persist in context
+        // maybe setNotificationSettings(...) if your API returns them
+      } else {
+        // invalid access: remove local data and force logout
+        handleLogout();
+        setIsAuth(false);
+      }
+    } catch (err) {
+      console.error("Token validation failed", err);
+      handleLogout();
+      setIsAuth(false);
+    }
+  };
+
+  validateToken();
+}, []); 
+
 
 
 

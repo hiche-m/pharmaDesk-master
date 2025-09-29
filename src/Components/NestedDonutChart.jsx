@@ -1,181 +1,96 @@
-import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"
-import { Doughnut } from "react-chartjs-2"
+import React from "react";
+import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import { tailwindColors } from "../Utils/Colors.jsx";
 import { useStateContext } from "../Context/ContextProvider.jsx";
-import LoadingSpinner from "./LoadingSpinner.jsx";
 
-// Register the required Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(ArcElement, Tooltip);
 
-export default function NestedDonutChart({ className }) {
+const centerTextPlugin = {
+  id: "centerText",
+  beforeDraw(chart, args, options) {
+    const { ctx, chartArea: { width, height } } = chart;
+    ctx.save();
 
+    ctx.font = "bold 14px sans-serif";
+    ctx.fillStyle = options.color || "#000";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-    const { todayStats } = useStateContext();
+    ctx.fillText(`${options.value}/${options.total}`, width / 2, height / 2);
 
-    const [data, setData] = useState(null);
+    ctx.restore();
+  },
+};
 
-    useEffect(() => {
-        if (todayStats) {
-            setData({
-                labels: [
-                    "Acceptées",
-                    "Refusées",
-                    "Selectionnée",
-                    "Ventes",
-                    "Envoie d'instructions",
-                ],
-                datasets: [
-                    {
-                        label: "Acceptées",
-                        data: [
-                            Math.round((todayStats.notifications_accepted / todayStats.total_notifications_received) * 100),
-                            Math.round(100 - (todayStats.notifications_accepted / todayStats.total_notifications_received) * 100),
-                        ],
-                        backgroundColor: [tailwindColors.primary, tailwindColors.lightShapes],
-                        borderColor: ["transparent", "transparent"],
-                        borderWidth: 0,
-                        circumference: 270,
-                        rotation: -135,
-                        weight: 0.5,
-                        borderRadius: 20,
-                    },
-                    {
-                        label: "Refusées",
-                        data: [
-                            Math.round((todayStats.notifications_rejected / todayStats.total_notifications_received) * 100),
-                            Math.round(100 - (todayStats.notifications_rejected / todayStats.total_notifications_received) * 100),
-                        ],
-                        backgroundColor: [tailwindColors.selectionBG, "#F3F3F3"],
-                        borderColor: ["transparent", "transparent"],
-                        borderWidth: 0,
-                        circumference: 270,
-                        rotation: -135,
-                        weight: 0.5,
-                        borderRadius: 20,
-                    },
-                    {
-                        label: "Selectionnée",
-                        data: [
-                            Math.round((todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100),
-                            Math.round(100 - (todayStats.notifications_accepted_client_chosen / todayStats.total_notifications_received) * 100),
-                        ],
-                        backgroundColor: [tailwindColors.accent, "#F6F6F6"],
-                        borderColor: ["transparent", "transparent"],
-                        borderWidth: 0,
-                        circumference: 270,
-                        rotation: -135,
-                        weight: 0.5,
-                        borderRadius: 20,
-                    },
-                    {
-                        label: "Ventes",
-                        data: [
-                            Math.round((todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100),
-                            Math.round(100 - (todayStats.confirmed_notifications / todayStats.total_notifications_received) * 100),
-                        ],
-                        backgroundColor: [tailwindColors.selection, "#F9F9F9"],
-                        borderColor: ["transparent", "transparent"],
-                        borderWidth: 0,
-                        circumference: 270,
-                        rotation: -135,
-                        weight: 0.5,
-                        borderRadius: 20,
-                    },
-                    {
-                        label: "Envoie d'instructions",
-                        data: [
-                            Math.round((todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100),
-                            Math.round(100 - (todayStats.confirmed_notifications_with_prescription / todayStats.total_notifications_received) * 100),
-                        ],
-                        backgroundColor: [tailwindColors.highlight, "#FCFCFC"],
-                        borderColor: ["transparent", "transparent"],
-                        borderWidth: 0,
-                        circumference: 270,
-                        rotation: -135,
-                        weight: 0.5,
-                        borderRadius: 20,
-                    },
-                ],
-            });
-        }
-    }, [todayStats]);
+export default function DashboardDonuts() {
+  const { todayStats } = useStateContext();
+  if (!todayStats) return null;
 
-    const options = {
-        responsive: true,
-        maintainAspectRatio: true,
-        cutout: "65%", // This makes the donuts skinny
-        plugins: {
-            legend: {
-                position: "bottom",
-                labels: {
-                    usePointStyle: true,
-                    pointStyle: "circle",
-                    generateLabels: (chart) => {
-                        // Custom function to generate correct labels for each dataset
-                        const datasets = chart.data.datasets
-                        const labels = chart.data.labels
+  const total = todayStats.total_notifications_received;
 
-                        return datasets.map((dataset, i) => {
-                            return {
-                                text: labels[i],
-                                fillStyle: dataset.backgroundColor[0],
-                                hidden: false,
-                                lineCap: undefined,
-                                lineDash: undefined,
-                                lineDashOffset: undefined,
-                                lineJoin: undefined,
-                                lineWidth: undefined,
-                                strokeStyle: undefined,
-                                pointStyle: "circle",
-                                datasetIndex: i,
-                            }
-                        })
-                    },
-                },
-            },
-            tooltip: {
-                callbacks: {
-                    // Add this title callback
-                    title: (tooltipItems) => {
-                        // Get the dataset index of the first item
-                        const datasetIndex = tooltipItems[0].datasetIndex;
-                        // Return the correct label from the labels array
-                        return data.labels[datasetIndex];
-                    },
-                    label: (context) => {
-                        const datasetIndex = context.datasetIndex;
-                        const dataIndex = context.dataIndex;
+  const makeData = (value, color) => ({
+    datasets: [
+      {
+        data: [
+          Math.round((value / total) * 100),
+          100 - Math.round((value / total) * 100),
+        ],
+        backgroundColor: [color, "#F3F3F3"],
+        borderWidth: 0,
+      },
+    ],
+  });
 
-                        // Only show tooltip for the filled part (dataIndex 0)
-                        if (dataIndex === 0) {
-                            const label = data.labels[datasetIndex] || "";
-                            const value = context.raw || 0;
-                            return `${label}: ${value}%`;
-                        } else {
-                            const value = context.raw || 0;
-                            return `Vide: ${value}%`;
-                        }
-                        return "";
-                    },
-                },
-            },
-        },
-    }
+  const makeOptions = (label, value,total) => ({
+    cutout: "70%",
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+      centerText: { value, total }, // pass values to plugin
+    },
+  });
 
-    return (
-        <div className={`${className} bg-superClear rounded-xl shadow-md p-4 flex flex-col space-y-2 justify-center items-start`}>
-            {!data && (<LoadingSpinner />)}
-        { data && 
-        (<>
-            <span className="text-sm font-medium">Statistiques d'aujourd'hui</span>
-            <div className="aspect-square w-64 h-64 mx-auto">
-                <Doughnut data={data} options={options} />
-            </div>
-            <span className="text-xs text-center text-textSecoundary mx-auto">
-                Nombre totale de commandes reçu : {todayStats.total_notifications_received}
-            </span>
-            </>)}
+  const cards = [
+    {
+      label: "Commandes",
+      value: todayStats.total_notifications_received,
+      color: tailwindColors.accent,
+    },
+    {
+      label: "Acceptées",
+      value: todayStats.notifications_accepted,
+      color: tailwindColors.primary,
+    },
+    {
+      label: "Refusées",
+      value: todayStats.notifications_rejected,
+      color: tailwindColors.selectionBG,
+    },
+    {
+      label: "Ventes",
+      value: todayStats.confirmed_notifications,
+      color: tailwindColors.selection,
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {cards.map((c, i) => (
+        <div
+          key={i}
+          className="bg-white shadow-md rounded-xl p-4 flex flex-col items-center"
+        >
+          <div className="w-28 h-28">
+            <Doughnut
+              data={makeData(c.value, c.color)}
+              options={makeOptions(c.label, c.value, total)}
+              plugins={[centerTextPlugin]}
+            />
+          </div>
+          <span className="mt-2 text-sm font-medium">{c.label}</span>
         </div>
-    )
+      ))}
+    </div>
+  );
 }

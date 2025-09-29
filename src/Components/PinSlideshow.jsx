@@ -12,6 +12,8 @@ const PinSlideshow = ({ className }) => {
     } = useStateContext();
 
     const [index, setIndex] = useState(0);
+    const [showUnpinModal, setShowUnpinModal] = useState(false); // Add this
+    const [notificationToUnpin, setNotificationToUnpin] = useState(null); // Add this
 
 
 
@@ -34,9 +36,24 @@ const PinSlideshow = ({ className }) => {
     };
 
     const handleUnpin = (id) => {
-        unpinNotif(id);
-        setIndex((prevIndex) => (prevIndex >= pinnedNotifs.length - 1 ? 0 : prevIndex));
-    }
+    // Instead of directly unpinning, show confirmation modal
+    setNotificationToUnpin(id);
+    setShowUnpinModal(true);
+};
+
+// Add new function for confirmed unpin
+const confirmUnpin = () => {
+    unpinNotif(notificationToUnpin);
+    setIndex((prevIndex) => (prevIndex >= pinnedNotifs.length - 1 ? 0 : prevIndex));
+    setShowUnpinModal(false);
+    setNotificationToUnpin(null);
+};
+
+// Add function to cancel unpin
+const cancelUnpin = () => {
+    setShowUnpinModal(false);
+    setNotificationToUnpin(null);
+};
 
     return (
         <div className={`${className} bg-superClear rounded-xl shadow-md flex flex-col relative h-full p-4`}>
@@ -78,14 +95,38 @@ const PinSlideshow = ({ className }) => {
                         <MdNavigateNext className="text-textSecoundary text-sm" />
                 </div>
             </div>)}
-            {pinnedNotifs.length > 0 && (<div className="inline-flex justify-between items-center relative z-20">
-                <button className="text-textSecoundary text-xs font-medium hover:text-textSecoundary/70" onClick={() => handleUnpin(pinnedNotifs[index].idnotifications)}>
+            {pinnedNotifs.length > 0 && (<div className="inline-flex justify-between items-center relative z-20 flex w-full gap-x-2">
+                <button className="flex-1 text-black text-xs font-medium hover:text-textSecoundary/70 border border-textSecoundary rounded-md px-6 py-1" onClick={() => handleUnpin(pinnedNotifs[index].idnotifications)}>
                     Désépingler
                 </button>
-                <button className="text-textSecoundary text-xs font-medium hover:text-textSecoundary/70" onClick={() => handleOpenModal(pinnedNotifs[index])}>
+                <button className="flex-1 text-black text-xs font-medium hover:text-textSecoundary/70 border border-primary bg-primary rounded-md py-1 px-6" onClick={() => handleOpenModal(pinnedNotifs[index])}>
                     Ouvrir
                 </button>
             </div>)}
+            {showUnpinModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+                    <h3 className="text-lg font-semibold mb-4">
+                         voulez-vous vraiment désépinglé cette commande  ?
+                    </h3>
+                    <div className="flex justify-end space-x-3">
+                        <button
+                            onClick={cancelUnpin}
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            onClick={confirmUnpin}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                        >
+                            Désépingler
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
         </div>
     );
 }

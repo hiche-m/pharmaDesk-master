@@ -82,10 +82,38 @@ function SignUp() {
 
     return (
         <div className="bg-white flex w-full min-h-screen overflow-hidden">
+            
             <div className="flex flex-col h-screen flex-grow">
                 <div className="fixed inset-0 z-0 overflow-hidden bg-white">
                     <div className="loginbackground-gridContainer">
                         {/* Background grid elements remain unchanged */}
+                        <div className="flex" style={{ gridArea: "top / start / 8 / end" }}>
+      <div className="flex-grow bg-gradient-to-b from-white to-[rgb(247,250,252)] to-[33%]"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "4 / 2 / auto / 5" }}>
+      <div className="flex-grow shadow-[inset_0_0_0_2px_#e3e8ee] animate-left-right-3s"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "6 / start / auto / 2" }}>
+      <div className="flex-grow bg-darkPrimary"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "7 / start / auto / 4" }}>
+      <div className="flex-grow bg-primary animate-left-right"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "8 / 4 / auto / 6" }}>
+      <div className="flex-grow bg-gray-100 animate-left-right-3s"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "2 / 15 / auto / end" }}>
+      <div className="flex-grow bg-selection animate-right-left-4s"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "3 / 14 / auto / end" }}>
+      <div className="flex-grow bg-primary animate-right-left"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "4 / 17 / auto / 20" }}>
+      <div className="flex-grow bg-gray-100 animate-right-left-4s"></div>
+    </div>
+    <div className="flex" style={{ gridArea: "5 / 14 / auto / 17" }}>
+      <div className="flex-grow shadow-[inset_0_0_0_2px_#e3e8ee] animate-right-left-3s"></div>
+    </div>
                     </div>
                 </div>
 

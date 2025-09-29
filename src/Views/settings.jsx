@@ -152,29 +152,45 @@ const Settings = () => {
         setPharmacyForm(defaultPharmacyForm);
     }
 
-    const handlePharmacyFormSave = () => {
-        const form = {};
+    const handlePharmacyFormSave = async () => {
+    const form = {};
+    let count = 0;
 
-        let count = 0;
-        for (let key in pharmacyForm) {
-            // Check if the property exists in both pharmacyForm and defaultPharmacyForm
-            if (pharmacyForm.hasOwnProperty(key)) {
-                // If the value in pharmacyForm is different from defaultPharmacyForm, keep the value
-                // Otherwise, set it to null
-                if (pharmacyForm[key] !== defaultPharmacyForm[key]) {
-                    form[key] = pharmacyForm[key];
-                    count += 1;
-                } else {
-                    form[key] = null;
-                }
+    for (let key in pharmacyForm) {
+        if (pharmacyForm.hasOwnProperty(key)) {
+            if (pharmacyForm[key] !== defaultPharmacyForm[key]) {
+                form[key] = pharmacyForm[key];
+                count += 1;
+            } else {
+                form[key] = null;
             }
         }
+    }
 
-        if (count > 0) {
-            console.log('Sending request...');
-            updateProfile(form, {});
+    // ✅ Save pharmacy info if changed
+    if (count > 0) {
+        console.log('Sending profile update request...');
+        const result = await updateProfile(form, {});
+        
+        // ✅ Update localStorage with new values after successful update
+        if (result && !profileUpdateError) {
+            if (form.storeName) {
+                localStorage.setItem('storeName', form.storeName);
+            }
+            // Update the default form to reflect new saved values
+            setdefaultPharmacyForm({...defaultPharmacyForm, ...form});
         }
-    };
+    }
+
+    // ✅ Save profile picture if one was selected
+    if (profilePicture) {
+        console.log('Uploading profile picture...');
+        await handleProfilePictureUpload();
+    }
+    
+    // ✅ Dispatch event to notify navbar of changes
+    window.dispatchEvent(new Event("userDataUpdated"));
+};
 
     ////////////////////////////////////////////////// Personal Settings
     /* const [defaultPersonalForm, setDefaultPersonalForm] = useState({
@@ -404,30 +420,39 @@ const Settings = () => {
     }
 
     const handleProfilePictureUpload = async () => {
-        if (profilePicture) {
-            setProfilePictureLoading(true);
-            const formData = new FormData();
-            formData.append('profilePicture', profilePicture);
-            formData.append('id', localStorage.getItem('idpharma'));
+    if (profilePicture) {
+        setProfilePictureLoading(true);
+        const formData = new FormData();
+        formData.append('profilePicture', profilePicture);
+        formData.append('id', localStorage.getItem('idpharma'));
 
-            try {
-                const response = await axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/setProfilePic`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                setProfilePictureResponse(response.data);
-                setProfilePictureSuccess(true);
-                setProfilePictureError(null)
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                setProfilePictureSuccess(false);
-                setProfilePictureError('Error uploading file');
+        try {
+            const response = await axios.post(`${HOST}${HOST_PORT_SEPARATOR}${PORT}/api/pharma/setProfilePic`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            
+            setProfilePictureResponse(response.data);
+            setProfilePictureSuccess(true);
+            setProfilePictureError(null);
+            
+            // ✅ Update localStorage with new profile picture URL
+            if (response.data && response.data.profilePicUrl) {
+                localStorage.setItem('profilePic', response.data.profilePicUrl);
             }
-            setProfilePictureLoading(false);
+            
+            // ✅ Dispatch event to notify navbar
+            window.dispatchEvent(new Event("userDataUpdated"));
+            
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            setProfilePictureSuccess(false);
+            setProfilePictureError('Error uploading file');
         }
+        setProfilePictureLoading(false);
     }
-
+}
     const handleProfilePictureDelete = async () => {
         try {
             setProfilePictureLoading(true);

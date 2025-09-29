@@ -5,7 +5,9 @@ import { MdDeleteForever } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { FaMinus } from "react-icons/fa6";
+// import { useNavigate } from "react-router-dom"; // Commented out for artifact compatibility
 import { AiOutlinePushpin } from "react-icons/ai";
+import { toast } from 'react-toastify';
 import { AiFillPushpin } from "react-icons/ai";
 import DropdownMenu from './DropDownMenu.jsx';
 import { useStateContext } from '../Context/ContextProvider.jsx';
@@ -15,23 +17,21 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import TailwindCommentModal from './TailwindCommentModal.jsx';
 
-
-
 const resizeObserverOptions = {};
-
 const maxWidth = 600;
 
 const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotification }) => {
-
     const [numPages, setNumPages] = useState();
     const [containerRef, setContainerRef] = useState(null);
     const [containerWidth, setContainerWidth] = useState();
     const [isPinned, setIsPinned] = useState(false);
-
+    const [showFullImage, setShowFullImage] = useState(false);
+    const [imageError, setImageError] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    // const navigate = useNavigate(); // Commented out for artifact compatibility
 
     const onResize = useCallback((entries) => {
         const [entry] = entries;
-
         if (entry) {
             setContainerWidth(entry.contentRect.width);
         }
@@ -52,9 +52,9 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     } = useStateContext();
 
     const daysPortion = 15;
-
     const [isImageLoading, setImageLoading] = useState(true);
     const [error, setError] = useState("");
+
     const handleOnClose = () => {
         setError("");
         onClose();
@@ -66,13 +66,47 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     useEffect(() => {
         const isPinned = pinnedNotifs.some((pin) => pin.idnotifications === selectedNotification.idnotifications);
         setIsPinned(isPinned);
-
         setComment(selectedNotification.comment || '');
-
+        
+        // Reset image states when notification changes
+        setImageError(false);
+        setImageLoaded(false);
     }, [selectedNotification]);
 
-    /* Frequency */
+    // Enhanced formatPhoneForDisplay function
+    function formatPhoneForDisplay(phone) {
+        if (!phone || phone === '') {
+            return "Numéro non disponible";
+        }
 
+        const phoneStr = String(phone).trim();
+        
+        if (phoneStr.startsWith('+')) {
+            return phoneStr;
+        }
+        
+        const parts = phoneStr.split(";").map(p => p.trim()).filter(Boolean);
+        
+        if (parts.length < 2) {
+            const singlePart = parts[0] || phoneStr;
+            if (/^\d+$/.test(singlePart)) {
+                return `+${singlePart}`;
+            }
+            return singlePart || "Format invalide";
+        }
+
+        const countryCode = parts[0];
+        let nationalNumber = parts[1];
+        nationalNumber = nationalNumber.replace(/\D/g, "");
+        
+        if (!nationalNumber.startsWith("0")) {
+            nationalNumber = "0" + nationalNumber;
+        }
+
+        return `+${countryCode} ${nationalNumber}`;
+    }
+
+    /* Frequency */
     const frequencyObjects = {
         'heur': 'Par heur',
         'jour': 'Par jour',
@@ -91,6 +125,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         /* setIsOn(!isOn); */
     };
 
+    // [Previous helper functions remain the same - addFrequency, minusFrequency, etc.]
     const addFrequency = () => {
         setPosiodata([
             ...posioData.slice(0, formIndex),
@@ -140,35 +175,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         ]);
     };
 
-
-    // utils/formatPhone.js (or inline)
- function formatPhoneForDisplay(phone) {
-  if (!phone) return "";
-
-  const parts = String(phone)
-    .split(";")
-    .map(p => p.trim())
-    .filter(Boolean);
-
-  // Single number: return as-is
-  if (parts.length === 1) return parts[0];
-
-  // Looks like "CC;NUMBER"
-  if (/^\d{1,4}$/.test(parts[0])) {
-    const cc = parts[0];
-    const nsn = (parts[1] || "")
-      .replace(/\D/g, "")      // keep digits only
-      .replace(/^0+/, "");     // drop trunk 0 for +CC format
-    return nsn ? `+${cc}${nsn}` : `+${cc}`;
-  }
-
-  // Fallback: multiple numbers separated by ';' → show all
-  return parts.join(" / ");
-}
-
-
     /* Portion/Quantity */
-
     const portionObjects = {
         'take': 'Par prise',
         'volume': 'Par volume',
@@ -246,7 +253,6 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         ]);
     };
 
-
     /* When to take? */
     const timingList = {
         ajeun: "À jeun",
@@ -279,9 +285,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         } : item));
     };
 
-
-    /*   Number of products */
-
+    /* Number of products */
     const [formIndex, setFormIndex] = useState(0);
 
     const addProduct = () => {
@@ -341,20 +345,17 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     }
 
     const currentForm = posioData[formIndex];
+
     /* DIALOG */
     const [pinDialogShowing, setPinDialogShowing] = useState(false);
-
-    const [comment, setComment] = useState(selectedNotification.comment || '');
+    const [comment, setComment] = useState(selectedNotification?.comment || '');
 
     const togglePin = () => {
         if (isPinned == null) return;
 
         if (isPinned) {
             unpinNotif(selectedNotification.idnotifications);
-        }
-        else {
-            console.log(selectedNotification);
-            
+        } else {
             pinNotif({
                 ...selectedNotification,
                 comment: comment,
@@ -365,20 +366,21 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
     }
 
     const cancelPinAction = () => {
-        /* Closes Dialog */
         setPinDialogShowing(false);
     };
 
     const pinAction = () => {
-        /* Disconnect */
-        /* handleLogout();
-        navigate(0); */
         togglePin();
         setPinDialogShowing(false);
+        onClose();
+        // navigate("/"); // Commented out for artifact compatibility
+        toast.success('Commande épinglée', {
+            duration: 3000,
+            position: 'top-right',
+        });
     };
 
     const handlePinOnClick = () => {
-        /* Open Dialog */
         setPinDialogShowing(true);
     };
 
@@ -386,176 +388,209 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         setComment(value);
     };
 
+    // New function to handle viewing full image
+    const handleViewImage = () => {
+        if (selectedNotification.url) {
+            setShowFullImage(true);
+        }
+    };
+
+    // Helper function to check if URL is a PDF
+    const isPdfFile = (url) => {
+        if (!url) return false;
+        return url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('pdf');
+    };
+
     if (!isOpen) return null;
 
-    return (<>
-        <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40 select-none`}>
-            <div className="bg-white w-max rounded-lg p-6 shadow-lg">
-                <div className="inline-flex w-max h-max space-x-4">
-                    {/* {isImageLoading && (
-                        <div className="w-[33vw] h-[33vw] flex justify-center items-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+    // Full Image/PDF Modal
+    if (showFullImage) {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 select-none">
+                <div className="relative max-w-4xl max-h-4xl w-full h-full p-4">
+                    <button 
+                        onClick={() => setShowFullImage(false)}
+                        className="absolute top-4 right-4 text-white text-2xl z-10 bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-75"
+                    >
+                        ×
+                    </button>
+                    
+                    {isPdfFile(selectedNotification.url) ? (
+                        // PDF Viewer using react-pdf
+                        <div className="w-full h-full flex justify-center items-center overflow-y-auto" ref={setContainerRef}>
+                            <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
+                                {Array.from(new Array(numPages), (_el, index) => (
+                                    <Page
+                                        key={`page_${index + 1}`}
+                                        className="my-2"
+                                        pageNumber={index + 1}
+                                        width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
+                                    />
+                                ))}
+                            </Document>
                         </div>
-                    )} */}
-                    {error !== "" && (
-                        <span className="text-lg text-red-500">{error}</span>
+                    ) : (
+                        // Image Viewer
+                        <img 
+                            src={selectedNotification.url} 
+                            alt="Full prescription" 
+                            className="max-w-full max-h-full object-contain"
+                        />
                     )}
-                    {/* PDF */}
-                    <div className="max-h-[75vh] h-[75vh] max-w-[50vw] w-[50vw] flex justify-center items-center overflow-y-auto my-2" ref={setContainerRef}>
-                        <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
-                            {Array.from(new Array(numPages), (_el, index) => (
-                                <Page
-                                    key={`page_${index + 1}`}
-                                    className={"my-2"}
-                                    pageNumber={index + 1}
-                                    width={containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth}
-                                />
-                            ))}
-                        </Document>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-40 select-none">
+                <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-4 border-b">
+                        <h2 className="text-lg font-semibold text-gray-800">
+                            Confirmer l'achat?
+                        </h2>
+                        <button 
+                            onClick={handleOnClose}
+                            className="text-gray-400 hover:text-gray-600 text-xl"
+                        >
+                            ×
+                        </button>
                     </div>
 
-                    <div className="flex flex-col justify-between items-start">
-                        {/* Info */}
-                        <div className="flex flex-col justify-start items-start space-y-2">
-                            <span className='inline-flex grow justify-between items-center'>
-                                <h2 className="text-lg font-bold p-0">Confirmer l'achat ?</h2>
-                                <div className='ml-2' onClick={() => handlePinOnClick()}>
-                                    {isPinned ?
-                                        (<AiFillPushpin className={`text-[1.5rem] text-primary`} />) :
-                                        (<AiOutlinePushpin className='text-[1.5rem] cursor-pointer text-textSecoundary' />)}
-                                </div>
-                            </span>
-                            <span className="text-gray-600 font-medium">
-                                {`${selectedNotification.firstname} ${selectedNotification.lastname}`} | <span>{formatPhoneForDisplay(selectedNotification?.phoneNumber)}</span>
-                            </span>
-                            <p className="text-gray-600">
-                                Confirmez la vente et envoyer la posologie des médicaments au client.
-                            </p>
-                            <div className={`flex flex-col space-y-2 pt-4 ${!isOn ? 'pointer-events-none cursor-default' : ''}`}>
-                                {/* Line 1 */}
-                                <div className="">
-                                    <div className="inline-flex flex-row space-x-2 items-center justify-between">
-                                        <span className='opacity-35'>Posologie ?</span>
-                                        <ToggleSwitch value={isOn} toggleSwitch={toggleSwitch} className='pointer-events-auto opacity-35' />
-                                        <div className='inline-flex justify-center items-center space-x-1'>
-                                            <MdDeleteForever className={`text-[1.5rem] ${isOn && posioData.length > 1 ? 'cursor-pointer text-red-500' : 'text-gray-500'} opacity-35`} onClick={() => deleteProduct()} />
-                                            {posioData.length > 1 && (<GrFormPrevious className="bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl" onClick={() => navigatePrevious()} />)}
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg opacity-35'>Med {formIndex + 1}</span>
-                                            {posioData.length > 1 && (<MdNavigateNext className='bg-transparent cursor-pointer p-1 text-[2rem] text-textSecoundary hover:bg-lightShapes hover:rounded-xl' onClick={() => navigateNext()} />)}
-                                            <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary opacity-35' onClick={() => addProduct()} />
+                    {/* Content */}
+                    <div className="p-4">
+                        {/* Image Preview Section */}
+                        <div className="flex items-start space-x-3 mb-4">
+                            {/* File Preview Thumbnail */}
+                            <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center">
+                                {isPdfFile(selectedNotification.url) ? (
+                                    <div className="w-full h-full overflow-hidden flex items-center justify-center">
+                                        <Document file={selectedNotification.url} onLoadSuccess={onDocumentLoadSuccess}>
+                                        <Page
+                                            pageNumber={1}
+                                            width={64} // roughly 16 * 4 (to fit your 16x16 box)
+                                            height={64}
+                                        />
+                                        </Document>
+                                    </div>
+                                    ) : imageError ? (
+                                    <div className="text-gray-400 text-xs text-center px-1">
+                                        Image<br />Error
+                                    </div>
+                                    ) : !imageLoaded ? (
+                                    <div className="text-gray-400 text-xs text-center">
+                                        Loading...
+                                    </div>
+                                    ) : null}
+                                
+                                {!isPdfFile(selectedNotification.url) && (
+                                    <img 
+                                        src={selectedNotification.url} 
+                                        alt="Prescription preview"
+                                        className={`w-full h-full object-cover ${imageError ? 'hidden' : ''}`}
+                                        onLoad={() => setImageLoaded(true)}
+                                        onError={(e) => {
+                                            console.error('Image failed to load:', selectedNotification.url);
+                                            setImageError(true);
+                                        }}
+                                        style={{ display: imageError ? 'none' : 'block' }}
+                                    />
+                                )}
+                            </div>
+                            
+                            {/* Info Section */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="text-base font-medium text-gray-900 truncate">
+                                            {selectedNotification.firstname}
+                                        </p>
+                                        <p className="text-sm text-gray-900 pt-3">
+                                            {formatPhoneForDisplay(selectedNotification?.phoneNumber || selectedNotification?.phone)}
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col space-y-2">
+                                        <button 
+                                            onClick={handleViewImage}
+                                            className="text-sm text-green-300 hover:text-green-400 font-medium"
+                                        >
+                                            View
+                                        </button>
+
+                                        <button
+                                            onClick={handlePinOnClick}
+                                            className="flex items-center space-x-1 px-3 py-2 text-sm"
+                                        >
+                                            {isPinned ? (
+                                            <AiFillPushpin className="text-green-300" />
+                                            ) : (
+                                            <AiOutlinePushpin className="text-gray-500" />
+                                            )}
+                                            <span className="text-green-300 hover:text-green-400 font-medium">
+                                            {isPinned ? 'Épinglé' : 'Épingle'}
+                                            </span>
+                                            </button>
                                         </div>
-                                        <span className='text-textSecoundary italic'>
-                                            Bientôt disponible
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Line 2 */}
-                                <div className="opacity-35">
-                                    <div className="inline-flex flex-row space-x-2 items-center">
-                                        <span>{'Fréquence de prise: '}</span>
-                                        {frequencyTypes[posioData[formIndex].frequenceDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
-                                            <FaMinus className={`text-[1.2rem] ${posioData[formIndex].frequence > 1 ? 'text-textSecoundary cursor-pointer' : 'text-disabled'}`} onClick={() => minusFrequency()} />
-                                            <span>{'Chaque '}</span>
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg inline-flex'><input className='outline-none bg-transparent w-10 text-center' value={currentForm["frequence"]} onChange={(event) => handleFrequencyChange(event.target.value)} />{frequencyTypes[posioData[formIndex].frequenceDetails]}</span>
-                                            <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addFrequency()} />
-                                        </div>)}
-                                        <DropdownMenu options={Object.entries(frequencyObjects).map(([key, value]) => ({
-                                            value: key,
-                                            label: value
-                                        }))} label={frequencyObjects[posioData[formIndex].frequenceDetails]} selectedValue={posioData[formIndex].frequenceDetails} onSelect={(value) => handleFrequencyTypeChange(value)}
-                                            disabled={!isOn}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Line 3 */}
-                                <div className="opacity-35">
-                                    <div className="inline-flex flex-row space-x-2 items-center">
-                                        <span>Quelle quantité par prise?</span>
-                                        {portionValues[posioData[formIndex].quantiteDetails] != null && (<div className='inline-flex justify-center items-center space-x-1'>
-                                            <FaMinus className={`text-[1.2rem] ${posioData[formIndex].quantite > 1 ? 'text-textSecoundary cursor-pointer' : 'text-disabled'}`} onClick={() => minusQuantity()} />
-                                            <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg inline-flex'><input className='outline-none bg-transparent w-10 text-center' value={currentForm["quantite"] * portionValues[posioData[formIndex].quantiteDetails]} onChange={(event) => handleQuantityChange(event.target.value)} />{portionTypes[posioData[formIndex].quantiteDetails]}</span>
-                                            <IoMdAdd className='text-[1.5rem] cursor-pointer text-textSecoundary' onClick={() => addQuantity()} />
-                                        </div>)}
-                                        <DropdownMenu options={Object.entries(portionObjects).map(([key, value]) => ({
-                                            value: key,
-                                            label: value
-                                        }))} label={portionObjects[posioData[formIndex].quantiteDetails]} selectedValue={posioData[formIndex].quantiteDetails} onSelect={(value) => handleQuantityTypeChange(value)}
-                                            disabled={!isOn}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Line 4 */}
-                                <div className="flex flex-col space-x-2 opacity-35">
-                                    <span className='mb-2'>Quand prendre?</span>
-                                    {Object.entries(timingList).map(([key, value], index) => (<div className='flex flex-row justify-start items-center space-x-1 mx-1' key={`timing-key-${index}`}>
-                                        <input
-                                            type="radio"
-                                            className={`${isOn ? 'accent-primary' : 'accent-gray-500'} cursor-pointer`}
-                                            value={index}
-                                            checked={currentForm[key]}
-                                            onChange={() => handleTiming(index)} />
-                                        <span>{value}</span>
-                                    </div>))}
-                                </div>
-
-                                {/* Line 5 */}
-                                <div className=" mt-4 opacity-35">
-                                    <span className='mr-2'>Durée de traitement: </span>
-                                    <div className='inline-flex justify-center items-center space-x-1'>
-                                        <FaMinus className='text-[1.2rem] text-textSecoundary cursor-pointer' onClick={() => minusDays()} />
-                                        <span className='text-textPrimary px-2 py-1 bg-lightShapes rounded-lg'>{currentForm["duree"]}j</span>
-                                        <IoMdAdd className='text-[1.5rem] text-textSecoundary cursor-pointer' onClick={() => addDays()} />
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
-                        {/* Spacer */}
-                        <div className="flex grow h-full w-full" />
-                        {/* Actions */}
-                        <div className="flex justify-between w-full">
-                            <button
-                                onClick={handleOnClose}
-                                className="text-gray-400 px-4 py-2 rounded hover:bg-gray-50"
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex justify-between items-center p-4 border-t">
+                         <button className="w-full mr-2 text-grey-900 px-4 py-2 border border-red-500 rounded-md hover:bg-red-400 text-sm"
+                            onClick={() => {
+                                // First unpin if it's pinned
+                                if (isPinned) {
+                                    unpinNotif(selectedNotification.idnotifications);
+                                }
+                                
+                                if (selectedNotification.posioFlag !== undefined || selectedNotification.prix !== undefined) {
+                                    // Vente refusal
+                                    onRefuseConfirmation(selectedNotification.idnotifications);
+                                } else {
+                                    // Commande refusal
+                                    onRefuse(selectedNotification.idnotifications);
+                                }
+                            }}
+                        >
+                            Refuser
+                        </button>
+                        <button
+                                onClick={() => {
+                                    if (isPinned) {
+                                        unpinNotif(selectedNotification.idnotifications);
+                                    }
+                                    onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn);
+                                }}
+                                className="w-full bg-green-400 text-gray-900 px-4 py-2 rounded-md hover:bg-green-700 text-sm"
                             >
-                                Annuler
+                                Confirm
                             </button>
-                            <div className="inline-flex">
-                                <button
-                                    onClick={() => onRefuse(selectedNotification.idnotifications)}
-                                    className="text-red-500 px-4 py-2 rounded hover:bg-red-50"
-                                >
-                                    Refuser
-                                </button>
-                                <button
-                                    onClick={() => onConfirm(selectedNotification.idprescription, selectedNotification.idClient, isOn)}
-                                    className="bg-primary text-white px-4 py-2 rounded hover:bg-darkPrimary"
-                                >
-                                    Confirmer
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        {pinDialogShowing && (<TailwindCommentModal
-            className="absolute z-[100]"
-            title={isPinned ? "Retirer l'épingle de cette notification ?" : "Épingler cette notification ?"}
-            comment={comment}
-            isPinned={isPinned}
-            onCommentChange={onCommentChange}
-            color={isPinned ? 'red-600' : 'primary'}
-            actionLabel={isPinned ? "Retirer" : "Épingler"}
-            cancelLabel="Annuler"
-            actionFunction={pinAction}
-            cancelAction={cancelPinAction}
-        />)}
-    </>
+
+            {/* Pin Dialog Modal */}
+            {pinDialogShowing && (
+                <TailwindCommentModal
+                    className="absolute z-[100]"
+                    title={isPinned ? "Retirer l'épingle de cette notification ?" : "Épingler cette notification ?"}
+                    comment={comment}
+                    isPinned={isPinned}
+                    onCommentChange={onCommentChange}
+                    color={isPinned ? 'red-600' : 'primary'}
+                    actionLabel={isPinned ? "Retirer" : "Épingler"}
+                    cancelLabel="Annuler"
+                    actionFunction={pinAction}
+                    cancelAction={cancelPinAction}
+                />
+            )}
+        </>
     );
 }
-
 
 export default ConfirmationModal;

@@ -1,15 +1,24 @@
 import React, { useEffect } from "react";
 import persp from "../Assets/Images/persp.svg"
 import { formatDate } from "../Utils/Functions.jsx";
+import { AiFillPushpin } from "react-icons/ai"; // Import pin icon
 
-const NotificationTile = ({ handleClick = () => { }, tile, index, isConfirm = false }) => {
+
+const NotificationTile = ({ handleClick = () => { }, tile, index, isConfirm = false, isPinned = false }) => {
 
     const timestamp = new Date(tile.created_at);
 
     const formattedTime = formatDate((new Date()) - timestamp);
 
     return (
-        <div onClick={handleClick} className={`flex flex-row p-4 justify-start items-center bg-superClear "bg-opacity-75" rounded-xl "shadow-lg" cursor-pointer hover:bg-opacity-95 active:bg-disabled active:shadow-none`}>
+        <div onClick={handleClick} className={`flex flex-row p-4 justify-start items-center bg-superClear "bg-opacity-75" rounded-xl "shadow-lg" cursor-pointer hover:bg-opacity-95 active:bg-disabled active:shadow-none relative`}>
+            {/* Pin indicator for pinned notifications */}
+            {isPinned && (
+                <div className="absolute top-2 right-2 z-10">
+                    <AiFillPushpin className="text-blue-500 text-sm" />
+                </div>
+            )}
+            
             <img src={persp} className="rounded-full w-1/5 mr-4" />
             <div className="flex flex-col mr-2 text-sm">
                 {/* tile.type === "order" && <span className="text-textSecoundary">Nouvelle commande</span> */}

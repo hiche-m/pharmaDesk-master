@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import pfp4 from "../Assets/Images/pfp4.svg"
 import { recentActivity, typeColors } from "../Utils/Data/ActivityData.jsx";
 import ActivityTile from "./ActivityTile.jsx";
@@ -15,29 +15,52 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
     const [refrechingWithInterval, setrefrechingInterval] = useState(true)
 
     useEffect(() => {
-        // Function to fetch notifications and clients
-        const fetchData = () => {
-            fetchNotif();
-            fetchCommingClients();
-        };
+  // Function to fetch notifications and clients
+  const fetchData = (isInitialLoad = false) => {
+    fetchNotif(isInitialLoad);
+    fetchCommingClients();
+  };
 
-        fetchData(); // Fetch data immediately when the effect runs
-        updateTodayStats(); // Update today stats immediately when the effect runs
+  fetchData(true); // Initial load with full replacement
+  updateTodayStats();
 
-        const interval = setInterval(() => {
-            fetchData(); // Fetch data periodically every 10 seconds
-        }, 1000 * refresh_rate);
+  const interval = setInterval(() => {
+    fetchData(false); // Subsequent loads with merging
+  }, 1000 * refresh_rate);
 
-        // Cleanup interval on component unmount
-        return () => clearInterval(interval);
-    }, []); // Empty dependency array ensures the effect runs only once on mount
+  return () => clearInterval(interval);
+}, []);
+
+// Or even better: Use a ref to track if it's the first load
+const isFirstLoad = useRef(true);
+
+useEffect(() => {
+  const fetchData = () => {
+    fetchNotif(isFirstLoad.current);
+    fetchCommingClients();
+    isFirstLoad.current = false;
+  };
+
+  fetchData();
+  updateTodayStats();
+
+  const interval = setInterval(() => {
+    fetchData();
+  }, 1000 * refresh_rate);
+
+  return () => clearInterval(interval);
+}, []);
 
     // const /* { isLoading, data, error, index } */notifObject = useSelector(state => state.notifications);
     const /* { isLoading, data, error, index } */confirmedNotifObject = useSelector(state => state.confirmedNotifications);
 
-    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, updateTodayStats, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif } = useStateContext();
+    const { fetchCommingClients, isLoadingNotificationConfirmation, isLoadingNotification, updateTodayStats, notificationListeRequests, notificationListeRequestsConfirmation, fetchNotif, pinnedNotifs } = useStateContext();
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    const isNotificationPinned = (notificationId) => {
+    return pinnedNotifs.some(pinnedNotif => pinnedNotif.idnotifications === notificationId);
+};
 
     const filterNotifications = (notifications) => {
         if (!searchQuery || searchQuery.length < 1) return notifications;
@@ -59,38 +82,46 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
             );
         });
     };
-    const [filteredNewNotifications, setFilteredNewNotifications] = useState(filterNotifications(notificationListeRequests));
-    const [filteredConfirmationNotifications, setFilteredConfirmationNotifications] = useState(filterNotifications(notificationListeRequestsConfirmation));
 
-    useEffect(() => {
+    // Use useMemo to memoize filtered results and prevent unnecessary recalculations
+    const filteredNewNotifications = React.useMemo(() => {
+        return filterNotifications(notificationListeRequests || []);
+    }, [notificationListeRequests, searchQuery]);
 
-        const notifTemp = filterNotifications(notificationListeRequests);
-        const confirmedNotifTemp = filterNotifications(notificationListeRequestsConfirmation);
+    const filteredConfirmationNotifications = React.useMemo(() => {
+        return filterNotifications(notificationListeRequestsConfirmation || []);
+    }, [notificationListeRequestsConfirmation, searchQuery]);
 
-        if(filteredNewNotifications != notifTemp){
-            setFilteredNewNotifications(filterNotifications(notificationListeRequests));
-        }
-
-        if(filteredConfirmationNotifications != confirmedNotifTemp){
-            setFilteredConfirmationNotifications(filterNotifications(notificationListeRequestsConfirmation));
-        }
-
-    }, [notificationListeRequestsConfirmation, notificationListeRequests]);
-
-    return (<div className="w-full h-[100vh] min-h-[940px] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-10">
+    return (<div className="w-full h-[100vh] min-h-[940px] min-w-[215px] bg-lightShapes flex flex-col grow space-y-5 p-2 overflow-y-auto px-4 py-7">
         <div className="flex flex-col">
-            <div className="inline-flex mb-2">
+            <div className="inline-flex mb-2 pb-4">
                 <span className="font-bold text-lg">Notifications</span>
             </div>
-            <SearchBar onSearch={(query) => setSearchQuery(query)} />
+            <SearchBar 
+            value={searchQuery} 
+            onSearch={(query) => setSearchQuery(query)} 
+        />
             <div className="h-max w-full space-y-2">
-                <div className="inline-flex mb-2 justify-between items-center ">
-                    <span className="font-medium">Confirmation et Posiologie</span>
-                </div>
-                {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de notifications à confirmer.</span>)}
-                {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
-                {filteredConfirmationNotifications != null && filteredConfirmationNotifications.map((tile, not_index) => (<NotificationTile key={`confirm-notification-tile-${not_index}`} isConfirm={true} tile={tile} index={not_index} handleClick={() => openNotification(tile, 1)} />))}
-            </div>
+    <div className="inline-flex mb-2 justify-between items-center ">
+        <span className="font-medium">Confirmation et Posiologie</span>
+    </div>
+    {(filteredConfirmationNotifications != null && filteredConfirmationNotifications.length < 1) && (
+        <span className="flex flex-row px-4 text-textSecoundary italic font-light">
+            Pas de notifications à confirmer.
+        </span>
+    )}
+    {(isLoadingNotificationConfirmation) && <NotifictionsSkeleton length={2} />}
+    {filteredConfirmationNotifications != null && filteredConfirmationNotifications.map((tile, not_index) => (
+        <NotificationTile 
+            key={`confirm-notification-tile-${tile.idnotifications || not_index}`} 
+            isConfirm={true} 
+            tile={tile} 
+            index={not_index} 
+            isPinned={isNotificationPinned(tile.idnotifications)} // Add this prop
+            handleClick={() => openNotification(tile, 1)} 
+        />
+    ))}
+</div>
             <div className="my-5" />
             <div className="h-max w-full space-y-2">
                 <div className="inline-flex mb-2">
@@ -98,7 +129,7 @@ const SideContent = ({ userData, handleRefresh = () => { }, acivity = recentActi
                 </div>
                 {(filteredNewNotifications != null && filteredNewNotifications.length < 1) && (<span className="flex flex-row px-4 text-textSecoundary italic font-light">Pas de nouvelles commandes.</span>)}
                 {isLoadingNotification && <NotifictionsSkeleton />}
-                {filteredNewNotifications != null && filteredNewNotifications.map((tile, not_index) => (<NotificationTile key={`notification-tile-${not_index}`} isConfirm={false} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
+                {filteredNewNotifications != null && filteredNewNotifications.map((tile, not_index) => (<NotificationTile key={`notification-tile-${tile.idnotifications || not_index}`} isConfirm={false} tile={tile} index={not_index} handleClick={() => openNotification(tile, 0)} />))}
             </div>
         </div>
     </div>);

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect  } from 'react';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import { IoMdAdd } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
@@ -75,6 +75,16 @@ const NotificationModal = ({ isOpen, onClose, onRefuse, onAccept, selectedNotifi
             ...genList.slice(index + 1)
         ]);
     };
+
+    useEffect(() => {
+    if (isOpen && selectedNotification) {
+      setComment('');
+      setGenList([]);
+      setError('');
+      setImageLoading(true);
+      setNumPages(undefined);
+    }
+  }, [isOpen, selectedNotification]);
 
     if (!isOpen) return null;
 
