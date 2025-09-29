@@ -61,10 +61,9 @@ const createWindow = () => {
   }
 
   mainWindow.once("ready-to-show", () => {
-    if (app.isPackaged) {
-      // Check for updates when app is ready
-      autoUpdater.checkForUpdatesAndNotify();
-    }
+  if (app.isPackaged) {
+    autoUpdater.checkForUpdates();  // ✅ Asks user first
+  }
   });
 
   // Modify headers to allow necessary requests
@@ -148,7 +147,7 @@ const template = [
         label: 'Vérifier les mises à jour',
         click: () => {
           if (app.isPackaged) {
-            autoUpdater.checkForUpdatesAndNotify();
+            autoUpdater.checkForUpdates();  // ✅ Changed here too
           } else {
             dialog.showMessageBox({
               type: 'info',

@@ -117,7 +117,7 @@ const cancelAction = () => {
     return (
         <>
         <div style={{position: 'fixed', bottom: 10, right: 10, background: '#000', color: '#fff', padding: '5px 10px', borderRadius: 5}}>
-        Version 0.0.21 - UPDATE TEST ✅
+        Version 0.0.23 - UPDATE TEST ✅
         </div>
         
         {disconnectDialogShowing && (
