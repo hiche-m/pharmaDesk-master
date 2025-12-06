@@ -140,6 +140,33 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
         ]);
     };
 
+
+    // utils/formatPhone.js (or inline)
+ function formatPhoneForDisplay(phone) {
+  if (!phone) return "";
+
+  const parts = String(phone)
+    .split(";")
+    .map(p => p.trim())
+    .filter(Boolean);
+
+  // Single number: return as-is
+  if (parts.length === 1) return parts[0];
+
+  // Looks like "CC;NUMBER"
+  if (/^\d{1,4}$/.test(parts[0])) {
+    const cc = parts[0];
+    const nsn = (parts[1] || "")
+      .replace(/\D/g, "")      // keep digits only
+      .replace(/^0+/, "");     // drop trunk 0 for +CC format
+    return nsn ? `+${cc}${nsn}` : `+${cc}`;
+  }
+
+  // Fallback: multiple numbers separated by ';' → show all
+  return parts.join(" / ");
+}
+
+
     /* Portion/Quantity */
 
     const portionObjects = {
@@ -399,7 +426,7 @@ const ConfirmationModal = ({ isOpen, onClose, onRefuse, onConfirm, selectedNotif
                                 </div>
                             </span>
                             <span className="text-gray-600 font-medium">
-                                {`${selectedNotification.firstname} ${selectedNotification.lastname}`} | {`0${selectedNotification.phoneNumber.split(";")[1]}`}
+                                {`${selectedNotification.firstname} ${selectedNotification.lastname}`} | <span>{formatPhoneForDisplay(selectedNotification?.phoneNumber)}</span>
                             </span>
                             <p className="text-gray-600">
                                 Confirmez la vente et envoyer la posologie des médicaments au client.
